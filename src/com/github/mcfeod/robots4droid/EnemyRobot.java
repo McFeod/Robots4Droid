@@ -1,5 +1,5 @@
 package com.github.mcfeod.robots4droid;
-
+// test diff
 public class EnemyRobot {
 	protected int mSpeed;
 	protected int mVisualId;
