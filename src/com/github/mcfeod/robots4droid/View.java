@@ -14,24 +14,29 @@ public class View {
     public View(Player player){
         setNewView(player);
     }
+
     public void setNewView(Player player){
+        int dWidth = 5;
+        int dHeight = 5;
         /*int dWidth = Activity.getWidth()/2;
-        int dHeight = Activity.getHeight()/2;
+        int dHeight = Activity.getHeight()/2;*/
         int x = player.getX();
         int y = player.getY();
-        int boardWidth = GamePlay.Board.getWidth();
-        int boardHeight = GamePlay.Board.getHeight();
-        mLeftTopX = x - dWidth;
-        if(mLeftTopX<0){
-
-        }else if(){
-
-        }
-        * Инициализация и проверка, можно оптимизировать
-        */
+        // Инициализация и проверка, можно оптимизировать?
+        mLeftTopX     = GamePlay.sBoard.normaliseX(x-dWidth);
+        mLeftTopY     = GamePlay.sBoard.normaliseY(y-dHeight);
+        mRightBottomX = GamePlay.sBoard.normaliseX(x+dWidth);
+        mRightBottomY = GamePlay.sBoard.normaliseY(y+dHeight);
     }
     public boolean isIn(int x, int y){
+        // дублирование кода с одноименной функцией
         return (x>=mLeftTopX)&&(x<=mRightBottomX)&&(y>=mLeftTopY)&&(y<=mRightBottomY);
+    }
+    public boolean isIn(Playable obj){
+        int x = obj.getX();
+        int y = obj.getY();
+        return (x>=mLeftTopX)&&(x<=mRightBottomX)&&(y>=mLeftTopY)&&(y<=mRightBottomY);
+        // дублирование кода с предыдущим
     }
     public int getXOffset(){
         return mLeftTopX;

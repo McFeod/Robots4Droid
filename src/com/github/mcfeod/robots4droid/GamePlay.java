@@ -13,18 +13,29 @@ public class GamePlay {
         sView = new View(sPlayer);
         sList = new List();
     }
-
+    /*
+     * Методы взаимодействия с activity
+     * */
     public void setPlayerMove(int deltaX, int deltaY){
         sPlayer.setFuturePos(deltaX, deltaY);
     }
-
-    //методы, которые делают ход или возвращают код, по которому ход игрока невозможен
-
-
-
-    //взаимодействие с activity
-    public boolean getObjectsFromView(){
+    public int movePlayer(){
+        return sPlayer.makeMove();
+    }
+    public void changeNearBoard(){
+        sBoard.refresh();
+        sList.makeMoveNear();
+    }
+    //Внимание! Этот метод должен вызываться activity только после вызова changeNearBoard
+    public void changeFarBoard(){
+        sList.makeMoveFar();
+    }
+    public void changeAllBoard(){
+        sBoard.refresh();
+        sList.makeMoveNear();
+        sList.makeMoveFar();
+    }
+    public Iterable<Playable> getObjectsFromView(){
         return sList.getNearList();
     }
-    //...
 }
