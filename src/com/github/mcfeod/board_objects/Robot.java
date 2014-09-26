@@ -1,6 +1,8 @@
-package com.github.mcfeod.robots4droid;
+package com.github.mcfeod.board_objects;
 
-public class Robot implements GameObject {
+import com.github.mcfeod.robots4droid.GamePlay;
+
+public class Robot implements GameObject, Playable {
     protected int mSpeed;
     protected int mVisualId;
     protected int mXPos;
@@ -35,18 +37,19 @@ public class Robot implements GameObject {
         }
     }
     public void crash(){
-        //исключить из списка роботов, уменьшить счётчик
+        GamePlay.sList.deletePlayable(this);
     }
-    //TODO договориться о коротких названиях
-    public int getXPos(){
+    public int getX(){
         return mXPos;
     }
-    public int getYPos(){
+    public int getY(){
         return mYPos;
     }
 
-    //hopefully, World.isPlaceValid() can be omitted
-    public void moveToPlayer(int playerX, int playerY){
+    //hopefully, GamePlay.sBoard.exist() can be omitted
+    public void makeMove(){
+        int playerX = GamePlay.sPlayer.getX();
+        int playerY = GamePlay.sPlayer.getY();
         if (playerX < mXPos)
             mXPos--;
         else if (playerX > mXPos)
@@ -55,6 +58,13 @@ public class Robot implements GameObject {
             mYPos--;
         else if (playerY > mYPos)
             mYPos++;
+        GamePlay.sBoard.add(mXPos, mYPos, this);
+    }
+    public void spawn(){
+        // заглушка
+        mXPos = 0;
+        mYPos = 0;
+        GamePlay.sBoard.add(mXPos, mYPos, this);
     }
     //...
 }

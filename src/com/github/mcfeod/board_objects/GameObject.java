@@ -1,4 +1,4 @@
-package com.github.mcfeod.robots4droid;
+package com.github.mcfeod.board_objects;
 
 /*
  * Упрощает хранение данных в массиве и обработку игровых ситуаций.

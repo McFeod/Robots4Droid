@@ -1,4 +1,4 @@
-package com.github.mcfeod.robots4droid;
+package com.github.mcfeod.board_objects;
 
 /*
  * Класс с единственным неизменяемым экземпляром, на ссылки который
@@ -8,7 +8,7 @@ package com.github.mcfeod.robots4droid;
  * */
 public class Empty implements GameObject {
     private static final Empty INSTANCE = new Empty();
-    private Empty(){}
+    private Empty(){};
     // static factory method
     public static Empty getIt(){
         return INSTANCE;
