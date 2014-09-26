@@ -67,7 +67,12 @@ public class SimpleWorld {
     	switch(where){
     		case STAY: break;
     		case TELE: player.setPos(findPos()); return true;
-    		case TELE_SAFE: tmp = findSafePos(); break;
+    		case TELE_SAFE: 
+    			if (player.getEnergy() == 0)
+    				return false;
+    			tmp = findSafePos();
+    			player.chEnergy(-1);
+    			break;
     		case UP: tmp.y--; break;
     		case DOWN: tmp.y++; break;
     		case LEFT: tmp.x--; break;
@@ -90,19 +95,19 @@ public class SimpleWorld {
     private void spawn(byte person){
     /** устанавливает person на случайную свободную клетку */
     	Point p = findPos();
-    	sBoard[p.x][p.y] = person;
+    	sBoard[p.y][p.x] = person;
     }
     
     private Point findPos(){
     /** ищет случайную свободную клетку */
-    	int x = rnd.nextInt(sHeight);
-    	int y = rnd.nextInt(sWidth);
+    	int y = rnd.nextInt(sHeight);
+    	int x = rnd.nextInt(sWidth);
     	for(int i=0; i<sHeight*sWidth; ++i){
-    		if (sBoard[x][y] == EMPTY)
+    		if (sBoard[y][x] == EMPTY)
     			return new Point(x,y);
     		else{
-    			x = rnd.nextInt(sHeight);
-    			y = rnd.nextInt(sWidth);
+    			y = rnd.nextInt(sHeight);
+    			x = rnd.nextInt(sWidth);
     		}
     	}
     	winner();
@@ -206,82 +211,89 @@ public class SimpleWorld {
     } //moveBots()
     
     
-    private boolean isSafePos(Point p){
-    /** проверка соседних клеток на наличие угрозы. */
-    	//попытка смоделировать 1 ход на участке 5х5 вокруг точки p
-    	// TODO оптимизировать, а лучше переписать вовсе
-    	byte[][] little1 = new byte[5][5];
-    	byte[][] little2 = new byte[5][5];
-    	int startY=max(0, p.y-2);
-    	int finishY = (min(sHeight,p.y+2));
-    	int startX = max(0, p.x-2);
-    	int finishX = (min(sWidth,p.x+2));
-    	int pX = p.x - startX;
-    	int pY = p.y - startY;
-    	for(int i=startY; i<finishY; ++i)
-    		for(int j=startX; j<finishX; ++j){
-    			little1[i-startY][j-startX] = sBoard[i][j];
-    	} // копия участка получена
-    	finishX -= startX; finishY -= startY;
-    	// клонируем доску без врагов   	
-    	for(int i=0; i<finishY; ++i)
-    		for(int j=0; j<finishX; ++j)
-    			switch(little1[i][j]){
-	    			case EMPTY:
-	    			case BOT:
-	    			case FASTBOT: little2[i][j]=EMPTY; break;
-	    			default: little2[i][j]=JUNK; }
-    	//первая часть хода
-    	for(int i=0; i<finishY; ++i)
-    		for(int j=0; j<finishX; ++j)
-    			if ((little1[i][j]==BOT)||(little1[i][j]==FASTBOT)){ 
-    				startX = startY = 0;						
-    				if (j<pX) startX++; 
-    				else if (j>pX) startX--;
-    				if (i<pY) startY++; 
-    				else if (i>pY) startY--;
-    				switch (little2[i+startY][j+startX]){
-    					case BOT: 
-    					case FASTBOT:
-    						little2[i+startY][j+startX] = JUNK;
-    						break;
-    					case EMPTY:
-    						little2[i+startY][j+startX] = little1[i][j];		
-    				}
-    			} 
-    	if (little2[pY][pX] != EMPTY)
-    		return false;
-    	// 2 перестановка
-    	for(int i=0; i<finishY; ++i)
-    		for(int j=0; j<finishX; ++j)
-    			switch(little2[i][j]){
-	    			case EMPTY:
-	    			case FASTBOT: little1[i][j]=EMPTY; break;
-	    			default: little1[i][j]=little2[i][j]; }
-    	
-    	//второй ход быстрых роботов
-    	for(int i=0; i<finishY; ++i)
-    		for(int j=0; j<finishX; ++j)
-    			if (little2[i][j]==FASTBOT){
-    				startX = startY = 0;						
-    				if (j<pX) startX++; 
-    				else if (j>pX) startX--;
-    				if (i<pY) startY++; 
-    				else if (i>pY) startY--;
-    				switch (little1[i+startY][j+startX]){
-						case BOT:
-						case FASTBOT: 
-							little1[i+startY][j+startX] = JUNK;
-							break;
-    					case EMPTY:
-    						little1[i+startY][j+startX] = FASTBOT;
-    				} //switch (little1[i+startY][j+startX])
-    			} //if (little2[i][j]==FASTBOT)
-    	if (little2[pY][pX] != EMPTY)
-    		return false;
-    	return true;
-    }
-   
+	private boolean isSafePos(Point p){
+	/** проверка проверка соседних клеток на наличие угрозы. */
+		//проверяем соседей в радиусе 1 клетки 
+		if ((p == null)||!p.isOnBoard(sWidth, sHeight))
+			return false;
+		for(byte i=-1; i<2;++i)
+			for (byte j=-1; i<2; ++j){
+				if ((i==0)&&(j==0))
+					continue;
+				if (isEnemy(p.x+j,p.y+i))
+					return false;
+				else
+					if (isEmpty(p.x+j,p.y+i)&&(isDanger2nd(p, i, j))) //и в радиусе 2
+						return false;
+			}
+		return true;
+	} 
+	
+	// дальше идут функции, вызываемые из isSafePos()
+	
+	private boolean isExists(int x, int y){
+		if ((x<0)||(y<0)||(x>=sWidth)||(y>=sHeight))
+				return false;
+			return true;
+	}
+	
+	private boolean isFast(int x, int y){
+		if (isExists(x,y))
+			if (sBoard[y][x] == FASTBOT)
+					return true;
+		return false;
+	}
+	
+	private boolean isEnemy(int x, int y){
+		if (isExists(x,y))
+			if ((sBoard[y][x] == BOT)||(sBoard[y][x] == FASTBOT))
+				return true;
+		return false;
+	}
+
+	private boolean isEmpty(int x, int y){
+		if (isExists(x,y))
+			if (sBoard[y][x] == EMPTY)
+				return true;
+		return false;
+	}
+	
+	private boolean isDanger2nd(Point p, int y, int x){
+	/** проверка в радиусе 2 клеток
+	 * p - проверяемая точка
+	 * (x;y) - diff координат. в сумме с p даёт точку, через которую
+	 * возможно вторжение роботов
+	 * возвращает true, если p небезопасна
+	 */
+		if ((x!=0)&&(y!=0)){		//диагонали
+			if (isFast(p.x+2*x, p.y+y*2))
+				return true;
+		}
+		else{ 	// проверка 3 клеток, с которых за 2 хода достигается p через (p.x+x;p.y+y)
+			boolean fast = false;
+			int count = 0;
+			if (x==0){	//по горизонтали
+				for(byte i=-1; i<2; ++i)
+					if (isEnemy(p.x, p.y+i)){
+						count++;
+						if (isFast(p.x, p.y+i))
+							fast=true;
+					}
+			}
+			else{	//по вертикали
+				for(byte i=-1; i<2; ++i)
+				if (isEnemy(p.x+i, p.y)){
+					count++;
+					if (isFast(p.x+i, p.y))
+						fast=true;
+				}
+			}
+			if (fast && (count == 1)) // если нет быстрых роботов - угрозы нет
+				return true;// если роботов несколько - они столкнутся на (p.x+x;p.y+y)
+		}
+		return false; // всё OK
+	}
+     
     private Point findSafePos(){
     /**возвращает координаты клетки, на которую можно безопасно телепортироваться*/
     	boolean fail = true;
@@ -310,9 +322,6 @@ public class SimpleWorld {
     public void winner(){
     	//TODO засчитать выигрыш игроку, выход из игры
     }
-    
-    private int max(int a, int b){return (a>b)?a:b;}
-    private int min(int a, int b){return (a<b)?a:b;}
     
     // TODO реализовать список роботов
 }
