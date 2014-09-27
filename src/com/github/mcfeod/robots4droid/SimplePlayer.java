@@ -7,8 +7,7 @@ public class SimplePlayer{
     private int mLevel;	
 
 	public SimplePlayer(int x, int y){
-        mPos.x = x;
-        mPos.y = y;
+		mPos = new Point(x,y);
         mEnergy = 0;
         mScore = 0;
     }
@@ -44,7 +43,7 @@ public class SimplePlayer{
 	}
 	
 	public void chEnergy(int diff){
-		mScore += diff;
+		mEnergy += diff;
 	}
 
 }

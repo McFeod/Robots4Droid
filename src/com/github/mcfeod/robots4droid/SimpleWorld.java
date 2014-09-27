@@ -12,19 +12,27 @@ public class SimpleWorld {
     private static int sAliveBots;
     
     private static Random rnd = new Random(System.currentTimeMillis());
-    
-    private static enum Movement{
-    	UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, 
-    	DOWN_LEFT, DOWN_RIGHT, STAY, TELE, TELE_SAFE
-    } // возможные ходы
-    
+
+	// возможные ходы
+	private static final byte UP = 0;
+	private static final byte DOWN = 1;
+	private static final byte LEFT = 2;
+	private static final byte RIGHT = 3;
+	private static final byte UP_LEFT = 4;
+	private static final byte UP_RIGHT = 5;
+	private static final byte DOWN_LEFT = 6;
+	private static final byte DOWN_RIGHT = 7;
+	private static final byte STAY = 8;
+	private static final byte TELE = 9;
+	private static final byte TELE_SAFE = 10;
+      
     // "персонажи"
     private static final byte BOT = 2;
     private static final byte FASTBOT = 3;
     private static final byte EMPTY = 0;
     private static final byte JUNK = 4;
     
-    private SimplePlayer player = new SimplePlayer(0, 0);//(rnd.nextInt(sHeight),rnd.nextInt(sHeight));
+    public SimplePlayer player = new SimplePlayer(0, 0);//(rnd.nextInt(sHeight),rnd.nextInt(sHeight));
     
     private static byte sBoard[][], sTempBoard[][];
  
@@ -61,14 +69,14 @@ public class SimpleWorld {
     	//TODO отрисовка
     }
     
-    public boolean movePlayer(Movement where){
+    public boolean movePlayer(byte where){
     /** возвращает false, если ход недопустим, true - после успешного завершения хода */
     	Point tmp = new Point(player.getPos());
     	switch(where){
     		case STAY: break;
     		case TELE: player.setPos(findPos()); return true;
     		case TELE_SAFE: 
-    			if (player.getEnergy() == 0)
+    			if (player.getEnergy() < 1)
     				return false;
     			tmp = findSafePos();
     			player.chEnergy(-1);
@@ -79,10 +87,10 @@ public class SimpleWorld {
     		case RIGHT: tmp.x++; break;
     		case UP_LEFT: tmp.x--; tmp.y--; break;
     		case UP_RIGHT: tmp.x++; tmp.y--; break;
-    		case DOWN_LEFT: tmp.x--; tmp.x++; break;
+    		case DOWN_LEFT: tmp.x--; tmp.y++; break;
     		case DOWN_RIGHT: tmp.x++; tmp.y++;
     	}
-    	if (!tmp.isOnBoard(sHeight, sWidth))
+    	if (!tmp.isOnBoard(sWidth, sHeight))
 			return false;
     	//TODO сделать опционально отключение "безопасных" ходов:
     	if (!isSafePos(tmp))
@@ -167,8 +175,8 @@ public class SimpleWorld {
     						sTempBoard[i+diffY][j+diffX] = sBoard[i][j];		
     				} // switch (sTempBoard[i+diffY][j+diffX])
     			} // if ((sBoard[i][j]==BOT)||(sBoard[i][j]==FASTBOT))
-    	checkState(sTempBoard);
-    	
+    	if (checkState(sTempBoard))
+			return;
     	//теперь переставляем на главную доску всё, кроме быстрых роботов
     	for(int i=0; i<sHeight; ++i)
     		for(int j=0; j<sWidth; ++j)
@@ -206,18 +214,18 @@ public class SimpleWorld {
     				} //switch (sBoard[i+diffY][j+diffX])
     			} //if (sTempBoard[i][j]==FASTBOT)
     	
-    checkState(sBoard);
-    	    	
+    if (checkState(sBoard))
+		return;  	
     } //moveBots()
     
     
 	private boolean isSafePos(Point p){
 	/** проверка проверка соседних клеток на наличие угрозы. */
 		//проверяем соседей в радиусе 1 клетки 
-		if ((p == null)||!p.isOnBoard(sWidth, sHeight))
+		if ((p == null)||!isEmpty(p.x,p.y))
 			return false;
 		for(byte i=-1; i<2;++i)
-			for (byte j=-1; i<2; ++j){
+			for (byte j=-1; j<2; ++j){
 				if ((i==0)&&(j==0))
 					continue;
 				if (isEnemy(p.x+j,p.y+i))
@@ -298,11 +306,11 @@ public class SimpleWorld {
     /**возвращает координаты клетки, на которую можно безопасно телепортироваться*/
     	boolean fail = true;
     	Point tmp = findPos();
-    	for(int i=0; fail && (i<sHeight*sWidth); ++i){
+    	for(int i=0; fail && (i<2*sHeight*sWidth); ++i){
     		if (isSafePos(tmp))
     			fail = false; 
     		else
-    			tmp = findPos();			
+    			tmp = findPos();		
     	}
     	if (fail){
     		winner();
@@ -310,15 +318,40 @@ public class SimpleWorld {
     	return(tmp);
     }
     
-    private void checkState(byte[][] arr){
+    private boolean checkState(byte[][] arr){
     	Point pos=player.getPos();
     	if ((arr[pos.y][pos.x])!=EMPTY){
     		//TODO оповещение GAME OVER
     	}
     	// TODO отрисовка
-    	if ((sAliveBots == 0)&&(sAliveFastBots==0))
+    	if ((sAliveBots < 1)&&(sAliveFastBots < 1)){
     		initLevel();
+    		return true;
+    	}
+    	return false;
     }
+    
+    public String showBoard(){
+	//FOR DEBUG LOGICCORE
+		Point p = player.getPos();
+		if (sBoard[p.y][p.x]==0)
+			sBoard[p.y][p.x] = 1;
+		String res = "";
+		for(int i=0; i<sHeight; ++i){
+			for(int j=0; j<sWidth; ++j)
+				switch (sBoard[i][j]){
+					case 0: res+='.'; break;
+					case 1: res+='@'; break;
+					case 2: res+='+'; break;
+					case 3: res+='#'; break;
+					default: res+='*';
+				}	
+			 res+='\n';		
+		}	
+		sBoard[p.y][p.x] = 0;
+		return res;
+	}	
+		
     public void winner(){
     	//TODO засчитать выигрыш игроку, выход из игры
     }
