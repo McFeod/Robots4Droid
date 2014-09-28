@@ -63,8 +63,8 @@ public class SimpleWorld {
     		spawn(BOT);
     	sAliveBots = sBotCount;
     	for(int i=0; i<sFastBotCount; ++i)
-    		spawn(FASTBOT);  
-    	sAliveFastBots = sFastBotCount;	
+    		spawn(FASTBOT);
+    	sAliveFastBots = sFastBotCount;
     	player.setPos(findSafePos());
     	//TODO отрисовка
     }
@@ -281,20 +281,20 @@ public class SimpleWorld {
 			boolean fast = false;
 			int count = 0;
 			if (x==0){	//по горизонтали
-				for(byte i=-1; i<2; ++i)
-					if (isEnemy(p.x, p.y+i)){
+				for(byte j=-1; j<2; ++j)
+					if (isEnemy(p.x+j,y*2+p.y)){
 						count++;
-						if (isFast(p.x, p.y+i))
+						if (isFast(p.x+j,y*2+p.y))
 							fast=true;
 					}
 			}
 			else{	//по вертикали
 				for(byte i=-1; i<2; ++i)
-				if (isEnemy(p.x+i, p.y)){
-					count++;
-					if (isFast(p.x+i, p.y))
-						fast=true;
-				}
+					if (isEnemy(p.x+x*2, p.y+i)){
+						count++;
+						if (isFast(p.x+x*2, p.y+i))
+							fast=true;
+					}
 			}
 			if (fast && (count == 1)) // если нет быстрых роботов - угрозы нет
 				return true;// если роботов несколько - они столкнутся на (p.x+x;p.y+y)
@@ -321,7 +321,7 @@ public class SimpleWorld {
     private boolean checkState(byte[][] arr){
     	Point pos=player.getPos();
     	if ((arr[pos.y][pos.x])!=EMPTY){
-    		//TODO оповещение GAME OVER
+    		player.isAlive = false;
     	}
     	// TODO отрисовка
     	if ((sAliveBots < 1)&&(sAliveFastBots < 1)){
