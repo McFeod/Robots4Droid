@@ -9,10 +9,13 @@
  * - соответствующие направления движения
  *
  */
+package com.github.mcfeod.robots4droid;
 import java.io.*;
+import com.github.mcfeod.robots4droid.*;
+
 public class RobotsConsole {
 	public static void main (String args[]) {
-		SimpleGameField wrld = new SimpleGameField(20,30);
+		SimpleWorld wrld = new SimpleWorld(20,30);
 		System.out.println("Level: "+wrld.player.getLevel()+"; Energy: "
 		+ wrld.player.getEnergy()+ "; Score: "+ wrld.player.getScore());
 		System.out.print(wrld.showBoard());
