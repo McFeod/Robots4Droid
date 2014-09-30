@@ -1,16 +1,17 @@
 package com.github.mcfeod.robots4droid;
 
 public class SimplePlayer{
-    private Point mPos; //РїСЂРѕСЃС‚Рѕ РєРѕРѕСЂРґРёРЅР°С‚С‹
+    private Point mPos; //просто координаты
     private int mScore; 
     private int mEnergy;
-    private int mLevel;	
+    private int mLevel;
+    public boolean isAlive;
 
 	public SimplePlayer(int x, int y){
-        mPos.x = x;
-        mPos.y = y;
+		mPos = new Point(x,y);
         mEnergy = 0;
         mScore = 0;
+        isAlive = true;
     }
     
     public int getLevel() {
@@ -44,7 +45,7 @@ public class SimplePlayer{
 	}
 	
 	public void chEnergy(int diff){
-		mScore += diff;
+		mEnergy += diff;
 	}
 
 }

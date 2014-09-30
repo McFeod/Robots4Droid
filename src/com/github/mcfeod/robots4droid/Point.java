@@ -1,7 +1,7 @@
 package com.github.mcfeod.robots4droid;
 
 public class Point {
-	public int x, y; //Р±РµР· РїСЂРµС„РёРєСЃРѕРІ Рё pivat'РѕРІ, РёР±Рѕ РЅРµ С„РёРі
+	public int x, y; //без префиксов и pivat'ов, ибо не фиг
 	
 	public Point(int x, int y){
 		this.x = x;
@@ -13,14 +13,14 @@ public class Point {
 		this.y = old.y;
 	}
 		
-	//РїСЂРѕРІРµСЂРєР° РЅР° РїСЂРёРЅР°РґР»РµР¶РЅРѕСЃС‚СЊ РёРіСЂРѕРІРѕРјСѓ РїРѕР»СЋ
+	//проверка на принадлежность игровому полю
 	public boolean isOnBoard(int sizeX, int sizeY){
 		if ((x<0)||(y<0)||(x>=sizeX)||(y>=sizeY))
 			return false;
 		return true;		
 	}
 	
-	//РїСЂРѕРІРµСЂРєР° РЅР° РїСЂРёРЅР°РґР»РµР¶РЅРѕСЃС‚СЊ РІРёРґРёРјРѕР№ РѕР±Р»Р°СЃС‚Рё
+	//проверка на принадлежность видимой области
 	public boolean isVisible(Point topLeft, Point bottomRight){
 		if ( (this.x<topLeft.x)||(this.y>topLeft.y)
 			||(this.x>bottomRight.x)||(this.y<bottomRight.y) )	

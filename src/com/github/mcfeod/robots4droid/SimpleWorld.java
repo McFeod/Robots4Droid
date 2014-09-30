@@ -3,7 +3,7 @@ package com.github.mcfeod.robots4droid;
 import java.util.Random;
 
 public class SimpleWorld {
-    // РјРёРЅРёРјР°Р»СЊРЅР°СЏ СЂР°Р±РѕС‡Р°СЏ РІРµСЂСЃРёСЏ
+    // минимальная рабочая версия
     private static int sHeight;
     private static int sWidth;  
     private static int sFastBotCount;
@@ -12,21 +12,29 @@ public class SimpleWorld {
     private static int sAliveBots;
     
     private static Random rnd = new Random(System.currentTimeMillis());
-    
-    private static enum Movement{
-    	UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, 
-    	DOWN_LEFT, DOWN_RIGHT, STAY, TELE, TELE_SAFE
-    } // РІРѕР·РјРѕР¶РЅС‹Рµ С…РѕРґС‹
-    
-    // "РїРµСЂСЃРѕРЅР°Р¶Рё"
+
+	// возможные ходы
+	private static final byte UP = 0;
+	private static final byte DOWN = 1;
+	private static final byte LEFT = 2;
+	private static final byte RIGHT = 3;
+	private static final byte UP_LEFT = 4;
+	private static final byte UP_RIGHT = 5;
+	private static final byte DOWN_LEFT = 6;
+	private static final byte DOWN_RIGHT = 7;
+	private static final byte STAY = 8;
+	private static final byte TELE = 9;
+	private static final byte TELE_SAFE = 10;
+      
+    // "персонажи"
     private static final byte BOT = 2;
     private static final byte FASTBOT = 3;
     private static final byte EMPTY = 0;
     private static final byte JUNK = 4;
     
-    private SimplePlayer player = new SimplePlayer(0, 0);//(rnd.nextInt(sHeight),rnd.nextInt(sHeight));
+    public SimplePlayer player = new SimplePlayer(0, 0);//(rnd.nextInt(sHeight),rnd.nextInt(sHeight));
     
-    private static byte sBoard[][], sTempBoard[][];
+    public static byte sBoard[][], sTempBoard[][];//у Гоши здесь private
  
     public SimpleWorld(int height, int width){
         sHeight = height;
@@ -37,7 +45,7 @@ public class SimpleWorld {
     }
     
     private void clrBoards(){
-    /** РѕР±РЅСѓР»РµРЅРёРµ РјР°СЃСЃРёРІРѕРІ СЃ РґРѕСЃРєР°РјРё */
+    /** обнуление массивов с досками */
     	for(int i=0; i < sHeight; ++i)
         	for(int j=0; j < sWidth; ++j){
         		sBoard[i][j] = EMPTY;
@@ -46,7 +54,7 @@ public class SimpleWorld {
     }
 
     private void initLevel(){
-    /** РЅР°РїРѕР»РЅРµРЅРёРµ РґРѕСЃРєРё РІ РЅР°С‡Р°Р»Рµ РєР°Р¶РґРѕРіРѕ СѓСЂРѕРІРЅСЏ */
+    /** наполнение доски в начале каждого уровня */
     	clrBoards();
     	player.incLevel();
     	sBotCount = 5 + (int)(1.5*player.getLevel());
@@ -55,20 +63,20 @@ public class SimpleWorld {
     		spawn(BOT);
     	sAliveBots = sBotCount;
     	for(int i=0; i<sFastBotCount; ++i)
-    		spawn(FASTBOT);  
-    	sAliveFastBots = sFastBotCount;	
+    		spawn(FASTBOT);
+    	sAliveFastBots = sFastBotCount;
     	player.setPos(findSafePos());
-    	//TODO РѕС‚СЂРёСЃРѕРІРєР°
+    	//TODO отрисовка
     }
     
-    public boolean movePlayer(Movement where){
-    /** РІРѕР·РІСЂР°С‰Р°РµС‚ false, РµСЃР»Рё С…РѕРґ РЅРµРґРѕРїСѓСЃС‚РёРј, true - РїРѕСЃР»Рµ СѓСЃРїРµС€РЅРѕРіРѕ Р·Р°РІРµСЂС€РµРЅРёСЏ С…РѕРґР° */
+    public boolean movePlayer(byte where){
+    /** возвращает false, если ход недопустим, true - после успешного завершения хода */
     	Point tmp = new Point(player.getPos());
     	switch(where){
     		case STAY: break;
     		case TELE: player.setPos(findPos()); return true;
     		case TELE_SAFE: 
-    			if (player.getEnergy() == 0)
+    			if (player.getEnergy() < 1)
     				return false;
     			tmp = findSafePos();
     			player.chEnergy(-1);
@@ -79,12 +87,12 @@ public class SimpleWorld {
     		case RIGHT: tmp.x++; break;
     		case UP_LEFT: tmp.x--; tmp.y--; break;
     		case UP_RIGHT: tmp.x++; tmp.y--; break;
-    		case DOWN_LEFT: tmp.x--; tmp.x++; break;
+    		case DOWN_LEFT: tmp.x--; tmp.y++; break;
     		case DOWN_RIGHT: tmp.x++; tmp.y++;
     	}
-    	if (!tmp.isOnBoard(sHeight, sWidth))
+    	if (!tmp.isOnBoard(sWidth, sHeight))
 			return false;
-    	//TODO СЃРґРµР»Р°С‚СЊ РѕРїС†РёРѕРЅР°Р»СЊРЅРѕ РѕС‚РєР»СЋС‡РµРЅРёРµ "Р±РµР·РѕРїР°СЃРЅС‹С…" С…РѕРґРѕРІ:
+    	//TODO сделать опционально отключение "безопасных" ходов:
     	if (!isSafePos(tmp))
     		return false;
     	player.setPos(tmp);
@@ -93,13 +101,13 @@ public class SimpleWorld {
     
     
     private void spawn(byte person){
-    /** СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ person РЅР° СЃР»СѓС‡Р°Р№РЅСѓСЋ СЃРІРѕР±РѕРґРЅСѓСЋ РєР»РµС‚РєСѓ */
+    /** устанавливает person на случайную свободную клетку */
     	Point p = findPos();
     	sBoard[p.y][p.x] = person;
     }
     
     private Point findPos(){
-    /** РёС‰РµС‚ СЃР»СѓС‡Р°Р№РЅСѓСЋ СЃРІРѕР±РѕРґРЅСѓСЋ РєР»РµС‚РєСѓ */
+    /** ищет случайную свободную клетку */
     	int y = rnd.nextInt(sHeight);
     	int x = rnd.nextInt(sWidth);
     	for(int i=0; i<sHeight*sWidth; ++i){
@@ -115,8 +123,8 @@ public class SimpleWorld {
     }
     
     public void moveBots(){
-    /** РџРµСЂРµРјРµС‰РµРЅРёСЏ СЂРѕР±РѕС‚РѕРІ */
-    	// РєР»РѕРЅРёСЂСѓРµРј РґРѕСЃРєСѓ Р±РµР· РІСЂР°РіРѕРІ   	
+    /** Перемещения роботов */
+    	// клонируем доску без врагов   	
     	for(int i=0; i<sHeight; ++i)
     		for(int j=0; j<sWidth; ++j)
     			switch(sBoard[i][j]){
@@ -124,14 +132,14 @@ public class SimpleWorld {
 	    			case BOT:
 	    			case FASTBOT: sTempBoard[i][j]=EMPTY; break;
 	    			default: sTempBoard[i][j]=JUNK; }
-    	//РїРµСЂРµРјРµС‰Р°РµРј РІСЃРµС… СЂРѕР±РѕС‚РѕРІ РЅР° 1 С€Р°Рі:
+    	//перемещаем всех роботов на 1 шаг:
     	int pX = player.getPos().x;
     	int pY = player.getPos().y;
     	byte diffX,diffY;
     	for(int i=0; i<sHeight; ++i)
     		for(int j=0; j<sWidth; ++j)
-    			if ((sBoard[i][j]==BOT)||(sBoard[i][j]==FASTBOT)){ // РќРµ СЃС‚Р°Р» РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СЃР»РѕР¶РµРЅРёРµ, С‡С‚РѕР±С‹ РїРѕС‚РѕРј 
-    				diffX = diffY = 0;						// РїРµСЂРµРїРёСЃР°С‚СЊ РїСЂРё РїРѕРјРѕС‰Рё РєР»Р°СЃСЃРѕРІ. РџРѕР»СѓС‡РёР»Р°СЃСЊ СЌС‚Р° Р¶СѓС‚СЊ
+    			if ((sBoard[i][j]==BOT)||(sBoard[i][j]==FASTBOT)){ // Не стал использовать сложение, чтобы потом 
+    				diffX = diffY = 0;						// переписать при помощи классов. Получилась эта жуть
     				if (j<pX) diffX++; 
     				else if (j>pX) diffX--;
     				if (i<pY) diffY++; 
@@ -167,9 +175,9 @@ public class SimpleWorld {
     						sTempBoard[i+diffY][j+diffX] = sBoard[i][j];		
     				} // switch (sTempBoard[i+diffY][j+diffX])
     			} // if ((sBoard[i][j]==BOT)||(sBoard[i][j]==FASTBOT))
-    	checkState(sTempBoard);
-    	
-    	//С‚РµРїРµСЂСЊ РїРµСЂРµСЃС‚Р°РІР»СЏРµРј РЅР° РіР»Р°РІРЅСѓСЋ РґРѕСЃРєСѓ РІСЃС‘, РєСЂРѕРјРµ Р±С‹СЃС‚СЂС‹С… СЂРѕР±РѕС‚РѕРІ
+    	if (checkState(sTempBoard))
+			return;
+    	//теперь переставляем на главную доску всё, кроме быстрых роботов
     	for(int i=0; i<sHeight; ++i)
     		for(int j=0; j<sWidth; ++j)
     			switch(sTempBoard[i][j]){
@@ -177,7 +185,7 @@ public class SimpleWorld {
 	    			case FASTBOT: sBoard[i][j]=EMPTY; break;
 	    			default: sBoard[i][j]=sTempBoard[i][j]; }
     	
-    	//РІС‚РѕСЂРѕР№ С…РѕРґ Р±С‹СЃС‚СЂС‹С… СЂРѕР±РѕС‚РѕРІ
+    	//второй ход быстрых роботов
     	for(int i=0; i<sHeight; ++i)
     		for(int j=0; j<sWidth; ++j)
     			if (sTempBoard[i][j]==FASTBOT){
@@ -206,30 +214,30 @@ public class SimpleWorld {
     				} //switch (sBoard[i+diffY][j+diffX])
     			} //if (sTempBoard[i][j]==FASTBOT)
     	
-    checkState(sBoard);
-    	    	
+    if (checkState(sBoard))
+		return;  	
     } //moveBots()
     
     
 	private boolean isSafePos(Point p){
-	/** РїСЂРѕРІРµСЂРєР° РїСЂРѕРІРµСЂРєР° СЃРѕСЃРµРґРЅРёС… РєР»РµС‚РѕРє РЅР° РЅР°Р»РёС‡РёРµ СѓРіСЂРѕР·С‹. */
-		//РїСЂРѕРІРµСЂСЏРµРј СЃРѕСЃРµРґРµР№ РІ СЂР°РґРёСѓСЃРµ 1 РєР»РµС‚РєРё 
-		if ((p == null)||!p.isOnBoard(sWidth, sHeight))
+	/** проверка проверка соседних клеток на наличие угрозы. */
+		//проверяем соседей в радиусе 1 клетки 
+		if ((p == null)||!isEmpty(p.x,p.y))
 			return false;
 		for(byte i=-1; i<2;++i)
-			for (byte j=-1; i<2; ++j){
+			for (byte j=-1; j<2; ++j){
 				if ((i==0)&&(j==0))
 					continue;
 				if (isEnemy(p.x+j,p.y+i))
 					return false;
 				else
-					if (isEmpty(p.x+j,p.y+i)&&(isDanger2nd(p, i, j))) //Рё РІ СЂР°РґРёСѓСЃРµ 2
+					if (isEmpty(p.x+j,p.y+i)&&(isDanger2nd(p, i, j))) //и в радиусе 2
 						return false;
 			}
 		return true;
 	} 
 	
-	// РґР°Р»СЊС€Рµ РёРґСѓС‚ С„СѓРЅРєС†РёРё, РІС‹Р·С‹РІР°РµРјС‹Рµ РёР· isSafePos()
+	// дальше идут функции, вызываемые из isSafePos()
 	
 	private boolean isExists(int x, int y){
 		if ((x<0)||(y<0)||(x>=sWidth)||(y>=sHeight))
@@ -259,50 +267,50 @@ public class SimpleWorld {
 	}
 	
 	private boolean isDanger2nd(Point p, int y, int x){
-	/** РїСЂРѕРІРµСЂРєР° РІ СЂР°РґРёСѓСЃРµ 2 РєР»РµС‚РѕРє
-	 * p - РїСЂРѕРІРµСЂСЏРµРјР°СЏ С‚РѕС‡РєР°
-	 * (x;y) - diff РєРѕРѕСЂРґРёРЅР°С‚. РІ СЃСѓРјРјРµ СЃ p РґР°С‘С‚ С‚РѕС‡РєСѓ, С‡РµСЂРµР· РєРѕС‚РѕСЂСѓСЋ
-	 * РІРѕР·РјРѕР¶РЅРѕ РІС‚РѕСЂР¶РµРЅРёРµ СЂРѕР±РѕС‚РѕРІ
-	 * РІРѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё p РЅРµР±РµР·РѕРїР°СЃРЅР°
+	/** проверка в радиусе 2 клеток
+	 * p - проверяемая точка
+	 * (x;y) - diff координат. в сумме с p даёт точку, через которую
+	 * возможно вторжение роботов
+	 * возвращает true, если p небезопасна
 	 */
-		if ((x!=0)&&(y!=0)){		//РґРёР°РіРѕРЅР°Р»Рё
+		if ((x!=0)&&(y!=0)){		//диагонали
 			if (isFast(p.x+2*x, p.y+y*2))
 				return true;
 		}
-		else{ 	// РїСЂРѕРІРµСЂРєР° 3 РєР»РµС‚РѕРє, СЃ РєРѕС‚РѕСЂС‹С… Р·Р° 2 С…РѕРґР° РґРѕСЃС‚РёРіР°РµС‚СЃСЏ p С‡РµСЂРµР· (p.x+x;p.y+y)
+		else{ 	// проверка 3 клеток, с которых за 2 хода достигается p через (p.x+x;p.y+y)
 			boolean fast = false;
 			int count = 0;
-			if (x==0){	//РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё
-				for(byte i=-1; i<2; ++i)
-					if (isEnemy(p.x, p.y+i)){
+			if (x==0){	//по горизонтали
+				for(byte j=-1; j<2; ++j)
+					if (isEnemy(p.x+j,y*2+p.y)){
 						count++;
-						if (isFast(p.x, p.y+i))
+						if (isFast(p.x+j,y*2+p.y))
 							fast=true;
 					}
 			}
-			else{	//РїРѕ РІРµСЂС‚РёРєР°Р»Рё
+			else{	//по вертикали
 				for(byte i=-1; i<2; ++i)
-				if (isEnemy(p.x+i, p.y)){
-					count++;
-					if (isFast(p.x+i, p.y))
-						fast=true;
-				}
+					if (isEnemy(p.x+x*2, p.y+i)){
+						count++;
+						if (isFast(p.x+x*2, p.y+i))
+							fast=true;
+					}
 			}
-			if (fast && (count == 1)) // РµСЃР»Рё РЅРµС‚ Р±С‹СЃС‚СЂС‹С… СЂРѕР±РѕС‚РѕРІ - СѓРіСЂРѕР·С‹ РЅРµС‚
-				return true;// РµСЃР»Рё СЂРѕР±РѕС‚РѕРІ РЅРµСЃРєРѕР»СЊРєРѕ - РѕРЅРё СЃС‚РѕР»РєРЅСѓС‚СЃСЏ РЅР° (p.x+x;p.y+y)
+			if (fast && (count == 1)) // если нет быстрых роботов - угрозы нет
+				return true;// если роботов несколько - они столкнутся на (p.x+x;p.y+y)
 		}
-		return false; // РІСЃС‘ OK
+		return false; // всё OK
 	}
      
     private Point findSafePos(){
-    /**РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРѕСЂРґРёРЅР°С‚С‹ РєР»РµС‚РєРё, РЅР° РєРѕС‚РѕСЂСѓСЋ РјРѕР¶РЅРѕ Р±РµР·РѕРїР°СЃРЅРѕ С‚РµР»РµРїРѕСЂС‚РёСЂРѕРІР°С‚СЊСЃСЏ*/
+    /**возвращает координаты клетки, на которую можно безопасно телепортироваться*/
     	boolean fail = true;
     	Point tmp = findPos();
-    	for(int i=0; fail && (i<sHeight*sWidth); ++i){
+    	for(int i=0; fail && (i<2*sHeight*sWidth); ++i){
     		if (isSafePos(tmp))
     			fail = false; 
     		else
-    			tmp = findPos();			
+    			tmp = findPos();		
     	}
     	if (fail){
     		winner();
@@ -310,18 +318,43 @@ public class SimpleWorld {
     	return(tmp);
     }
     
-    private void checkState(byte[][] arr){
+    private boolean checkState(byte[][] arr){
     	Point pos=player.getPos();
     	if ((arr[pos.y][pos.x])!=EMPTY){
-    		//TODO РѕРїРѕРІРµС‰РµРЅРёРµ GAME OVER
+    		player.isAlive = false;
     	}
-    	// TODO РѕС‚СЂРёСЃРѕРІРєР°
-    	if ((sAliveBots == 0)&&(sAliveFastBots==0))
+    	// TODO отрисовка
+    	if ((sAliveBots < 1)&&(sAliveFastBots < 1)){
     		initLevel();
-    }
-    public void winner(){
-    	//TODO Р·Р°СЃС‡РёС‚Р°С‚СЊ РІС‹РёРіСЂС‹С€ РёРіСЂРѕРєСѓ, РІС‹С…РѕРґ РёР· РёРіСЂС‹
+    		return true;
+    	}
+    	return false;
     }
     
-    // TODO СЂРµР°Р»РёР·РѕРІР°С‚СЊ СЃРїРёСЃРѕРє СЂРѕР±РѕС‚РѕРІ
+    public String showBoard(){
+	//FOR DEBUG LOGICCORE
+		Point p = player.getPos();
+		if (sBoard[p.y][p.x]==0)
+			sBoard[p.y][p.x] = 1;
+		String res = "";
+		for(int i=0; i<sHeight; ++i){
+			for(int j=0; j<sWidth; ++j)
+				switch (sBoard[i][j]){
+					case 0: res+='.'; break;
+					case 1: res+='@'; break;
+					case 2: res+='+'; break;
+					case 3: res+='#'; break;
+					default: res+='*';
+				}	
+			 res+='\n';		
+		}	
+		sBoard[p.y][p.x] = 0;
+		return res;
+	}	
+		
+    public void winner(){
+    	//TODO засчитать выигрыш игроку, выход из игры
+    }
+    
+    // TODO реализовать список роботов
 }
