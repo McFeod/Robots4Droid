@@ -1,16 +1,27 @@
 package com.github.mcfeod.robots4droid;
 
 public class Point {
-	public int x, y; //без префиксов и pivat'ов, ибо не фиг
+	public int x, y;
+	
+	public Point(){
+		this.x = 0;
+		this.y = 0;
+	}
 	
 	public Point(int x, int y){
 		this.x = x;
 		this.y = y;
 	}
 	
-	public Point(Point old){
-		this.x = old.x;
-		this.y = old.y;
+	public Point(Point pos){
+		if (pos != null){
+			this.x = pos.x;
+			this.y = pos.y;
+		}
+	}
+	
+	public Point CopyPoint(){
+		return new Point(x, y);
 	}
 		
 	//проверка на принадлежность игровому полю
@@ -20,6 +31,12 @@ public class Point {
 		return true;		
 	}
 	
+	public static boolean isOnBoard(int x, int y, int sizeX, int sizeY){
+		if ((x<0)||(y<0)||(x>=sizeX)||(y>=sizeY))
+			return false;
+		return true;
+	}
+	/*
 	//проверка на принадлежность видимой области
 	public boolean isVisible(Point topLeft, Point bottomRight){
 		if ( (this.x<topLeft.x)||(this.y>topLeft.y)
@@ -27,5 +44,5 @@ public class Point {
 			return false;
 		return true;
 	}
-
+*/
 }
