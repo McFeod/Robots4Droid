@@ -19,30 +19,5 @@ public class Point {
 			this.y = pos.y;
 		}
 	}
-	
-	public Point CopyPoint(){
-		return new Point(x, y);
-	}
-		
-	//проверка на принадлежность игровому полю
-	public boolean isOnBoard(int sizeX, int sizeY){
-		if ((x<0)||(y<0)||(x>=sizeX)||(y>=sizeY))
-			return false;
-		return true;		
-	}
-	
-	public static boolean isOnBoard(int x, int y, int sizeX, int sizeY){
-		if ((x<0)||(y<0)||(x>=sizeX)||(y>=sizeY))
-			return false;
-		return true;
-	}
-	/*
-	//проверка на принадлежность видимой области
-	public boolean isVisible(Point topLeft, Point bottomRight){
-		if ( (this.x<topLeft.x)||(this.y>topLeft.y)
-			||(this.x>bottomRight.x)||(this.y<bottomRight.y) )	
-			return false;
-		return true;
-	}
-*/
+
 }

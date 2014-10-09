@@ -1,10 +1,10 @@
 package com.github.mcfeod.robots4droid;
 
 public class Player{
-    private Point mPos; //координаты
+    private Point mPos; //РєРѕРѕСЂРґРёРЅР°С‚С‹
     private int mScore;
     private int mEnergy;
-    public boolean isAlive;
+    public boolean isAlive; 
 
 	public Player(){
 		mPos = new Point();
@@ -17,6 +17,11 @@ public class Player{
 		return mPos;
 	}
 
+	public void setPos(int x, int y){
+		mPos.x = x;
+		mPos.y = y;
+	}
+	
 	public void setPos(Point pos){
 		if (pos != null){
 			mPos.x = pos.x;
