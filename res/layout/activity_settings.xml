@@ -10,4 +10,8 @@
             android:layout_height="wrap_content"
             android:text="Music On"
             android:id="@+id/musicBox" android:longClickable="false" android:enabled="true" android:checked="false"/>
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+    </FrameLayout>
 </LinearLayout>
