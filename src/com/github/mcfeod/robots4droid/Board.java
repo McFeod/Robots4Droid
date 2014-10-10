@@ -8,6 +8,11 @@ public class Board{
 	public static final byte JUNK = 1;
 	public static final byte ROBOT = 2;
 	public static final byte FASTROBOT = 3;
+	
+    private int mAliveFastBotCount;
+    private int mAliveBotCount;
+    private int mDiffFastBotCount = 0;
+    private int mDiffBotCount = 0;
 
 	private int mWidth, mHeight;
 	private byte mBoard[][];
@@ -27,32 +32,27 @@ public class Board{
 				mBoard[i][j] = EMPTY;
 	}
 
-	/*Перемещение робота. При столкновении образуется куча*/
+	/** Перемещение робота. При столкновении образуется куча */
 	public void MoveObject(int oldX, int oldY, int newX, int newY){
 		if ((!isOnBoard(oldX, oldY)) || (!isOnBoard(newX, newY)))
 			return;
 		if (mBoard[oldX][oldY] != EMPTY){
-			if (mBoard[newX][newY] != EMPTY)
+			if (mBoard[newX][newY] != EMPTY){
+				chDiff(mBoard[oldX][oldY],1);
+				chDiff(mBoard[newX][newY],1);
 				mBoard[newX][newY] = JUNK;
+			}
 			else
 				mBoard[newX][newY] = mBoard[oldX][oldY];
 			mBoard[oldX][oldY] = EMPTY;
 		}
 	}
 
-	/*Перемещение робота. При столкновении образуется куча*/
+	/** Перемещение робота. При столкновении образуется куча*/
 	public void MoveObject(Point oldPos, Point newPos){
 		if ((oldPos == null) || (newPos == null))
 			return;
-		if ((!isOnBoard(oldPos)) || (!isOnBoard(newPos)))
-			return;
-		if (mBoard[oldPos.x][oldPos.y] != EMPTY){
-			if (mBoard[newPos.x][newPos.y] != EMPTY)
-				mBoard[newPos.x][newPos.y] = JUNK;
-			else
-				mBoard[newPos.x][newPos.y] = mBoard[oldPos.x][oldPos.y];
-			mBoard[oldPos.x][oldPos.y] = EMPTY;
-		}
+		MoveObject(oldPos.x, oldPos.y, newPos.x, newPos.y);
 	}
 
 	/*Возвращает тип объекта, находящегося в координатах (x, y)*/
@@ -163,5 +163,30 @@ public class Board{
 				return true;
 		return false;
     }
+	
+    public void chDiff(byte kind, int diff){
+    	switch(kind){
+			case Board.ROBOT: mDiffBotCount+= diff; break;
+			case Board.FASTROBOT: mDiffFastBotCount+=diff; break;
+    	}
+    }
+    
+    public int diff2score(){
+    	mAliveBotCount-= mDiffBotCount;
+    	mAliveFastBotCount-= mDiffFastBotCount;
+    	int res = mDiffBotCount*5 + 10*mDiffFastBotCount;
+    	mDiffBotCount = 0;
+    	mDiffFastBotCount = 0;
+    	return res;
+    }
+    
+   public void setRobotCount(int bot, int fast){
+	   mAliveBotCount = (bot>0)? bot:0;
+	   mAliveFastBotCount = (fast>0)? fast:0;
+   }
+   
+   public boolean isBotsDead(){
+	   return !((mAliveBotCount>0)||(mAliveFastBotCount>0));
+   }
 
 }

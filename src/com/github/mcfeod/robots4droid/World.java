@@ -6,8 +6,6 @@ public class World{
     public int mWidth;
     private int mFastRobotCount;
     private int mRobotCount;
-    //private int sAliveFastBotCount;
-    //private int AliveBotCount;
 
     //возможные ходы
 	private static final byte UP = 1;
@@ -18,12 +16,12 @@ public class World{
 	private static final byte UP_RIGHT = 2;
 	private static final byte DOWN_LEFT = 6;
 	private static final byte DOWN_RIGHT = 8;
-	private static final byte STAY = 4;
+//	private static final byte STAY = 4;
 	private static final byte TELEPORT = 9;
 	private static final byte SAFE_TELEPORT = 10;
 
     public Player player;
-    public Board mBoard, supBoard;
+    public Board mBoard;
     
     /*вспомогательные объекты и переменные для хранения временной информации*/
     private Point junkPos, objectPos, freePos;
@@ -34,7 +32,6 @@ public class World{
 		mWidth = width;
 		mHeight = height;
 		mBoard = new Board(width, height);
-		supBoard = new Board(5,5);	
         player = new Player();
         mLevel=0;
         //создание вспомогательных объектов
@@ -45,7 +42,7 @@ public class World{
         initLevel();
     }
 
-    /*Создание нового уровня*/
+    /** Создание нового уровня */
     private void initLevel(){
     	mBoard.Clear(); //очистка доски
     	mLevel ++;
@@ -56,6 +53,7 @@ public class World{
 		//определение количества роботов
     	mRobotCount = 5 + (int)(1.5 * mLevel);
     	mFastRobotCount = -4 + (int)(1.2 * mLevel);
+    	mBoard.setRobotCount(mRobotCount, mFastRobotCount);
     	//Размещение простых роботов
     	for(int i=0; i<mRobotCount; ++i){
     		if (findFreePos());
@@ -72,8 +70,8 @@ public class World{
     	//TODO отрисовка
     }
 
-    /*Ищет свободную случайную клетку и сохраняет ее в глобальный freePos.
-      Возвращает true, если свободная клетка найдена*/
+    /** Ищет свободную случайную клетку и сохраняет ее в глобальный freePos.
+      Возвращает true, если свободная клетка найдена */
 	private boolean findFreePos(){
     	if (mBoard.RandomFindFreePos(freePos))
     		return true;
@@ -82,13 +80,13 @@ public class World{
     	return false;
 	}
 
-	/*Проверяет, если клетка с координатами (startX, startY) - JUNK, то сохраняет
+	/** Проверяет, если клетка с координатами (startX, startY) - JUNK, то сохраняет
 	  информацию о ней и о той куда мусор переместиться. Информация нужна для
 	  дальнейшего восстановления этих клеток при небезопасном ходе.
 	  Возвращает true, если ход разрешен.
 	  Ход запрещен, если
 	   1) точка (endX, endY) или точка (startX, startY) лежит за пределами поля
-	   2) точка (endX, endY) - JUNK*/
+	   2) точка (endX, endY) - JUNK */
 	private boolean saveInfoAboutJunk(int startX, int startY, int endX, int endY){
 		isJunkExists = false;
 		objectKind=0;
@@ -108,6 +106,7 @@ public class World{
 			isJunkExists = true;
 			//сохраняем информацию о конечной клетке
 			objectKind = mBoard.GetKind(endX, endY);
+			mBoard.chDiff(objectKind, 1);
 			//перемещаем мусор
 			mBoard.SetKind(junkPos, Board.EMPTY);
 			mBoard.SetKind(objectPos, Board.JUNK);
@@ -115,15 +114,16 @@ public class World{
 		return true;
 	}
 
-	/*Восстанавливает сохраненную информацию о мусоре*/
+	/** Восстанавливает сохраненную информацию о мусоре */
 	private void backInfoAboutJunk(){
 		if (isJunkExists){
+			mBoard.chDiff(objectKind, -1);
 			mBoard.SetKind(junkPos, Board.JUNK);
 			mBoard.SetKind(objectPos, objectKind);
 		}
 	}
 	
-	/* Возвращает true, если ход выполнен*/
+	/** Возвращает true, если ход выполнен*/
     public boolean movePlayer(byte where){
     	//копируем координаты игрока
     	freePos.x = player.getPos().x;
@@ -211,7 +211,7 @@ public class World{
     	return true;
     }
 
-    /*Передвигает одного робота в сторону игрока*/
+    /** Передвигает одного робота в сторону игрока */
 	private void moveRobot(int robotX, int robotY, int playerX, int playerY){
     	int newBotX = robotX, newBotY = robotY;
     	if (robotX > playerX)
@@ -277,7 +277,7 @@ public class World{
     	}
     }
 	
-	/*Перемещение роботов*/
+	/** Перемещение роботов */
 	public void moveBots(){	
 		Point playerPos = player.getPos();
 		//поиск максимального радиуса
@@ -294,89 +294,85 @@ public class World{
     	//передвижение быстрых роботов второй раз
     	for (int i=1; i<=d; i++)
     		moveRobots(playerPos.x, playerPos.y, i, false);
+    	player.chScore(mBoard.diff2score());
     	//если игрок мертв, то игра заканчивается поражением
     	if (!player.isAlive){
-    		defeat();
     		return;
     	}
     	//если количество живых роботов == 0, то переходим на следующий уровень
-    	if (mBoard.GetObjectCount(Board.ROBOT)+mBoard.GetObjectCount(Board.FASTROBOT) == 0)    		
+    	if (mBoard.isBotsDead())    		
     		initLevel();	
 	}
-	
-	/*Проверка соседних клеток на наличие угрозы. */   
+
+	/** проверка проверка соседних клеток на наличие угрозы. */
 	private boolean isSafePos(int x, int y){
-		//Копирование объектов в дополнительный массив 5x5
-		for (int i=0; i<5; i++)
-			for (int j=0; j<5; j++){
-				supBoard.SetKind(i, j, mBoard.GetKind(x-2+i, y-2+j));
-			}
-		//Проверка внутреннего круга на наличие угроз
-		for (int i=1; i<4; i++)
-			for (int j=1; j<4; j++)
-				if (supBoard.isEnemy(i,j))
+		//проверяем соседей в радиусе 1 клетки 
+		if (!mBoard.isEmpty(x,y))
+			return false;
+		for(byte i=-1; i<2;++i)
+			for (byte j=-1; j<2; ++j){
+				if ((i==0)&&(j==0))
+					continue;
+				if (mBoard.isEnemy(x+j,y+i))
 					return false;
-		//Обход внешнего круга и передвижение быстрых роботов на внутренний круг
-		boolean isFound = false;
-		if (supBoard.isFastRobot(0,0)){
-			supBoard.MoveObject(0, 0, 1, 1);
-			isFound = true;
-		}
-		if (supBoard.isFastRobot(4,0)){
-			supBoard.MoveObject(4, 0, 3, 1);
-			isFound = true;
-		}
-		if (supBoard.isFastRobot(4,4)){
-			supBoard.MoveObject(4, 4, 3, 3);
-			isFound = true;
-		}	
-		if (supBoard.isFastRobot(0,4)){
-			supBoard.MoveObject(0, 4, 1, 3);
-			isFound = true;
-		}
-		for (int i=1; i<4; i++){
-			if (supBoard.isFastRobot(i,0)){
-				supBoard.MoveObject(i, 0, 2, 1);
-				isFound = true;
-			}
-			if (supBoard.isFastRobot(i,4)){
-				supBoard.MoveObject(i, 4, 2, 3);
-				isFound = true;
-			}
-			if (supBoard.isFastRobot(0,i)){
-				supBoard.MoveObject(0, i, 1, 2);
-				isFound = true;
-			}
-			if (supBoard.isFastRobot(4,i)){
-				supBoard.MoveObject(4, i, 3, 2);
-				isFound = true;
-			}
-		}
-		//Если был найден хотя бы один быстрый робот, то ищем его на внутреннем круге
-		if (isFound)
-			for (int i=1; i<4; i++)
-				for (int j=1; j<4; j++)
-					if (supBoard.isFastRobot(i,j))
+				else
+					if (mBoard.isEmpty(x+j,y+i)&&(isDanger2nd(x, y, i, j))) //и в радиусе 2
 						return false;
+			}
 		return true;
+	}
+	
+	/** проверка в радиусе 2 клеток
+	 * p - проверяемая точка
+	 * (x;y) - diff координат. в сумме с p даёт точку, через которую
+	 * возможно вторжение роботов
+	 * возвращает true, если p небезопасна */
+	private boolean isDanger2nd(int px, int py, int y, int x){
+		if ((x!=0)&&(y!=0)){		//диагонали
+			if (mBoard.isFastRobot(px+2*x, py+y*2))
+				return true;
+		}
+		else{ 	// проверка 3 клеток, с которых за 2 хода достигается p через (p.x+x;p.y+y)
+			boolean fast = false;
+			int count = 0;
+			if (x==0){	//по горизонтали
+				for(byte j=-1; j<2; ++j)
+					if (mBoard.isEnemy(px+j,y*2+py)){
+						count++;
+						if (mBoard.isFastRobot(px+j,y*2+py))
+							fast=true;
+					}
+			}
+			else{	//по вертикали
+				for(byte i=-1; i<2; ++i)
+					if (mBoard.isEnemy(px+x*2, py+i)){
+						count++;
+						if (mBoard.isFastRobot(px+x*2, py+i))
+							fast=true;
+					}
+			}
+			if (fast && (count == 1)) // если нет быстрых роботов - угрозы нет
+				return true;// если роботов несколько - они столкнутся на (p.x+x;p.y+y)
+		}
+		return false; // всё OK
 	}
 	
 	/*Ищет координаты безопасной клетки и сохраняет их в freePos.
 	  Возвращает true, если такая клетка существует*/
-    private boolean findSafePos(){    
-    	for(int i=0; i<2*mHeight*mWidth; ++i)
-    		if (findFreePos())
-    			if ((freePos.x != player.getPos().x) && (freePos.y != player.getPos().y))
-    				if (isSafePos(freePos.x, freePos.y))
-    					return true;
-    	for (int i=0; i<mWidth; i++)
-    		for (int j=0; j<mHeight; j++)
-    			if ((i != player.getPos().x) && (j != player.getPos().y))
-    				if (isSafePos(i, j))
-    					return true;
-    	return false;
-    }
-    
+	private boolean findSafePos(){    
+	  	for(int i=0; i<2*mHeight*mWidth; ++i)
+	  		if (findFreePos())
+	  			if ((freePos.x != player.getPos().x) && (freePos.y != player.getPos().y))
+	  				if (isSafePos(freePos.x, freePos.y))
+	  					return true;
+	  	for (int i=0; i<mWidth; i++)
+	  		for (int j=0; j<mHeight; j++)
+	  			if ((i != player.getPos().x) && (j != player.getPos().y))
+	  				if (isSafePos(i, j))
+	  					return true;
+	  	return false;
+	}
+	
     public void winner(){
 
     }

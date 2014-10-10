@@ -75,5 +75,10 @@ public class DrawWorld {
          world.player.getPos().y*height+1,paint);        
         image.setImageBitmap(bitMain);		
 	}
-
+	public void death(){
+		canvas.drawColor(Color.BLACK);
+		paint.setColor(Color.RED);
+		paint.setTextSize(50);
+		canvas.drawText("GAME OVER", height/2, 200, paint);
+	}
 }
