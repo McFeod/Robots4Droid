@@ -1,12 +1,12 @@
 package com.github.mcfeod.robots4droid;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
@@ -14,7 +14,9 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class GameActivity extends ActionBarActivity {
+
+
+public class GameActivity extends Activity {
 	private int width=10, height=10; //размеры сторон
 	private int sizew, sizeh;
 	//главный bitmap
@@ -24,6 +26,9 @@ public class GameActivity extends ActionBarActivity {
     private World world;
     private DrawWorld drawWorld;
     Point screen;
+
+    private MediaPlayer mSoundTrack;
+    private boolean isMusicOn;
 
 	public Point GetScreenSize(){
 		Display display = getWindowManager().getDefaultDisplay();
@@ -36,8 +41,9 @@ public class GameActivity extends ActionBarActivity {
 	public OnClickListener listener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			//MediaPlayer mediaPlayer = MediaPlayer.create(v.getContext(), R.raw.muz); // создаём новый объект mediaPlayer
-	        //mediaPlayer.start(); // запускаем воспроизведение
+            //Лавинообразный мусор
+            //MediaPlayer mediaPlayer = MediaPlayer.create(v.getContext(), R.raw.muz); // создаём новый объект mediaPlayer
+            //mediaPlayer.start(); // запускаем воспроизведение
 			boolean succ=false;
 			switch (v.getId()){
 				case R.id.left_button: succ=world.movePlayer((byte)(3)); break;
@@ -83,9 +89,12 @@ public class GameActivity extends ActionBarActivity {
         findViewById(R.id.safe_teleport_button).setOnClickListener(listener); 
         findViewById(R.id.stay_button).setOnClickListener(listener); 
         
-        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.muz);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.start();
+        mSoundTrack = MediaPlayer.create(this, R.raw.muz);
+        mSoundTrack.setLooping(true);
+        // при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
+        // по этой причине start() и stop() размещены в onStart() и onStop()
+        String settings = getIntent().getStringExtra(MainActivity.SETTINGS);
+        isMusicOn = SettingsParser.isMusicOn(settings);
         
         world = new World(width, height);
         drawWorld = new DrawWorld(this.getApplicationContext(), 
@@ -100,7 +109,8 @@ public class GameActivity extends ActionBarActivity {
 		text.setText(str);
     }
 
-
+    /** Вот они, Ваня, комментарии на великолепном английском.
+     * */
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -119,4 +129,18 @@ public class GameActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }*/
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(isMusicOn) {
+            mSoundTrack.start();
+        }
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        mSoundTrack.pause();
+    }
 }
