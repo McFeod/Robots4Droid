@@ -2,8 +2,20 @@
 <resources>
 
     <string name="app_name">Robots4Droid</string>
-    <string name="menu_game">Играть</string>
-	<string name="menu_settings">Настройки</string>
-	<string name="menu_help">Справка</string>
-    
+    <string name="action_settings">Settings</string>
+	<string name="button_left">Left</string>
+	<string name="button_right">Right</string>
+	<string name="button_down">Down</string>
+	<string name="button_up">Up</string>
+	<string name="button_left_up">Left-Up</string>
+	<string name="button_left_down">Left-Down</string>
+	<string name="button_right_up">Right-Up</string>
+    <string name="button_right_down">Right-Down</string>
+    <string name="button_stay">Stay</string>
+    <string name="button_teleport">Tele</string>
+    <string name="button_safe_teleport">Safe-Tele</string>
+    <string name="game_button">Play game</string>
+    <string name="settings_button">Settings</string>
+    <string name="settings_button_hint">Push, if you don\'t like game</string>
+    <string name="game_button_hint">Push, if you like game</string>
 </resources>
