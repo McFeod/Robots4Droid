@@ -2,6 +2,8 @@ package com.github.mcfeod.robots4droid;
 
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +13,7 @@ public class SettingsActivity extends Activity {
 
     private CheckBox musicBox;
     private Intent mIntent;
+    private FragmentManager mFm;
 
     @Override
     protected void onCreate(Bundle savedInstanceBundle) {
@@ -36,6 +39,15 @@ public class SettingsActivity extends Activity {
                 setResult(RESULT_OK, mIntent);
             }
         });
+
+        mFm = getFragmentManager();
+        Fragment fragment = mFm.findFragmentById(R.id.fragmentContainer);
+        if(fragment == null){
+            fragment = new SenselessFragment();
+            mFm.beginTransaction()
+                    .add(R.id.fragmentContainer, fragment)
+                    .commit();
+        }
 
     }
 //    Не знаю, почему, но так не работает. Было бы эффективнее.
