@@ -42,9 +42,6 @@ public class GameActivity extends Activity {
 	public OnClickListener listener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-            //Лавинообразный мусор
-            //MediaPlayer mediaPlayer = MediaPlayer.create(v.getContext(), R.raw.muz); // создаём новый объект mediaPlayer
-            //mediaPlayer.start(); // запускаем воспроизведение
 			boolean succ=false;
 			if (world.player.isAlive){
 				switch (v.getId()){
@@ -104,8 +101,8 @@ public class GameActivity extends Activity {
         mSoundTrack.setLooping(true);
         // при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
         // по этой причине start() и stop() размещены в onStart() и onStop()
-        String settings = getIntent().getStringExtra(MainActivity.SETTINGS);
-        isMusicOn = SettingsParser.isMusicOn(settings);
+
+        isMusicOn = SettingsParser.isMusicOn();
         
         world = new World(width, height);
         drawWorld = new DrawWorld(this.getApplicationContext(), 
@@ -120,8 +117,6 @@ public class GameActivity extends Activity {
 		text.setText(str);
     }
 
-    /** Вот они, Ваня, комментарии на великолепном английском.
-     * */
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

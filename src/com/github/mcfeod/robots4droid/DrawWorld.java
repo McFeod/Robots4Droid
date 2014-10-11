@@ -17,7 +17,7 @@ public class DrawWorld {
 	private Bitmap bitMain, bitRobot, bitFastRobot, bitPlayer, bitJunk;
 	private int width, height;
 	private Point screen;
-	
+
 	public DrawWorld(Context context, ImageView image, World world, Point screen){
 		this.image = image;
 		this.world = world;

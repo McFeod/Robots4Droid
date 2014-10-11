@@ -6,10 +6,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 public class SettingsActivity extends Activity {
 
     private CheckBox musicBox;
+    private CheckBox suicideBox;
+    private RadioButton mNormalButton;
+    private RadioButton mExtraFastButton;
+    private RadioGroup complexityGroup;
     private Intent mIntent;
 
     @Override
@@ -17,32 +23,56 @@ public class SettingsActivity extends Activity {
         super.onCreate(savedInstanceBundle);
         setContentView(R.layout.activity_settings);
 
-        musicBox = (CheckBox)findViewById(R.id.musicBox);
-        mIntent = getIntent();
-        //страховочный костыль на случай, если сразу нажата Back
-        setResult(RESULT_OK, mIntent);
+        musicBox = (CheckBox) findViewById(R.id.musicBox);
+        suicideBox = (CheckBox) findViewById(R.id.suicideBox);
+        complexityGroup = (RadioGroup) findViewById(R.id.complexityGroup);
+        mNormalButton = (RadioButton) findViewById(R.id.normalRadio);
+        mExtraFastButton = (RadioButton) findViewById(R.id.extraRadio);
 
-        if(mIntent.getStringExtra(MainActivity.SETTINGS).charAt(0) == '1'){
-            musicBox.setChecked(true);
+        musicBox.setChecked(SettingsParser.isMusicOn());
+        suicideBox.setChecked(SettingsParser.areSuicidesOn());
+        if(SettingsParser.needExtraFastBots()){
+            mExtraFastButton.setChecked(true);
         }else{
-            musicBox.setChecked(false);
+            mNormalButton.setChecked(true);
         }
 
         musicBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mIntent.putExtra(MainActivity.SETTINGS,
-                                 SettingsParser.getSettingsString(musicBox.isChecked()));
-                setResult(RESULT_OK, mIntent);
+                SettingsParser.setMusicMode(musicBox.isChecked());
             }
         });
 
+        suicideBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SettingsParser.setSuicidePermission(suicideBox.isChecked());
+            }
+        });
+
+        complexityGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.normalRadio:
+                        SettingsParser.setGameComplexity(SettingsParser.NORMAL_MODE);
+                        break;
+                    case R.id.extraRadio:
+                        SettingsParser.setGameComplexity(SettingsParser.EXTRA_FAST_BOTS);
+                        break;
+                }
+            }
+        });
     }
-//    Не знаю, почему, но так не работает. Было бы эффективнее.
-//    @Override
-//    protected void onDestroy(){
-//        mIntent.putExtra(MainActivity.SETTINGS,
-//                SettingsParser.getSettingsString(musicBox.isChecked()));
-//        setResult(RESULT_OK, mIntent);
-//    }
 }
+
+//    Даже так не работает
+//    @Override
+//    protected void onPause(){
+//        mIntent.putExtra(MainActivity.SETTINGS,
+//                SettingsParser.getSettingsString(musicBox.isChecked(), false, 0));
+//        setResult(RESULT_OK, mIntent);
+//        Log.i("Settings", "stopped\n");
+//        super.onPause();
+//    }

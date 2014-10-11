@@ -1,6 +1,8 @@
 package com.github.mcfeod.robots4droid;
 
-public class World{	
+import java.util.Set;
+
+public class World{
 	public int mLevel;
     public int mHeight;
     public int mWidth;
@@ -27,6 +29,8 @@ public class World{
     private Point junkPos, objectPos, freePos;
     private boolean isJunkExists;
     private byte objectKind;
+
+    private boolean areSuicidesForbidden;
     
     public World(int width, int height){
 		mWidth = width;
@@ -40,6 +44,10 @@ public class World{
         objectPos = new Point();
         //создание первого уровня
         initLevel();
+
+        areSuicidesForbidden = !SettingsParser.areSuicidesOn();
+        // Побочный эффект:эту настройку нельзя изменять во время партии
+        // Но, пока нет соохранения партии в Bundle, изменение настроек во время партии вообще невозможно
     }
 
     /** Создание нового уровня */
@@ -48,24 +56,31 @@ public class World{
     	mLevel ++;
     	//увеличение энергии и очков
     	player.chEnergy((int)(mLevel*0.2+1));
+
 		if (mLevel>1)
 			player.chScore((mLevel*5));
 		//определение количества роботов
-    	mRobotCount = 5 + (int)(1.5 * mLevel);
-    	mFastRobotCount = -4 + (int)(1.2 * mLevel);
+        if(SettingsParser.needExtraFastBots()){
+            mRobotCount = 5 + (int)(0.5 * mLevel);
+            mFastRobotCount = mLevel;
+            player.chEnergy(mLevel); // иначе не пройти дальше 4
+        }else{
+            mRobotCount = 5 + (int)(1.5 * mLevel);
+            mFastRobotCount = -4 + (int)(1.2 * mLevel);
+        }
     	mBoard.setRobotCount(mRobotCount, mFastRobotCount);
     	//Размещение простых роботов
     	for(int i=0; i<mRobotCount; ++i){
-    		if (findFreePos());
+    		if (findFreePos())
 				mBoard.SetKind(freePos, Board.ROBOT);
 		}
     	//Размещение быстрых роботов
     	for(int i=0; i<mFastRobotCount; ++i){
-    		if (findFreePos());
+    		if (findFreePos())
 				mBoard.SetKind(freePos, Board.FASTROBOT);
     	}
     	//Размещение игрока
-    	if (findSafePos());
+    	if (findSafePos())
 			player.setPos(freePos);
     	//TODO отрисовка
     }
@@ -201,8 +216,7 @@ public class World{
     		backInfoAboutJunk();//возвращаем объекты на свои места
     		return false;
     	}
-    	//TODO сделать опционально отключение "безопасных" ходов:
-    	if (!isSafePos(freePos.x, freePos.y)){
+    	if (areSuicidesForbidden && !isSafePos(freePos.x, freePos.y)){
     		backInfoAboutJunk();
     		return false;
     	}
