@@ -54,19 +54,17 @@ public class World{
     private void initLevel(){
     	mBoard.Clear(); //очистка доски
     	mLevel ++;
-    	//увеличение энергии и очков
-    	player.chEnergy((int)(mLevel*0.2+1));
-
 		if (mLevel>1)
 			player.chScore((mLevel*5));
 		//определение количества роботов
         if(SettingsParser.needExtraFastBots()){
             mRobotCount = 5 + (int)(0.5 * mLevel);
             mFastRobotCount = mLevel;
-            player.chEnergy(mLevel); // иначе не пройти дальше 4
+            player.chEnergy(mLevel);
         }else{
             mRobotCount = 5 + (int)(1.5 * mLevel);
             mFastRobotCount = -4 + (int)(1.2 * mLevel);
+            player.chEnergy((int)(mLevel*0.2+1));
         }
     	mBoard.setRobotCount(mRobotCount, mFastRobotCount);
     	//Размещение простых роботов

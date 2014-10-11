@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-
 public class GameActivity extends Activity {
 	private int width=10, height=10; //размеры сторон
 	private int sizew, sizeh;
@@ -148,5 +147,11 @@ public class GameActivity extends Activity {
     protected void onPause(){
         super.onPause();
         mSoundTrack.pause();
+    }
+
+    @Override
+    protected void  onDestroy(){
+        super.onDestroy();
+        mSoundTrack.release();
     }
 }
