@@ -143,4 +143,10 @@ public class GameActivity extends Activity {
         super.onPause();
         mSoundTrack.pause();
     }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        mSoundTrack.release();
+    }
 }

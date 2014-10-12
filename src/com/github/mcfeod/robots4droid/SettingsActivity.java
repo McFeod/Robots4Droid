@@ -40,10 +40,13 @@ public class SettingsActivity extends Activity {
             }
         });
 
+        // пошли фрагменты
+
         mFm = getFragmentManager();
         Fragment fragment = mFm.findFragmentById(R.id.fragmentContainer);
         if(fragment == null){
-            fragment = new SenselessFragment();
+            //fragment = new SenselessFragment();
+            fragment = new MyListFragment();
             mFm.beginTransaction()
                     .add(R.id.fragmentContainer, fragment)
                     .commit();
