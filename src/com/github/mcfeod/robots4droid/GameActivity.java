@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GameActivity extends Activity {
-	private int width=10, height=10; //размеры сторон
+	private int width=20, height=15; //размеры сторон
     private World world;
     private DrawWorld drawWorld;
     Point screen;
