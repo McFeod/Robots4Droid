@@ -1,126 +1,179 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.github.mcfeod.robots4droid.GameActivity" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:context="com.github.mcfeod.robots4droid.GameActivity" >
 
-    <TableLayout
-        android:id="@+id/tableLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" >
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" >
 
-        <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+		<Button
+			android:id="@+id/teleport_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/button_teleport" />
 
-            <Button
-                android:id="@+id/left_up_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_left_up" />
+		<Button
+			android:id="@+id/safe_teleport_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/button_safe_teleport" />
 
-            <Button
-                android:id="@+id/up_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_up" />
+		<TextView
+			android:id="@+id/textView1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
 
-            <Button
-                android:id="@+id/right_up_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_right_up" />
-        </TableRow>
+	</LinearLayout>
 
-        <TableRow
-            android:id="@+id/tableRow2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" >
 
-            <Button
-                android:id="@+id/left_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_left" />
+	    <Button
+	        android:id="@+id/mine_button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/button_mine" />
+	    
+	    <Button
+	        android:id="@+id/bomb_button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/button_bomb" />
+	    
+	</LinearLayout>
 
-            <Button
-                android:id="@+id/stay_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_stay" />
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/right_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_right" />
-        </TableRow>
+		<ScrollView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" >	
+			<HorizontalScrollView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" >
 
-        <TableRow
-            android:id="@+id/tableRow3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+				<ImageView
+				    android:id="@+id/imageView1"
+				    android:layout_width="wrap_content"
+				    android:layout_height="match_parent"
+				    android:src="@drawable/point"				    
+				    android:background="@null" />
 
-            <Button
-                android:id="@+id/left_down_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_left_down" />
+			</HorizontalScrollView>
+		</ScrollView>
 
-            <Button
-                android:id="@+id/down_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_down" />
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical" >
 
-            <Button
-                android:id="@+id/right_down_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_right_down" />
-        </TableRow>
+			<RelativeLayout
+				android:layout_alignParentTop="true"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" >
 
-        <TableRow
-            android:id="@+id/tableRow4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+				<ImageButton
+				    android:id="@+id/left_up_button"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentLeft="true"
+				    android:background="@null"
+				    android:src="@drawable/left_up"
+				    android:text="@string/button_left_up" />
 
-            <Button
-                android:id="@+id/teleport_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_teleport" />
+				<ImageButton
+				    android:id="@+id/up_button"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_centerHorizontal="true"
+				    android:background="@null"
+				    android:src="@drawable/up"
+				    android:text="@string/button_up" />
+	
+				<ImageButton
+				    android:id="@+id/right_up_button"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentRight="true"
+				    android:background="@null"
+				    android:src="@drawable/right_up"
+				    android:text="@string/button_right_up" />
 
-            <Button
-                android:id="@+id/safe_teleport_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_safe_teleport" />
-        </TableRow>
-    </TableLayout>
+			</RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tableLayout1"
-        android:orientation="vertical" >
+			<RelativeLayout
+				android:layout_centerVertical="true"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" >
+	
+				<ImageButton
+				    android:id="@+id/left_button"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentLeft="true"
+				    android:background="@null"
+				    android:src="@drawable/left"
+				    android:text="@string/button_left" />
+	
+				<ImageButton
+				    android:background="@null"
+				    android:src="@drawable/point"
+					android:id="@+id/stay_button"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerHorizontal="true"
+					android:text="@string/button_stay" />
+	
+				<ImageButton
+				    android:id="@+id/right_button"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentRight="true"
+				    android:background="@null"
+				    android:src="@drawable/right"
+				    android:text="@string/button_right" />
+	
+			</RelativeLayout>
+	
+			<RelativeLayout
+				android:layout_alignParentBottom="true"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" >
+	
+				<ImageButton
+				    android:id="@+id/left_down_button"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentLeft="true"
+				    android:background="@null"
+				    android:src="@drawable/left_down"
+				    android:text="@string/button_left_down" />
+	
+				<ImageButton
+				    android:id="@+id/down_button"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_centerHorizontal="true"
+				    android:background="@null"
+				    android:src="@drawable/down"
+				    android:text="@string/button_down" />
+	
+				<ImageButton
+				    android:id="@+id/right_down_button"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_alignParentRight="true"
+				    android:background="@null"
+				    android:src="@drawable/right_down"
+				    android:text="@string/button_right_down" />
+	
+			</RelativeLayout>
+		</RelativeLayout>
+	</FrameLayout>
 
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"/>
-
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp" />
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>

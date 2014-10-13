@@ -13,11 +13,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GameActivity extends Activity {
-	private int width=10, height=10; //размеры сторон
+	private int width=20, height=15; //размеры сторон
     private World world;
     private DrawWorld drawWorld;
     Point screen;
 	String mMsgStr;
+	public TextView text_time;
 
     private MediaPlayer mSoundTrack;
     private boolean isMusicOn;
@@ -34,6 +35,7 @@ public class GameActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			boolean succ=false;
+			TextView text=(TextView)findViewById(R.id.textView1);
 			if (world.player.isAlive){
 				switch (v.getId()){
 					case R.id.left_button: succ=world.movePlayer((byte)(3)); break;
@@ -46,28 +48,43 @@ public class GameActivity extends Activity {
 					case R.id.right_down_button: succ=world.movePlayer((byte)(8)); break;	
 					case R.id.stay_button: succ=world.movePlayer((byte)(4)); break;	
 					case R.id.teleport_button: succ=world.movePlayer((byte)(9)); break;	
-					case R.id.safe_teleport_button: succ=world.movePlayer((byte)(10)); break;	
+					case R.id.safe_teleport_button: succ=world.movePlayer((byte)(10)); break;
+					case R.id.mine_button:
+						world.setMine();
+						succ=false;
+						drawWorld.repaint();
+						mMsgStr="Level: "+Integer.toString(world.mLevel)+
+						"  Score: "+Integer.toString(world.player.getScore())+
+						"  Energy: "+Integer.toString(world.player.getEnergy());
+						text.setText(mMsgStr);
+						break;	
+					case R.id.bomb_button:
+						world.bomb();
+						succ=false;
+						drawWorld.repaint();
+						mMsgStr="Level: "+Integer.toString(world.mLevel)+
+						"  Score: "+Integer.toString(world.player.getScore())+
+						"  Energy: "+Integer.toString(world.player.getEnergy());
+						text.setText(mMsgStr);
+						break;
 				}
-				if (succ)
+				if (succ){
 					world.moveBots();
-				drawWorld.repaint();
-				
-				if (world.player.isAlive)
-					mMsgStr="Level: "+Integer.toString(world.mLevel)+
-					"  Score: "+Integer.toString(world.player.getScore())+
-					"  Energy: "+Integer.toString(world.player.getEnergy());
-				
-				if (!world.player.isAlive){
-					mMsgStr = "Tap any button to replay";
-					drawWorld.death();
+					drawWorld.repaint();				
+					if (world.player.isAlive)
+						mMsgStr="Level: "+Integer.toString(world.mLevel)+
+						"  Score: "+Integer.toString(world.player.getScore())+
+						"  Energy: "+Integer.toString(world.player.getEnergy());			
+					else{
+						mMsgStr = "Tap any button to replay";
+						drawWorld.death();
+					}					
+					text.setText(mMsgStr);
 				}
-			}
-			else{
+			}else{
 				world.defeat();
 				drawWorld.repaint();
-			}
-			TextView text=(TextView)findViewById(R.id.textView1);
-			text.setText(mMsgStr);
+			}			
 		}
 	};
 
@@ -77,7 +94,7 @@ public class GameActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
          WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_game);
+        setContentView(R.layout.activity_game);        
 
         screen = GetScreenSize();
 
@@ -91,7 +108,9 @@ public class GameActivity extends Activity {
         findViewById(R.id.right_down_button).setOnClickListener(listener); 
         findViewById(R.id.teleport_button).setOnClickListener(listener); 
         findViewById(R.id.safe_teleport_button).setOnClickListener(listener); 
-        findViewById(R.id.stay_button).setOnClickListener(listener); 
+        findViewById(R.id.stay_button).setOnClickListener(listener);
+        findViewById(R.id.mine_button).setOnClickListener(listener);
+        findViewById(R.id.bomb_button).setOnClickListener(listener); 
         
         mSoundTrack = MediaPlayer.create(this, R.raw.muz);
         mSoundTrack.setLooping(true);

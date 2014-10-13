@@ -27,8 +27,11 @@ public class World{
     private Point junkPos, objectPos, freePos;
     private boolean isJunkExists;
     private byte objectKind;
+    //private Timer timer;
+    //private boolean isTimerStart;
+    //Random rand;
     
-    public World(int width, int height){
+    public World(int width, int height){   	
 		mWidth = width;
 		mHeight = height;
 		mBoard = new Board(width, height);
@@ -38,12 +41,18 @@ public class World{
         freePos = new Point();
         junkPos = new Point();
         objectPos = new Point();
+        //rand = new Random(System.currentTimeMillis());
+        //timer = new Timer();
+        //isTimerStart = false;
         //создание первого уровня
         initLevel();
     }
 
     /** Создание нового уровня */
     private void initLevel(){
+    	/*if (isTimerStart)
+    		timer.cancel();
+    	isTimerStart = true;*/
     	mBoard.Clear(); //очистка доски
     	mLevel ++;
     	//увеличение энергии и очков
@@ -68,6 +77,43 @@ public class World{
     	if (findSafePos());
 			player.setPos(freePos);
     	//TODO отрисовка
+		//таймер, рандомно выбирающий 20 точек и превращающий роботов в мусор
+		//начинает работать каждые 10 секунд после минуты с начала уровня
+		/*timer.scheduleAtFixedRate(new TimerTask(){            
+	    	public void run() {
+	    		for (int i=0; i<200; i++){
+            		
+            		int x=rand.nextInt();
+            		int y=rand.nextInt();
+            		if (mBoard.isEnemy(x, y))
+            			mBoard.SetKind(x, y, Board.JUNK);
+            	}
+	    	}
+		}, 10000, 10000);*/
+    }
+    
+    public void setMine(){
+    	if (mBoard.GetKind(player.getPos().x, player.getPos().y) == Board.MINE)
+    		mBoard.SetKind(player.getPos(), Board.EMPTY);
+    	else
+    		if (player.getEnergy() > 0){
+    			player.chEnergy(-1);
+    			mBoard.SetKind(player.getPos(), Board.MINE);
+    		}
+    }
+    
+    public void bomb(){
+    	if (player.getEnergy() > 0){
+    		player.chEnergy(-1);
+    		for (int i=-1; i<2; i++)
+    			for (int j=-1; j<2; j++){
+    				mBoard.chDiff(mBoard.GetKind(player.getPos().x+i, player.getPos().y+j), 1);
+    				mBoard.SetKind(player.getPos().x+i, player.getPos().y+j, Board.EMPTY);
+    			}
+    		player.chScore(mBoard.diff2score());
+        	if (mBoard.isBotsDead())    		
+        		initLevel();	
+    	}
     }
 
     /** Ищет свободную случайную клетку и сохраняет ее в глобальный freePos.
@@ -301,15 +347,15 @@ public class World{
     	}
     	//если количество живых роботов == 0, то переходим на следующий уровень
     	if (mBoard.isBotsDead())    		
-    		initLevel();	
+    		initLevel();
 	}
 
 	/** проверка проверка соседних клеток на наличие угрозы. */
 	private boolean isSafePos(int x, int y){
 		//проверяем соседей в радиусе 1 клетки 
-		if (!mBoard.isEmpty(x,y))
+		if (mBoard.isEnemy(x,y))
 			return false;
-		for(byte i=-1; i<2;++i)
+		for(byte i=-1; i<2; ++i)
 			for (byte j=-1; j<2; ++j){
 				if ((i==0)&&(j==0))
 					continue;

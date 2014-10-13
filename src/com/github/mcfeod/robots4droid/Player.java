@@ -8,7 +8,7 @@ public class Player{
 
 	public Player(){
 		mPos = new Point();
-        mEnergy = 0;
+        mEnergy = 100;
         mScore = 0;
         isAlive = true;
     }
