@@ -15,10 +15,11 @@ public class DrawWorld {
 	private Canvas canvas;
 	private Paint paint;
 	private Bitmap bitMain, bitRobot, bitFastRobot, bitPlayer, bitCell, bitCell2,
-	 bitJunk, bitMine;
+	 bitJunk, bitMine, bitRobotMirror;
 	public int widthPX, heightPX;
 	private Point screen;
 	private Point startPos; //координаты, на которые смещается поле
+	boolean isMirror = false;
 
 	public DrawWorld(Context context, ImageView image, World world, Point screen,
 	 int widthPX, int heightPX){
@@ -27,7 +28,6 @@ public class DrawWorld {
 		this.screen = new Point(screen);
 		this.widthPX = widthPX;
 		this.heightPX = heightPX;
-
         startPos = new Point(0, 0);
         
 		bitMain=Bitmap.createBitmap(widthPX*world.mWidth,heightPX*world.mHeight,Bitmap.Config.ARGB_8888);
@@ -39,6 +39,7 @@ public class DrawWorld {
 		bitCell=BitmapFactory.decodeResource(context.getResources(),R.drawable.cell);
 		bitCell2=BitmapFactory.decodeResource(context.getResources(),R.drawable.cell2);
 		bitMine=BitmapFactory.decodeResource(context.getResources(),R.drawable.mine); 
+		bitRobotMirror=BitmapFactory.decodeResource(context.getResources(),R.drawable.robot_mirror); 
 
         //подгоняем размеры bitmap-ов под размеры клеток
 		bitRobot=Bitmap.createScaledBitmap(bitRobot,widthPX-1,heightPX-1,false);
@@ -49,6 +50,7 @@ public class DrawWorld {
 	    bitCell2=Bitmap.createScaledBitmap(bitCell2,widthPX-1,heightPX-1,false);
 	    bitCell=Bitmap.createScaledBitmap(bitCell,widthPX-1,heightPX-1,false);
 	    bitMine=Bitmap.createScaledBitmap(bitMine,widthPX-1,heightPX-1,false);
+	    bitRobotMirror=Bitmap.createScaledBitmap(bitRobotMirror,widthPX-1,heightPX-1,false);
         
         canvas = new Canvas(bitMain);
         paint = new Paint();
@@ -75,7 +77,11 @@ public class DrawWorld {
         				canvas.drawBitmap(bitJunk,i*widthPX+1,j*heightPX+1,paint);
         				break;
         			case Board.ROBOT:
-        				canvas.drawBitmap(bitRobot,i*widthPX+1,j*heightPX+1,paint);
+        				if (isMirror)
+        					canvas.drawBitmap(bitRobot,i*widthPX+1,j*heightPX+1,paint);
+        				else
+        					canvas.drawBitmap(bitRobotMirror,i*widthPX+1,j*heightPX+1,paint);
+        				
         				break;
         			case Board.FASTROBOT:
         				canvas.drawBitmap(bitFastRobot,i*widthPX+1,j*heightPX+1,paint);
@@ -85,6 +91,7 @@ public class DrawWorld {
         				break;
         		}
         	}
+        isMirror = !isMirror;
         canvas.drawBitmap(bitPlayer,world.player.getPos().x*widthPX+1,
          world.player.getPos().y*heightPX+1,paint);
 	}

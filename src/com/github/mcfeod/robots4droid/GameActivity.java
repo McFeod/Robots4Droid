@@ -1,5 +1,8 @@
 package com.github.mcfeod.robots4droid;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -27,8 +30,11 @@ public class GameActivity extends Activity {
 
     private MediaPlayer mSoundTrack;
     private boolean isMusicOn;    
-
-	public Point GetScreenSize(){
+    
+    Runnable runnable;
+    Timer timer;
+	
+    public Point GetScreenSize(){
 		Display display = getWindowManager().getDefaultDisplay();
 		DisplayMetrics metrics = new DisplayMetrics();
 		display.getMetrics(metrics);
@@ -52,6 +58,7 @@ public class GameActivity extends Activity {
 					case R.id.right_up_button: succ=world.movePlayer((byte)(2)); break;
 					case R.id.right_down_button: succ=world.movePlayer((byte)(8)); break;	
 					case R.id.stay_button: succ=world.movePlayer((byte)(4)); break;	
+					//TODO при ходе (не телепортации) и переходе на новый уровень сделать скролл на игрока
 					case R.id.teleport_button: succ=world.movePlayer((byte)(9)); break;	
 					case R.id.safe_teleport_button: succ=world.movePlayer((byte)(10)); break;
 					case R.id.mine_button:
@@ -126,6 +133,9 @@ public class GameActivity extends Activity {
          WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_game);
         
+        
+        
+        
         startTouchPos = new Point();
         endTouchPos = new Point();
 
@@ -166,6 +176,38 @@ public class GameActivity extends Activity {
    		 "  Score: "+Integer.toString(world.player.getScore())+
    		 "  Energy: "+Integer.toString(world.player.getEnergy());
 		text.setText(str);
+		
+		runnable = new Runnable(){
+			public void run(){
+				drawWorld.mainRepaint();
+				drawWorld.repaint(0, 0);
+			}
+		};
+		
+		timer = new Timer();
+		timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(runnable);
+            }
+        }, 1000, 1000);
+		/*Это просто эксперимент
+		 h = new Handler() {
+        	public void handleMessage(android.os.Message msg) {
+				drawWorld.mainRepaint();	
+        		
+        	};
+        };
+        
+        Thread t = new Thread(new Runnable(){
+        	public void run(){
+        		for (int i=0; i<1000000; i++)
+        			h.sendEmptyMessage(0);
+        		
+        	}        	
+        });
+        t.start();*/	
+		
     }
 	
 	@Override
