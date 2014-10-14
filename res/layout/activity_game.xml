@@ -29,6 +29,7 @@
 	</LinearLayout>
 
 	<LinearLayout
+	    android:id="@+id/linearLayout1"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content" >
 
@@ -47,25 +48,14 @@
 	</LinearLayout>
 
 	<FrameLayout
+	    android:id="@+id/frameLayout"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
-		<ScrollView
-			android:layout_width="match_parent"
-			android:layout_height="match_parent" >	
-			<HorizontalScrollView
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content" >
-
-				<ImageView
-				    android:id="@+id/imageView1"
-				    android:layout_width="wrap_content"
-				    android:layout_height="match_parent"
-				    android:src="@drawable/point"				    
-				    android:background="@null" />
-
-			</HorizontalScrollView>
-		</ScrollView>
+		<ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
 		<RelativeLayout
 			android:layout_width="match_parent"

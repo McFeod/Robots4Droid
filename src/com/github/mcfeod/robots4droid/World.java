@@ -1,5 +1,6 @@
 package com.github.mcfeod.robots4droid;
 
+
 public class World{	
 	public int mLevel;
     public int mHeight;
@@ -242,6 +243,7 @@ public class World{
     				return false;		
     			break;
     	}
+    	
     	//если новые координаты игрока находятся за пределами доски, то возвращает false
     	if (!mBoard.isOnBoard(freePos)){
     		backInfoAboutJunk();//возвращаем объекты на свои места
@@ -353,7 +355,7 @@ public class World{
 	/** проверка проверка соседних клеток на наличие угрозы. */
 	private boolean isSafePos(int x, int y){
 		//проверяем соседей в радиусе 1 клетки 
-		if (mBoard.isEnemy(x,y))
+		if (!mBoard.isEmpty(x,y))
 			return false;
 		for(byte i=-1; i<2; ++i)
 			for (byte j=-1; j<2; ++j){
