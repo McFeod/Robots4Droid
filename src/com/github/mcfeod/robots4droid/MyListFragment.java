@@ -2,8 +2,8 @@ package com.github.mcfeod.robots4droid;
 
 
 import android.app.ListFragment;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -16,21 +16,25 @@ public class MyListFragment extends ListFragment{
         super.onCreate(savedInstanceBundle);
         getActivity().setTitle("123 Fragment appears!\n");
 
-
-        ArrayAdapter<SavedGame> adapter =
-                new ArrayAdapter<SavedGame>(getActivity(),
-                        android.R.layout.simple_list_item_1,
-                        SaveManager.INSTANCE.mGames);
+        SaveAdapter adapter = new SaveAdapter(SaveManager.INSTANCE.mGames);
         setListAdapter(adapter);
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        //super.onListItemClick(l, v, position, id);
-        SavedGame game = (SavedGame)(getListAdapter()).getItem(position);
-        Log.i("Clock on", String.valueOf(game.getNumber()));
+        SavedGame game = ((SaveAdapter)getListAdapter()).getItem(position);
+
+        // запускаем активность с информацией о соохранении game
+        Intent i = new Intent(getActivity(), SaveActivity.class);
+        i.putExtra(SaveFragment.SAVED_GAME_NUMBER, position);
+        startActivity(i);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        ((SaveAdapter)getListAdapter()).notifyDataSetChanged();
+    }
 
     private class SaveAdapter extends ArrayAdapter<SavedGame>{
         public SaveAdapter(ArrayList<SavedGame> games){
@@ -47,11 +51,10 @@ public class MyListFragment extends ListFragment{
             //настройка представления
             SavedGame game = getItem(position);
 
-            TextView saveInfo = (TextView)convertView.findViewById(R.id.saveInfo);
+            TextView saveInfo = (TextView)convertView.findViewById(R.id.itemSaveTitle);
             saveInfo.setText(game.toString());
 
             return convertView;
         }
     }
-
 }

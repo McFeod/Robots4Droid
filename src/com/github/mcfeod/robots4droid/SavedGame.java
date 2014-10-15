@@ -1,5 +1,7 @@
 package com.github.mcfeod.robots4droid;
 
+import java.util.Random;
+
 public class SavedGame {
     private static int sNumber = 0;
 
@@ -9,19 +11,20 @@ public class SavedGame {
     private int mNumber;
 
     private static StringBuilder sBuilder = new StringBuilder();
+    private static Random rnd = new Random();
 
     public SavedGame(Player player, int level, Board board){
         mPlayer = player;
         mLevel = level;
         mBoard = board;
-        mNumber = ++sNumber;
+        mNumber = rnd.nextInt(100);
     }
     public SavedGame(){
         //это заглушка
         mPlayer = new Player();
         mLevel = 1;
         mBoard = new Board(10,10);
-        mNumber = ++sNumber;
+        mNumber = rnd.nextInt(100);
     }
 
     public int getNumber() {
