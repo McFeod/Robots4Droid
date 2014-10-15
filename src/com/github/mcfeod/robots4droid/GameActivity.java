@@ -1,28 +1,19 @@
 package com.github.mcfeod.robots4droid;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
-
 public class GameActivity extends Activity {
-	private int width=10, height=10; //размеры сторон
-	private int sizew, sizeh;
-	//главный bitmap
-	private Bitmap bitMain;
-    //bitmap-ы для картинок из ресурсов
-	private Bitmap bitRobot, bitFastRobot, bitPlayer, bitJunk;
+	private int width=20, height=15; //размеры сторон
     private World world;
     private DrawWorld drawWorld;
     Point screen;
@@ -42,9 +33,6 @@ public class GameActivity extends Activity {
 	public OnClickListener listener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-            //Лавинообразный мусор
-            //MediaPlayer mediaPlayer = MediaPlayer.create(v.getContext(), R.raw.muz); // создаём новый объект mediaPlayer
-            //mediaPlayer.start(); // запускаем воспроизведение
 			boolean succ=false;
 			if (world.player.isAlive){
 				switch (v.getId()){
@@ -74,8 +62,10 @@ public class GameActivity extends Activity {
 					drawWorld.death();
 				}
 			}
-			else
+			else{
 				world.defeat();
+				drawWorld.repaint();
+			}
 			TextView text=(TextView)findViewById(R.id.textView1);
 			text.setText(mMsgStr);
 		}
@@ -84,6 +74,9 @@ public class GameActivity extends Activity {
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+         WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_game);
 
         screen = GetScreenSize();
@@ -115,31 +108,9 @@ public class GameActivity extends Activity {
         TextView text=(TextView)findViewById(R.id.textView1);
         String str="Level: "+Integer.toString(world.mLevel)+
    		 "  Score: "+Integer.toString(world.player.getScore())+
-   		 "  Energy: "+Integer.toString(world.player.getEnergy())+
-   		 "  isAlive: "+world.player.isAlive;
+   		 "  Energy: "+Integer.toString(world.player.getEnergy());
 		text.setText(str);
     }
-
-    /** Вот они, Ваня, комментарии на великолепном английском.
-     * */
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.game, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
 
     @Override
     protected void onResume(){
