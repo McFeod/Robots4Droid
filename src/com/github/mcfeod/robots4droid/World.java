@@ -28,9 +28,6 @@ public class World{
     private Point junkPos, objectPos, freePos;
     private boolean isJunkExists;
     private byte objectKind;
-    //private Timer timer;
-    //private boolean isTimerStart;
-    //Random rand;
     
     public World(int width, int height){   	
 		mWidth = width;
@@ -42,9 +39,6 @@ public class World{
         freePos = new Point();
         junkPos = new Point();
         objectPos = new Point();
-        //rand = new Random(System.currentTimeMillis());
-        //timer = new Timer();
-        //isTimerStart = false;
         //создание первого уровня
         initLevel();
     }
@@ -78,19 +72,6 @@ public class World{
     	if (findSafePos());
 			player.setPos(freePos);
     	//TODO отрисовка
-		//таймер, рандомно выбирающий 20 точек и превращающий роботов в мусор
-		//начинает работать каждые 10 секунд после минуты с начала уровня
-		/*timer.scheduleAtFixedRate(new TimerTask(){            
-	    	public void run() {
-	    		for (int i=0; i<200; i++){
-            		
-            		int x=rand.nextInt();
-            		int y=rand.nextInt();
-            		if (mBoard.isEnemy(x, y))
-            			mBoard.SetKind(x, y, Board.JUNK);
-            	}
-	    	}
-		}, 10000, 10000);*/
     }
     
     public void setMine(){
@@ -102,8 +83,8 @@ public class World{
     			mBoard.SetKind(player.getPos(), Board.MINE);
     		}
     }
-    
-    public void bomb(){
+
+    public boolean bomb(){
     	if (player.getEnergy() > 0){
     		player.chEnergy(-1);
     		for (int i=-1; i<2; i++)
@@ -113,8 +94,10 @@ public class World{
     			}
     		player.chScore(mBoard.diff2score());
         	if (mBoard.isBotsDead())    		
-        		initLevel();	
+        		initLevel();
+        	return true;
     	}
+    	return false;
     }
 
     /** Ищет свободную случайную клетку и сохраняет ее в глобальный freePos.
