@@ -14,6 +14,7 @@
     <string name="button_stay">Stay</string>
     <string name="button_teleport">Tele</string>
     <string name="button_safe_teleport">Safe-Tele</string>
+    <string name="button_save_level">Save</string>
     <string name="game_button">Play game</string>
     <string name="settings_button">Settings</string>
     <string name="settings_button_hint">Push, if you don\'t like game</string>

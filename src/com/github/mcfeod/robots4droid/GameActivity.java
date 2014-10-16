@@ -8,12 +8,14 @@ import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
 
 
 public class GameActivity extends Activity {
@@ -56,8 +58,8 @@ public class GameActivity extends Activity {
 				case R.id.right_down_button: succ=world.movePlayer((byte)(8)); break;	
 				case R.id.stay_button: succ=world.movePlayer((byte)(4)); break;	
 				case R.id.teleport_button: succ=world.movePlayer((byte)(9)); break;	
-				case R.id.safe_teleport_button: succ=world.movePlayer((byte)(10)); break;	
-			}
+				case R.id.safe_teleport_button: succ=world.movePlayer((byte)(10)); break;
+            }
 			if (succ)
 				world.moveBots();
 			drawWorld.repaint();
@@ -69,6 +71,18 @@ public class GameActivity extends Activity {
 			text.setText(str);
 		}
 	};
+
+    public void save(){
+        SavedGameSerializer serializer =
+                new SavedGameSerializer(getApplicationContext(), "robots4droid_saves.txt");
+        world.mBoard.addToSave(serializer);
+        try {
+            serializer.saveGame();
+        }
+        catch (Exception e){
+            Log.e("GameActivity","Saving error:",e);
+        }
+    }
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +101,14 @@ public class GameActivity extends Activity {
         findViewById(R.id.right_down_button).setOnClickListener(listener); 
         findViewById(R.id.teleport_button).setOnClickListener(listener); 
         findViewById(R.id.safe_teleport_button).setOnClickListener(listener); 
-        findViewById(R.id.stay_button).setOnClickListener(listener); 
+        findViewById(R.id.stay_button).setOnClickListener(listener);
+
+        findViewById(R.id.save_level_button).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                save();
+            }
+        });
         
         mSoundTrack = MediaPlayer.create(this, R.raw.muz);
         mSoundTrack.setLooping(true);

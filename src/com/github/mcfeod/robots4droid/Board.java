@@ -164,4 +164,7 @@ public class Board{
 		return false;
     }
 
+    public void addToSave(SavedGameSerializer serializer){
+        serializer.setBoard(mBoard);
+    }
 }
