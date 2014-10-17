@@ -72,6 +72,7 @@ public class World{
 
     public boolean setMine(){
     	byte cost = 5;
+    	if (!isSafePos(player.getPos().x, player.getPos().y)) return false;
     	if (mBoard.GetKind(player.getPos().x, player.getPos().y) == Board.MINE){
     		mBoard.SetKind(player.getPos(), Board.EMPTY);
     		player.chEnergy(cost);
