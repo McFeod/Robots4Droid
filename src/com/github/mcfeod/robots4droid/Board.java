@@ -8,6 +8,7 @@ public class Board{
 	public static final byte JUNK = 1;
 	public static final byte ROBOT = 2;
 	public static final byte FASTROBOT = 3;
+	public static final byte MINE = 4;
 	
     private int mAliveFastBotCount;
     private int mAliveBotCount;

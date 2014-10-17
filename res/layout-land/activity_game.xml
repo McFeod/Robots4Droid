@@ -1,46 +1,48 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical"
-	tools:context="com.github.mcfeod.robots4droid.GameActivity" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.github.mcfeod.robots4droid.GameActivity" >
+	
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="34dp"
+    android:orientation="horizontal" >
 
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content" >
-
-		<Button
-			android:id="@+id/teleport_button"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/button_teleport" />
-
-		<Button
-			android:id="@+id/safe_teleport_button"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/button_safe_teleport" />
-
-		<Button
-	        android:id="@+id/mine_button"
+	    <Button
+	        android:id="@+id/teleport_button"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:text="@string/button_teleport" />
+
+	    <Button
+	        android:id="@+id/safe_teleport_button"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/button_safe_teleport" />
+
+	    <Button
+	        android:id="@+id/mine_button"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
 	        android:text="@string/button_mine" />
-	</LinearLayout>
-	<TextView
+			    
+	    <TextView
 			android:id="@+id/textView1"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" />
 
+	</LinearLayout>
+
 	<FrameLayout
 	    android:id="@+id/frameLayout"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent">
-
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
 		<ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+		    android:id="@+id/imageView1"
+		    android:layout_width="match_parent"
+		    android:layout_height="fill_parent" />
 
 		<RelativeLayout
 			android:layout_width="match_parent"
@@ -97,7 +99,7 @@
 					android:id="@+id/stay_button"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_centerHorizontal="true" />
+					android:layout_centerHorizontal="true"/>
 	
 				<ImageButton
 				    android:id="@+id/right_button"
@@ -105,7 +107,7 @@
 				    android:layout_height="wrap_content"
 				    android:layout_alignParentRight="true"
 				    android:background="@null"
-				    android:src="@drawable/right" />
+				    android:src="@drawable/right"/>
 	
 			</RelativeLayout>
 	
@@ -136,7 +138,7 @@
 				    android:layout_height="wrap_content"
 				    android:layout_alignParentRight="true"
 				    android:background="@null"
-				    android:src="@drawable/right_down" />
+				    android:src="@drawable/right_down"/>
 	
 			</RelativeLayout>
 		</RelativeLayout>

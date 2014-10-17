@@ -70,6 +70,21 @@ public class World{
     	//TODO отрисовка
     }
 
+    public boolean setMine(){
+    	byte cost = 5;
+    	if (mBoard.GetKind(player.getPos().x, player.getPos().y) == Board.MINE){
+    		mBoard.SetKind(player.getPos(), Board.EMPTY);
+    		player.chEnergy(cost);
+    		return true;
+    	}
+    	if (player.getEnergy() >= cost){
+    			player.chEnergy(-cost);
+    			mBoard.SetKind(player.getPos(), Board.MINE);
+    			return true;
+    		}
+    	return false;
+    }
+
     /** Ищет свободную случайную клетку и сохраняет ее в глобальный freePos.
       Возвращает true, если свободная клетка найдена */
 	private boolean findFreePos(){
