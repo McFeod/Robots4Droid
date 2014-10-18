@@ -56,16 +56,8 @@ public class GameActivity extends Activity {
 					case R.id.stay_button: succ=world.movePlayer((byte)(4)); break;	
 					case R.id.teleport_button: succ=world.movePlayer((byte)(9)); break;	
 					case R.id.safe_teleport_button: succ=world.movePlayer((byte)(10)); break;	
-					case R.id.mine_button:
-						succ=world.setMine();
-						drawWorld.mainRepaint();
-						drawWorld.centerPlayerPos(world.player.getPos().x*widthPX+
-						 widthPX/2, world.player.getPos().y*heightPX+heightPX/2);
-						mMsgStr="Level: "+Integer.toString(world.mLevel)+
-						 "  Score: "+Integer.toString(world.player.getScore())+
-						 "  Energy: "+Integer.toString(world.player.getEnergy());
-						text.setText(mMsgStr);
-						break;
+					case R.id.mine_button: succ=world.setMine(); break;	
+					case R.id.bomb_button: succ=world.bomb(); break;
 				}
 				if (succ){
 					/*отрисовываем игрока с центрированием только при телепортации,
@@ -88,9 +80,9 @@ public class GameActivity extends Activity {
 					drawWorld.mainRepaint();
 					drawWorld.repaint(0,0);
 					if (world.player.isAlive)
-						mMsgStr="Level: "+Integer.toString(world.mLevel)+
-						 "  Score: "+Integer.toString(world.player.getScore())+
-						 "  Energy: "+Integer.toString(world.player.getEnergy());			
+						mMsgStr="L: "+Integer.toString(world.mLevel)+
+						 "  S: "+Integer.toString(world.player.getScore())+
+						 "  E: "+Integer.toString(world.player.getEnergy());			
 					else{
 						mMsgStr = "Tap any button to replay";
 						drawWorld.death();
@@ -144,7 +136,8 @@ public class GameActivity extends Activity {
         findViewById(R.id.teleport_button).setOnClickListener(listener); 
         findViewById(R.id.safe_teleport_button).setOnClickListener(listener); 
         findViewById(R.id.stay_button).setOnClickListener(listener);
-		findViewById(R.id.mine_button).setOnClickListener(listener); 
+		findViewById(R.id.mine_button).setOnClickListener(listener);
+		findViewById(R.id.bomb_button).setOnClickListener(listener); 
         
         mSoundTrack = MediaPlayer.create(this, R.raw.muz);
         mSoundTrack.setLooping(true);
@@ -161,9 +154,9 @@ public class GameActivity extends Activity {
 		 widthPX/2, world.player.getPos().y*heightPX+heightPX/2);
 		
         TextView text=(TextView)findViewById(R.id.textView1);
-        String str="Level: "+Integer.toString(world.mLevel)+
-   		 "  Score: "+Integer.toString(world.player.getScore())+
-   		 "  Energy: "+Integer.toString(world.player.getEnergy());
+        String str="L: "+Integer.toString(world.mLevel)+
+   		 "  S: "+Integer.toString(world.player.getScore())+
+   		 "  E: "+Integer.toString(world.player.getEnergy());
 		text.setText(str);
     }
 	

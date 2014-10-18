@@ -85,6 +85,32 @@ public class World{
     		}
     	return false;
     }
+    
+    public boolean bomb(){
+		byte cost = 6;
+    	if (player.getEnergy() >= cost){
+			for (int i=-1; i<2; i++){
+    			for (int j=-1; j<2; j++){
+
+					if ((i==0)&&(j==0))
+						continue;
+					if (isDanger2nd(player.getPos().x, player.getPos().y, i, j))
+						return false;
+				}
+			}
+    		player.chEnergy(-cost);
+    		for (int i=-1; i<2; i++)
+    			for (int j=-1; j<2; j++){
+    				mBoard.chDiff(mBoard.GetKind(player.getPos().x+i, player.getPos().y+j), 1);
+    				mBoard.SetKind(player.getPos().x+i, player.getPos().y+j, Board.EMPTY);
+    			}
+    		player.chScore(mBoard.diff2score());
+        	if (mBoard.isBotsDead())    		
+        		initLevel();	
+			return true;
+    	}
+		return false;
+    }
 
     /** Ищет свободную случайную клетку и сохраняет ее в глобальный freePos.
       Возвращает true, если свободная клетка найдена */
