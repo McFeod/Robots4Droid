@@ -33,6 +33,7 @@ public class DrawWorld {
 	private Timer moveTimer;
 	private Activity activity;
 	private Point movePos;
+	public int dX, dY;
 	
 	public DrawWorld(Context context, ImageView image, World world, Point screen,
 	 int widthPX, int heightPX, Activity activity){
@@ -80,6 +81,7 @@ public class DrawWorld {
 	
 	class MoveRunnable implements Runnable{
 		public void run(){
+			if (toMove){
 			if (movePos.x - startPos.x >= 5)
 				startPos.x += 5;
 			else
@@ -93,19 +95,43 @@ public class DrawWorld {
 				if (movePos.y - startPos.y <= -5)
 					startPos.y -= 5;
 				else
-					startPos.y = movePos.y;
-			repaint(0,0);
+					startPos.y = movePos.y;}
+				//меняем начальную точку
+		        startPos.x += dX;
+		        startPos.y += dY;
+		        int screenX = screen.x, screenY = screen.y;
+		        //проверка выхода за пределы экрана
+		        if (startPos.x < 0)
+		        	startPos.x = 0;
+		        if (startPos.y < 0)
+		        	startPos.y = 0;
+		        if (startPos.x + screenX > bitMain.getWidth())
+		        	startPos.x = bitMain.getWidth() - screenX;
+		        if (startPos.y + screenY > bitMain.getHeight())
+		        	startPos.y = bitMain.getHeight() - screenY;
+		        if (screenX > bitMain.getWidth()){
+		        	startPos.x = 0;
+		        	screenX = bitMain.getWidth();        	
+		        }
+		        if (screenY > bitMain.getHeight()){
+		        	startPos.y = 0;
+		        	screenY = bitMain.getHeight();        	
+		        }
+		        //рисование
+		        image.setImageBitmap(Bitmap.createBitmap(bitMain, startPos.x, startPos.y,
+		         screenX, screenY));
+			
 		}
 	}
 	
 	class MoveTimerTask extends TimerTask{
 		@Override
 		public void run(){
-			if (toMove){
+			//if (toMove){
 				activity.runOnUiThread(moveRunnable);
 				if ((movePos.x == startPos.x) && (movePos.y == startPos.y) && (toMove))
 					toMove=false;
-			}
+			//}
 		}
 	}
 	
@@ -113,7 +139,7 @@ public class DrawWorld {
 	public void centerPlayerPos(int x, int y){
 		startPos.x = x - (int) (screen.x / 2) + indent;
 		startPos.y = y - (int) (screen.y / 2) + indent;
-		repaint(0, 0);
+		//repaint(0, 0);
 	}
 	
 	//перерисовывает все поле в bitMain, не выводит на Image
@@ -149,32 +175,7 @@ public class DrawWorld {
 	}
 	
 	//рисует часть bitMain размером screen.x*screen.y, начиная с точки startPos
-	public void repaint(int dX, int dY){
-		//меняем начальную точку
-        startPos.x += dX;
-        startPos.y += dY;
-        int screenX = screen.x, screenY = screen.y;
-        //проверка выхода за пределы экрана
-        if (startPos.x < 0)
-        	startPos.x = 0;
-        if (startPos.y < 0)
-        	startPos.y = 0;
-        if (startPos.x + screenX > bitMain.getWidth())
-        	startPos.x = bitMain.getWidth() - screenX;
-        if (startPos.y + screenY > bitMain.getHeight())
-        	startPos.y = bitMain.getHeight() - screenY;
-        if (screenX > bitMain.getWidth()){
-        	startPos.x = 0;
-        	screenX = bitMain.getWidth();        	
-        }
-        if (screenY > bitMain.getHeight()){
-        	startPos.y = 0;
-        	screenY = bitMain.getHeight();        	
-        }
-        //рисование
-        image.setImageBitmap(Bitmap.createBitmap(bitMain, startPos.x, startPos.y,
-         screenX, screenY));
-	}
+	
 	
 	public void moveTo(int x, int y){
 		movePos.x = x - (int)screen.x/2 + indent;
@@ -190,10 +191,10 @@ public class DrawWorld {
         toMove=true;
 	}
 	
-	public void death(){
+	/*public void death(){
 		canvas.drawColor(Color.BLACK);
 		paint.setColor(Color.RED);
 		paint.setTextSize(50);
 		canvas.drawText("GAME OVER", heightPX/2, 200, paint);
-	}
+	}*/
 }
