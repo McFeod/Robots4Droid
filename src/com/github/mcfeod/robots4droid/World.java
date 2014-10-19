@@ -16,7 +16,7 @@ public class World{
 	private static final byte UP_RIGHT = 2;
 	private static final byte DOWN_LEFT = 6;
 	private static final byte DOWN_RIGHT = 8;
-//	private static final byte STAY = 4;
+	private static final byte STAY = 4;
 	private static final byte TELEPORT = 9;
 	private static final byte SAFE_TELEPORT = 10;
 

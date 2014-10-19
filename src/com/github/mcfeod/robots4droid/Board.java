@@ -41,7 +41,10 @@ public class Board{
 			if (mBoard[newX][newY] != EMPTY){
 				chDiff(mBoard[oldX][oldY],1);
 				chDiff(mBoard[newX][newY],1);
-				mBoard[newX][newY] = JUNK;
+				if (mBoard[newX][newY] == MINE)
+					mBoard[newX][newY] = EMPTY;
+				else
+					mBoard[newX][newY] = JUNK;
 			}
 			else
 				mBoard[newX][newY] = mBoard[oldX][oldY];
@@ -100,15 +103,6 @@ public class Board{
 		return false;
 	}
 
-	/*Возвращает количество объектов с типом kind*/
-	public int GetObjectCount(byte kind){
-		int count=0;
-		for (int i=0; i<mWidth; i++)
-			for (int j=0; j<mHeight; j++)
-				if (mBoard[i][j] == kind)
-					count ++;
-		return count;
-	}
 
 	/*Проверяет, принадлежит ли точка p полю*/
 	public boolean isOnBoard(Point p){

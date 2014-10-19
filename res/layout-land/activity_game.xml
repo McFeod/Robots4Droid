@@ -45,10 +45,11 @@
 	    android:id="@+id/frameLayout"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content">
-		<ImageView
-		    android:id="@+id/imageView1"
-		    android:layout_width="match_parent"
-		    android:layout_height="fill_parent" />
+
+		<com.github.mcfeod.robots4droid.GameSurfaceView
+      		android:id="@+id/game"
+      		android:layout_width="fill_parent"
+      		android:layout_height="fill_parent"/>
 
 		<RelativeLayout
 			android:layout_width="match_parent"

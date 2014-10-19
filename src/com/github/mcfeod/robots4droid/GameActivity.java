@@ -1,48 +1,35 @@
 package com.github.mcfeod.robots4droid;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class GameActivity extends Activity {
 	private int width=20, height=15; //размеры сторон
-	private int widthPX=35, heightPX=35; //размеры клетки в пикселях
     private World world;
-    private DrawWorld drawWorld;
-    private Point screen;
     private String mMsgStr;
     private int mLastLevel=-1;
 
-    //объекты и переменные для прокручивания поля
-	private boolean toScroll;
-	private Point startTouchPos, endTouchPos;
 
     private MediaPlayer mSoundTrack;
     private boolean isMusicOn;
 
-	public Point GetScreenSize(){
-		Display display = getWindowManager().getDefaultDisplay();
-		DisplayMetrics metrics = new DisplayMetrics();
-		display.getMetrics(metrics);
-		Point size = new Point(metrics.widthPixels, metrics.heightPixels);
-		return size;
-	}
+    private TextView text;
+    private GameSurfaceView view;
+
 
 	public OnClickListener listener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			boolean succ=false;
-			TextView text=(TextView)findViewById(R.id.textView1);
 			if (world.player.isAlive){
 				switch (v.getId()){
 					case R.id.left_button: succ=world.movePlayer((byte)(3)); break;
@@ -60,51 +47,44 @@ public class GameActivity extends Activity {
 					case R.id.bomb_button: succ=world.bomb(); break;
 				}
 				if (succ){
-					/*отрисовываем игрока с центрированием только при телепортации,
-					  потому что при простом ходе получается очень резкое перемещение поля*/
-					switch (v.getId()){
-						case R.id.teleport_button:
-							drawWorld.centerPlayerPos(world.player.getPos().x*widthPX+
-							 widthPX/2, world.player.getPos().y*heightPX+heightPX/2);
-							break;
-						case R.id.safe_teleport_button: 
-							drawWorld.centerPlayerPos(world.player.getPos().x*widthPX+
-							 widthPX/2, world.player.getPos().y*heightPX+heightPX/2);
-							break;
-						default:
-							drawWorld.repaint(0,0);
-					}
 					//передвигаем роботов
 					world.moveBots();
-					//отрисовываем роботов
-					drawWorld.mainRepaint();
-					drawWorld.repaint(0,0);
-					if (world.player.isAlive)
+					if (world.player.isAlive){
 						mMsgStr="L: "+Integer.toString(world.mLevel)+
 						 "  S: "+Integer.toString(world.player.getScore())+
-						 "  E: "+Integer.toString(world.player.getEnergy());			
-					else{
-						mMsgStr = "Tap any button to replay";
-						drawWorld.death();
-						drawWorld.repaint(0,0);
-					}					
-					text.setText(mMsgStr);
+						 "  E: "+Integer.toString(world.player.getEnergy());
+						text.setText(mMsgStr);
+						//отрисовываем роботов
+						view.mDrawThread.moveTo(world.player.getPos().x*35+
+								 35/2, world.player.getPos().y*35+35/2);
+					}else{
+						AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+						builder.setTitle(R.string.dialog);
+						builder.setMessage(R.string.dialog);
+						builder.setCancelable(false);
+						builder.setPositiveButton(R.string.restart, new DialogInterface.OnClickListener() { // Кнопка ОК
+						    @Override
+						    public void onClick(DialogInterface dialog, int which) {
+						    	world.defeat();
+						    	view.mDrawThread.moveTo(world.player.getPos().x*35+
+										 35/2, world.player.getPos().y*35+35/2);
+								dialog.dismiss();
+						    }
+						});
+						AlertDialog dialog = builder.create();
+						dialog.show();
+					}
 				}else{
 					Toast.makeText(GameActivity.this, "You can't do it", Toast.LENGTH_SHORT).show();
 				}
-			}else{
-				world.defeat();
-				drawWorld.mainRepaint();
-				drawWorld.centerPlayerPos(world.player.getPos().x*widthPX+
-				 widthPX/2, world.player.getPos().y*heightPX+heightPX/2);
-			}	
+					
+			}
 			if (mLastLevel != world.mLevel){
-				drawWorld.repaint(0, 0);
 				mLastLevel = world.mLevel;
 				Toast.makeText(GameActivity.this, "NEW LEVEL: " + mLastLevel , Toast.LENGTH_SHORT).show();
 				
 			}
-			text.setText(mMsgStr);
+
 		}
 	};
 
@@ -115,15 +95,6 @@ public class GameActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
          WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_game);
-        
-        startTouchPos = new Point();
-        endTouchPos = new Point();
-
-        screen = GetScreenSize();
-        //костыль. Не могу понять, почему screen.x меньше реальной ширины экрана
-        screen.x +=50;
-        //screen.y - не весь экран, а область, в которой отрисовывается поле
-        screen.y -= findViewById(R.id.frameLayout).getTop();
 
         findViewById(R.id.left_button).setOnClickListener(listener);
         findViewById(R.id.right_button).setOnClickListener(listener);
@@ -147,59 +118,20 @@ public class GameActivity extends Activity {
         isMusicOn = SettingsParser.isMusicOn(settings);
         
         world = new World(width, height);
-        drawWorld = new DrawWorld(this.getApplicationContext(), 
-         (ImageView)findViewById(R.id.imageView1), world, screen, widthPX, heightPX);
-		drawWorld.mainRepaint();
-		drawWorld.centerPlayerPos(world.player.getPos().x*widthPX+
-		 widthPX/2, world.player.getPos().y*heightPX+heightPX/2);
-		
-        TextView text=(TextView)findViewById(R.id.textView1);
+		view = (GameSurfaceView)findViewById(R.id.game);
+        view.SetWorld(world);
+        
+        
+        view.CreateThread();
+        view.mDrawThread.SetActivity(this);
+        text=(TextView)findViewById(R.id.textView1);
+        view.mDrawThread.SetText(text);
+        view.StartThread();
         String str="L: "+Integer.toString(world.mLevel)+
    		 "  S: "+Integer.toString(world.player.getScore())+
    		 "  E: "+Integer.toString(world.player.getEnergy());
 		text.setText(str);
     }
-	
-	@Override
-    public boolean onTouchEvent(MotionEvent event) {
-		switch (event.getAction()) {
-			//событие возникает при нажатии на экран
-			case MotionEvent.ACTION_DOWN:
-				//запоминаем координаты нажатия
-				startTouchPos.x = (int) event.getRawX();
-				startTouchPos.y = (int) event.getRawY();
-				//если координата y выше поля, то запрещаем scroll
-				if (startTouchPos.y < findViewById(R.id.frameLayout).getTop())
-					toScroll = false;
-				else
-					toScroll = true;
-				break;
-			//событие возникает при движении по экрану
-			case MotionEvent.ACTION_MOVE:
-				if (toScroll){
-					//запоминаем координаты касания
-					endTouchPos.x = (int) event.getRawX();
-					endTouchPos.y = (int) event.getRawY();
-					//если координата y выше поля, то не перерисовываем поле
-					if (endTouchPos.y > findViewById(R.id.frameLayout).getTop()){
-						/*перерисовываем поле startTouchPos.x - endTouchPos.x и
-						  startTouchPos.y - endTouchPos.y - разница между предыдущей
-						  точкой касания и текущей. Определяет, на сколько необходимо
-						  передвинуть поле по x и по y*/
-						drawWorld.repaint(startTouchPos.x - endTouchPos.x,
-						 startTouchPos.y - endTouchPos.y);
-						//запоминаем новые координаты начальной точки касания
-						startTouchPos.x = endTouchPos.x;
-						startTouchPos.y = endTouchPos.y;
-					}
-					break;
-				}
-			case MotionEvent.ACTION_UP:
-				toScroll = false;
-				break;
-		}
-		return true;
-	}
 
     @Override
     protected void onResume(){
@@ -212,6 +144,7 @@ public class GameActivity extends Activity {
     @Override
     protected void onPause(){
         super.onPause();
+        view.StopThread();
         mSoundTrack.pause();
     }
 }
