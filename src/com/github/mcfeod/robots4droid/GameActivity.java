@@ -17,7 +17,7 @@ public class GameActivity extends Activity {
     private World world;
     private String mMsgStr;
     private int mLastLevel=-1;
-
+    private boolean mNeedCrutchForLaunch = true;
 
     private MediaPlayer mSoundTrack;
     private boolean isMusicOn;
@@ -134,7 +134,10 @@ public class GameActivity extends Activity {
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
-		view.mDrawThread.moveTo(world.player.getPos());
+		if (mNeedCrutchForLaunch){
+			view.mDrawThread.moveTo(world.player.getPos());
+			mNeedCrutchForLaunch = false;
+		}
 	}
 	
     @Override
