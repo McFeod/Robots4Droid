@@ -210,6 +210,5 @@ public class DrawThread extends Thread {
     
     public void customKill(){
     	mustDie = true;
-    	this.interrupt();
     }
 }

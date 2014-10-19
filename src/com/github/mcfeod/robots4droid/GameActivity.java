@@ -131,6 +131,12 @@ public class GameActivity extends Activity {
 		text.setText(str);
     }
 
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		view.mDrawThread.moveTo(world.player.getPos());
+	}
+	
     @Override
     protected void onResume(){
         super.onResume();
