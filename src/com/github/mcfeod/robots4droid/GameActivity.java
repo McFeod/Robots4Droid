@@ -55,8 +55,7 @@ public class GameActivity extends Activity {
 						 "  E: "+Integer.toString(world.player.getEnergy());
 						text.setText(mMsgStr);
 						//отрисовываем роботов
-						view.mDrawThread.moveTo(world.player.getPos().x*35+
-								 35/2, world.player.getPos().y*35+35/2);
+						view.mDrawThread.moveTo(world.player.getPos());
 					}else{
 						AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
 						builder.setTitle(R.string.dialog);
@@ -66,8 +65,7 @@ public class GameActivity extends Activity {
 						    @Override
 						    public void onClick(DialogInterface dialog, int which) {
 						    	world.defeat();
-						    	view.mDrawThread.moveTo(world.player.getPos().x*35+
-										 35/2, world.player.getPos().y*35+35/2);
+						    	view.mDrawThread.moveTo(world.player.getPos());
 								dialog.dismiss();
 						    }
 						});
@@ -145,6 +143,8 @@ public class GameActivity extends Activity {
     protected void onPause(){
         super.onPause();
         view.StopThread();
-        mSoundTrack.pause();
+        if(isMusicOn) {
+        	mSoundTrack.pause();
+        }
     }
 }

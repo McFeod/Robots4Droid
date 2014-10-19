@@ -50,14 +50,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     }
     
     public void StartThread(){
-    	//mDrawThread.setRunning(true);
     	mDrawThread.start();
     }
     
-    @SuppressWarnings("deprecation")
 	public void StopThread(){
-    	//mDrawThread.setRunning(true);
-    	mDrawThread.stop();
+    	mDrawThread.customKill();
     	mDrawThread = null;
     }
     

@@ -21,17 +21,19 @@ public class DrawThread extends Thread {
 	private Paint paint;
 	private Point startPos, movePos;
 	private GameSurfaceView view;
-	private boolean toDraw, toMove;
+	private boolean toDraw, toMove, mustDie = false;
 	private int step = 8;
 	private SurfaceHolder mSurfaceHolder; //Область для рисования
 	Context context;
 	TextView text;
 	Activity ac;
-
+	
 	public DrawThread(SurfaceHolder surfaceHolder, Context context, World world,
 	 GameSurfaceView view)
-    {
-        mSurfaceHolder = surfaceHolder;
+    { 	widthPX =(int) (widthPX*context.getResources().getDisplayMetrics().density);
+    	heightPX = widthPX;
+    	step =(int) (step*context.getResources().getDisplayMetrics().density);
+    	mSurfaceHolder = surfaceHolder;
         this.world = world;
         startPos = new Point(0, 0);
         movePos = new Point(0, 0);
@@ -65,7 +67,7 @@ public class DrawThread extends Thread {
     @Override
     public void run()
     {
-        while (true){
+        while (!mustDie){
         	try{
         		Thread.sleep(40);
             }catch (InterruptedException e) {}
@@ -111,21 +113,7 @@ public class DrawThread extends Thread {
     public void SetActivity(Activity ac){
     	this.ac = ac;
     }
-    
-    /*Runnable runnable = new Runnable(){
-    	@Override
-    	public void run(){
-    		int boardX=world.mWidth*widthPX+indent*2;
-	        int boardY=world.mHeight*heightPX+indent*2;
-    		text.setText(Integer.toString(startPos.x)+" "+
-					Integer.toString(startPos.y)+" "+
-					Integer.toString(movePos.x)+" "+
-					Integer.toString(movePos.y)+" "+
-					Integer.toString(boardX - view.getWidth())+" "+
-					Integer.toString(boardY - view.getHeight()));
-    	}
-    };*/
-    
+        
     public void Draw(){
     	toDraw = true;
     }
@@ -134,9 +122,9 @@ public class DrawThread extends Thread {
     	this.text = text;
     }
     
-    public void moveTo(int x, int y){
-    	movePos.x = x - view.getWidth()/2 + indent;
-    	movePos.y = y - view.getHeight()/2 + indent;
+    public void moveTo(Point p){
+    	movePos.x = (p.x*widthPX+widthPX/2) - view.getWidth()/2 + indent;
+    	movePos.y = (p.y*heightPX+heightPX/2) - view.getHeight()/2 + indent;
         int boardX=world.mWidth*widthPX+indent*2;
         int boardY=world.mHeight*heightPX+indent*2;
         //проверка выхода за пределы экрана
@@ -219,5 +207,9 @@ public class DrawThread extends Thread {
 	        if (startPos.y + view.getHeight() > boardY)
 	        	startPos.y = boardY - view.getHeight();
     }
-
+    
+    public void customKill(){
+    	mustDie = true;
+    	this.interrupt();
+    }
 }
