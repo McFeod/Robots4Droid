@@ -63,7 +63,13 @@ public class DrawThread extends Thread {
 
         paint = new Paint();
     }
-
+	
+	public void delay(int n){
+		while (toMove)
+	    	try{
+	    		Thread.sleep(n);
+	        }catch (InterruptedException e) {}
+	}
     @Override
     public void run()
     {

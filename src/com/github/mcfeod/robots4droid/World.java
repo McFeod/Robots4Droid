@@ -16,7 +16,7 @@ public class World{
 	private static final byte UP_RIGHT = 2;
 	private static final byte DOWN_LEFT = 6;
 	private static final byte DOWN_RIGHT = 8;
-	private static final byte STAY = 4;
+	//private static final byte STAY = 4;
 	private static final byte TELEPORT = 9;
 	private static final byte SAFE_TELEPORT = 10;
 
@@ -67,17 +67,11 @@ public class World{
     	//Размещение игрока
     	if (findSafePos());
 			player.setPos(freePos);
-    	//TODO отрисовка
     }
 
     public boolean setMine(){
-    	byte cost = 5;
+    	byte cost = 6; //повышено до 6, мина "повреждает" робота (образуется куча). Иначе нет смысла её ставить и тратить ход.
     	if (!isSafePos(player.getPos().x, player.getPos().y)) return false;
-    	if (mBoard.GetKind(player.getPos().x, player.getPos().y) == Board.MINE){
-    		mBoard.SetKind(player.getPos(), Board.EMPTY);
-    		player.chEnergy(cost);
-    		return true;
-    	}
     	if (player.getEnergy() >= cost){
     			player.chEnergy(-cost);
     			mBoard.SetKind(player.getPos(), Board.MINE);
@@ -87,17 +81,26 @@ public class World{
     }
     
     public boolean bomb(){
-		byte cost = 6;
+		byte cost = 1;
+		for (int i=-1; i<2; i++){
+			for (int j=-1; j<2; j++){
+				if ((i==0)&&(j==0))
+					continue;
+				if (!mBoard.isEmpty(player.getPos().x+i, player.getPos().y+j))
+					cost++;
+			}
+		}// назначили цену = 1 + количество объектов вокруг
+		
     	if (player.getEnergy() >= cost){
 			for (int i=-1; i<2; i++){
     			for (int j=-1; j<2; j++){
-
 					if ((i==0)&&(j==0))
 						continue;
 					if (isDanger2nd(player.getPos().x, player.getPos().y, i, j))
 						return false;
 				}
-			}
+			}//проверили на безопасность
+			
     		player.chEnergy(-cost);
     		for (int i=-1; i<2; i++)
     			for (int j=-1; j<2; j++){

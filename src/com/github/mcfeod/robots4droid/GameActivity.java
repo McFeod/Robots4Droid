@@ -3,6 +3,7 @@ package com.github.mcfeod.robots4droid;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
@@ -47,6 +48,8 @@ public class GameActivity extends Activity {
 					case R.id.bomb_button: succ=world.bomb(); break;
 				}
 				if (succ){
+					view.mDrawThread.moveTo(world.player.getPos());
+					view.mDrawThread.delay(400);
 					//передвигаем роботов
 					world.moveBots();
 					if (world.player.isAlive){
@@ -71,6 +74,7 @@ public class GameActivity extends Activity {
 						});
 						AlertDialog dialog = builder.create();
 						dialog.show();
+						dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
 					}
 				}else{
 					Toast.makeText(GameActivity.this, "You can't do it", Toast.LENGTH_SHORT).show();

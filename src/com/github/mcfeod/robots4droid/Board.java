@@ -41,10 +41,7 @@ public class Board{
 			if (mBoard[newX][newY] != EMPTY){
 				chDiff(mBoard[oldX][oldY],1);
 				chDiff(mBoard[newX][newY],1);
-				if (mBoard[newX][newY] == MINE)
-					mBoard[newX][newY] = EMPTY;
-				else
-					mBoard[newX][newY] = JUNK;
+				mBoard[newX][newY] = JUNK;
 			}
 			else
 				mBoard[newX][newY] = mBoard[oldX][oldY];
