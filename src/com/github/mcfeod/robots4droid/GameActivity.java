@@ -155,9 +155,14 @@ public class GameActivity extends Activity {
     @Override
     protected void onPause(){
         super.onPause();
-        view.StopThread();
         if(isMusicOn) {
         	mSoundTrack.pause();
         }
+    }
+    
+    @Override
+    protected void onDestroy(){
+    	super.onDestroy();
+    	view.StopThread();
     }
 }
