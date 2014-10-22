@@ -173,7 +173,7 @@ public class DrawThread extends Thread {
         			else
         				canvas.drawBitmap(bitCell,widthPX*i+indent-startPos.x,
                			 heightPX*j+indent-startPos.y,paint);
-        			switch (world.mBoard.GetKind(i,j)){
+        			switch (world.board.GetKind(i,j)){
         				case Board.JUNK:
         					canvas.drawBitmap(bitJunk,widthPX*i+indent-startPos.x,
         	        		 heightPX*j+indent-startPos.y,paint);

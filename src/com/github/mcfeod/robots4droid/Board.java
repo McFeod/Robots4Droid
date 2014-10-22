@@ -26,6 +26,15 @@ public class Board{
 		rand = new Random(System.currentTimeMillis());
 		Clear();
 	}
+	
+	public Board(int lengthX, int lengthY, int bots, int fast){
+		mWidth = lengthX;
+		mHeight = lengthY;
+		mAliveFastBotCount = fast;
+		mAliveBotCount = bots;
+		mBoard = new byte[mWidth][];
+		rand = new Random(System.currentTimeMillis());
+	}
 
 	public void Clear(){
 		for (int i=0; i<mWidth; i++)
@@ -172,13 +181,28 @@ public class Board{
     	return res;
     }
     
-   public void setRobotCount(int bot, int fast){
-	   mAliveBotCount = (bot>0)? bot:0;
-	   mAliveFastBotCount = (fast>0)? fast:0;
-   }
+	public void setRobotCount(int bot, int fast){
+		mAliveBotCount = (bot>0)? bot:0;
+		mAliveFastBotCount = (fast>0)? fast:0;
+	}
+	
+	public boolean isBotsDead(){
+		return !((mAliveBotCount>0)||(mAliveFastBotCount>0));
+	}
    
-   public boolean isBotsDead(){
-	   return !((mAliveBotCount>0)||(mAliveFastBotCount>0));
-   }
-
+	public byte[] getRow(int n){
+		return(mBoard[n]);
+	}
+	
+	public void setRow(int n, byte[] row){
+		mBoard[n] = row;
+	}
+	
+	public int getAliveFastBotCount() {
+		return mAliveFastBotCount;
+	}
+	
+	public int getAliveBotCount() {
+		return mAliveBotCount;
+	}
 }

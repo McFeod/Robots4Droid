@@ -116,10 +116,32 @@ public class GameActivity extends Activity {
         mSoundTrack.setLooping(true);
         // при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
         // по этой причине start() и stop() размещены в onStart() и onStop()
-        String settings = getIntent().getStringExtra(MainActivity.SETTINGS);
-        isMusicOn = SettingsParser.isMusicOn(settings);
         
-        world = new World(width, height);
+        
+        if (savedInstanceState == null){
+        	world = new World(width, height);
+        	String settings = getIntent().getStringExtra(MainActivity.SETTINGS);
+            isMusicOn = SettingsParser.isMusicOn(settings);
+        }else{
+        	world = new World(
+        			savedInstanceState.getInt("width"),
+        			savedInstanceState.getInt("height"),
+        			savedInstanceState.getInt("bots"),
+        			savedInstanceState.getInt("fastbots"),
+        			savedInstanceState.getInt("playerX"),
+        			savedInstanceState.getInt("playerY"),
+        			savedInstanceState.getInt("energy"),
+        			savedInstanceState.getInt("score"),
+        			savedInstanceState.getBoolean("isAlive"),
+        			savedInstanceState.getInt("level")
+        			);
+        	for(int i=0; i<width; ++i){
+        		 world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
+        	}
+        	isMusicOn = savedInstanceState.getBoolean("isMusicOn");
+        	if (isMusicOn)
+        		mSoundTrack.seekTo(savedInstanceState.getInt("musicTime")+400);
+        }
 		view = (GameSurfaceView)findViewById(R.id.game);
         view.SetWorld(world);
         
@@ -129,10 +151,9 @@ public class GameActivity extends Activity {
         text=(TextView)findViewById(R.id.textView1);
         view.mDrawThread.SetText(text);
         view.StartThread();
-        String str="L: "+Integer.toString(world.mLevel)+
-   		 "  S: "+Integer.toString(world.player.getScore())+
-   		 "  E: "+Integer.toString(world.player.getEnergy());
-		text.setText(str);
+		text.setText("L: "+Integer.toString(world.mLevel)+
+    			"  S: "+Integer.toString(world.player.getScore())+
+    			"  E: "+Integer.toString(world.player.getEnergy()));
     }
 
 	@Override
@@ -150,6 +171,7 @@ public class GameActivity extends Activity {
         if(isMusicOn) {
             mSoundTrack.start();
         }
+        view.mDrawThread.moveTo(world.player.getPos());
     }
 
     @Override
@@ -165,4 +187,26 @@ public class GameActivity extends Activity {
     	super.onDestroy();
     	view.StopThread();
     }
+    
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+    	super.onSaveInstanceState(savedInstanceState);
+    	savedInstanceState.putInt("width", width);
+    	savedInstanceState.putInt("height", height);
+    	for(int i=0; i<width; ++i){
+    		savedInstanceState.putByteArray("board_"+i, world.board.getRow(i));
+    	}
+    	savedInstanceState.putInt("fastbots", world.board.getAliveFastBotCount());
+    	savedInstanceState.putInt("bots", world.board.getAliveBotCount());
+    	savedInstanceState.putInt("level", world.getLevel());
+    	savedInstanceState.putInt("score", world.player.getScore());
+    	savedInstanceState.putInt("energy", world.player.getEnergy());
+    	savedInstanceState.putInt("playerX", world.player.getPos().x);
+    	savedInstanceState.putInt("playerY", world.player.getPos().y);
+    	savedInstanceState.putBoolean("isAlive", world.player.isAlive);
+    	savedInstanceState.putBoolean("isMusicOn", isMusicOn);
+    	if (isMusicOn)
+    		savedInstanceState.putInt("musicTime",mSoundTrack.getCurrentPosition());
+    }
+  
 }
