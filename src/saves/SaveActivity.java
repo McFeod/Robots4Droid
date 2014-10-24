@@ -1,12 +1,10 @@
-package com.github.mcfeod.robots4droid;
+package saves;
 
-import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.os.Bundle;
 import android.util.Log;
+import com.github.mcfeod.robots4droid.HostActivity;
 
-public class SaveActivity extends HostActivity {
+class SaveActivity extends HostActivity {
     @Override
     protected Fragment createFragment(){
         int saveNumber = getIntent().getIntExtra(SaveFragment.SAVED_GAME_NUMBER, -1);

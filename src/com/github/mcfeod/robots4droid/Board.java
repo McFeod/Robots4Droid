@@ -1,5 +1,7 @@
 package com.github.mcfeod.robots4droid;
 
+import saves.BinaryIOManager;
+
 import java.util.Random;
 
 public class Board{
@@ -164,7 +166,7 @@ public class Board{
 		return false;
     }
 
-    public void addToSave(SavedGameSerializer serializer){
-        serializer.setBoard(mBoard);
+    public void giveLinkToManager(BinaryIOManager manager){
+        manager.setBoard(mBoard);
     }
 }

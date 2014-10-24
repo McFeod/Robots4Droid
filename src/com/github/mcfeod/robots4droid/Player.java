@@ -12,6 +12,12 @@ public class Player{
         mScore = 0;
         isAlive = true;
     }
+    public Player(int x, int y, int energy, int score){
+        mPos = new Point(x,y);
+        mEnergy = energy;
+        mScore = score;
+        isAlive = true;
+    }
 
     public Point getPos(){
 		return mPos;

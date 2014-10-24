@@ -1,20 +1,30 @@
-package com.github.mcfeod.robots4droid;
+package saves;
 
 
 import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.github.mcfeod.robots4droid.R;
 
 import java.util.ArrayList;
 
 public class MyListFragment extends ListFragment{
+
     @Override
     public void onCreate(Bundle savedInstanceBundle){
         super.onCreate(savedInstanceBundle);
-        getActivity().setTitle("123 Fragment appears!\n");
+
+        try {
+            SaveManager.INSTANCE.openDatabaseConnection();
+            SaveManager.INSTANCE.loadSavesFromDatabase();
+        }
+        catch (RuntimeException e) {
+            Log.d("MyListFragment", "Loading error" + e.getMessage());
+        }
 
         SaveAdapter adapter = new SaveAdapter(SaveManager.INSTANCE.mGames);
         setListAdapter(adapter);
@@ -33,6 +43,10 @@ public class MyListFragment extends ListFragment{
     @Override
     public void onResume(){
         super.onResume();
+        if(SaveManager.INSTANCE.hasLoadingGame()){
+            SaveManager.INSTANCE.closeDatabaseConnection();
+            getActivity().finish();
+        }
         ((SaveAdapter)getListAdapter()).notifyDataSetChanged();
     }
 
@@ -56,5 +70,11 @@ public class MyListFragment extends ListFragment{
 
             return convertView;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        SaveManager.INSTANCE.closeDatabaseConnection();
     }
 }

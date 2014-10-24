@@ -1,4 +1,4 @@
-package com.github.mcfeod.robots4droid;
+package saves;
 
 
 import android.app.Activity;
@@ -9,16 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.support.v4.view;
+import com.github.mcfeod.robots4droid.R;
 
-public class SaveFragment extends Fragment {
+class SaveFragment extends Fragment {
     public static final String SAVED_GAME_NUMBER =
             "com.github.mcfeod.robots4droid.saved_game";
 
     private SavedGame mGame;
     private int mGameNumber;
     private TextView mSaveInfo;
-    private Button mDeleteButton;
 
 
     @Override
@@ -38,11 +37,21 @@ public class SaveFragment extends Fragment {
         mSaveInfo = (TextView)v.findViewById(R.id.savedLevelInfo);
         mSaveInfo.setText(mGame.toString());
 
-        mDeleteButton = (Button)v.findViewById(R.id.deleteSaveButton);
-        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+        Button deleteButton = (Button)v.findViewById(R.id.deleteSaveButton);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SaveManager.INSTANCE.mGames.remove(mGameNumber);
+                Activity activity = getActivity();
+                SaveManager.INSTANCE.removeSave(mGameNumber, activity.getApplicationContext());
+                activity.finish();
+            }
+        });
+
+        Button playButton = (Button)v.findViewById(R.id.playSaveButton);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SaveManager.INSTANCE.rememberGame(mGameNumber);
                 getActivity().finish();
             }
         });

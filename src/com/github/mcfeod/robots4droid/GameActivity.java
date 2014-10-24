@@ -2,20 +2,16 @@ package com.github.mcfeod.robots4droid;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.io.IOException;
+import saves.BinaryIOManager;
+import saves.SaveManager;
 
 
 public class GameActivity extends Activity {
@@ -29,6 +25,8 @@ public class GameActivity extends Activity {
     private DrawWorld drawWorld;
     Point screen;
 
+    TextView mTextView;
+
     private MediaPlayer mSoundTrack;
     private boolean isMusicOn;
 
@@ -36,8 +34,7 @@ public class GameActivity extends Activity {
 		Display display = getWindowManager().getDefaultDisplay();
 		DisplayMetrics metrics = new DisplayMetrics();
 		display.getMetrics(metrics);
-		Point size = new Point(metrics.widthPixels, metrics.heightPixels);
-		return size;
+		return new Point(metrics.widthPixels, metrics.heightPixels);
 	}
 
 	public OnClickListener listener = new OnClickListener() {
@@ -55,10 +52,10 @@ public class GameActivity extends Activity {
 				case R.id.left_up_button: succ=world.movePlayer((byte)(0)); break;
 				case R.id.left_down_button: succ=world.movePlayer((byte)(6)); break;
 				case R.id.right_up_button: succ=world.movePlayer((byte)(2)); break;
-				case R.id.right_down_button: succ=world.movePlayer((byte)(8)); break;	
-				case R.id.stay_button: succ=world.movePlayer((byte)(4)); break;	
+				case R.id.right_down_button: succ=world.movePlayer((byte)(8)); break;
 				case R.id.teleport_button: succ=world.movePlayer((byte)(9)); break;	
 				case R.id.safe_teleport_button: succ=world.movePlayer((byte)(10)); break;
+                case R.id.stay_button: succ = world.movePlayer((byte)4); break;
             }
 			if (succ)
 				world.moveBots();
@@ -72,16 +69,24 @@ public class GameActivity extends Activity {
 		}
 	};
 
+    public void load(){
+        BinaryIOManager loader = new BinaryIOManager(getApplicationContext(), world);
+        world.mBoard.giveLinkToManager(loader);
+        SaveManager.INSTANCE.loadGameFromBinary(loader);
+    }
+
     public void save(){
-        SavedGameSerializer serializer =
-                new SavedGameSerializer(getApplicationContext(), "robots4droid_saves.txt");
-        world.mBoard.addToSave(serializer);
-        try {
-            serializer.saveGame();
-        }
-        catch (Exception e){
-            Log.e("GameActivity","Saving error:",e);
-        }
+        BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
+        world.mBoard.giveLinkToManager(saver);
+        SaveManager.INSTANCE.saveGameToBinary(saver);
+    }
+
+    private void changeText(){
+        String str="Level: "+Integer.toString(world.mLevel)+
+                "  Score: "+Integer.toString(world.player.getScore())+
+                "  Energy: "+Integer.toString(world.player.getEnergy())+
+                "  isAlive: "+world.player.isAlive;
+        mTextView.setText(str);
     }
 
 	@Override
@@ -100,7 +105,7 @@ public class GameActivity extends Activity {
         findViewById(R.id.right_up_button).setOnClickListener(listener);
         findViewById(R.id.right_down_button).setOnClickListener(listener); 
         findViewById(R.id.teleport_button).setOnClickListener(listener); 
-        findViewById(R.id.safe_teleport_button).setOnClickListener(listener); 
+        findViewById(R.id.safe_teleport_button).setOnClickListener(listener);
         findViewById(R.id.stay_button).setOnClickListener(listener);
 
         findViewById(R.id.save_level_button).setOnClickListener(new OnClickListener() {
@@ -119,19 +124,16 @@ public class GameActivity extends Activity {
         
         world = new World(width, height);
         drawWorld = new DrawWorld(this.getApplicationContext(), 
-         (ImageView)findViewById(R.id.imageView1), world, screen);
+                    (ImageView)findViewById(R.id.imageView1), world, screen);
+        mTextView=(TextView)findViewById(R.id.textView1);
+
+        if(SaveManager.INSTANCE.hasLoadingGame()){
+            load();
+        }
         drawWorld.repaint();
-        
-        TextView text=(TextView)findViewById(R.id.textView1);
-        String str="Level: "+Integer.toString(world.mLevel)+
-   		 "  Score: "+Integer.toString(world.player.getScore())+
-   		 "  Energy: "+Integer.toString(world.player.getEnergy())+
-   		 "  isAlive: "+world.player.isAlive;
-		text.setText(str);
+        changeText();
     }
 
-    /** Вот они, Ваня, комментарии на великолепном английском.
-     * */
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
