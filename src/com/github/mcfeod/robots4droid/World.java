@@ -100,10 +100,10 @@ public class World{
 			for (int j=-1; j<2; j++){
 				if ((i==0)&&(j==0))
 					continue;
-				if (!board.isEmpty(player.getPos().x+i, player.getPos().y+j))
+				if (board.isEnemy(player.getPos().x+i, player.getPos().y+j))
 					cost++;
 			}
-		}// назначили цену = 1 + количество объектов вокруг
+		}// назначили цену = 1 + количество врагов вокруг
 		
     	if (player.getEnergy() >= cost){
 			for (int i=-1; i<2; i++){
