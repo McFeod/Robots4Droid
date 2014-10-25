@@ -12,7 +12,7 @@ import com.github.mcfeod.robots4droid.R;
 
 import java.util.ArrayList;
 
-public class MyListFragment extends ListFragment{
+class MyListFragment extends ListFragment{
 
     @Override
     public void onCreate(Bundle savedInstanceBundle){
@@ -35,7 +35,7 @@ public class MyListFragment extends ListFragment{
         SavedGame game = ((SaveAdapter)getListAdapter()).getItem(position);
 
         // запускаем активность с информацией о соохранении game
-        Intent i = new Intent(getActivity(), SaveActivity.class);
+        Intent i = new Intent(getActivity(), SaveWindowActivity.class);
         i.putExtra(SaveFragment.SAVED_GAME_NUMBER, position);
         startActivity(i);
     }

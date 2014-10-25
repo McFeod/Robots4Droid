@@ -1,5 +1,7 @@
 package com.github.mcfeod.robots4droid;
 
+import saves.BinaryIOManager;
+
 import java.util.Random;
 
 public class Board{
@@ -120,9 +122,7 @@ public class Board{
 
 	/*Проверяет, принадлежит ли точка с координатами (x, y) полю*/
 	public boolean isOnBoard(int x, int y){
-		if ((x>=0) && (y>=0) && (x<mWidth) && (y<mHeight))
-			return true;
-		return false;
+		return  (x>=0) && (y>=0) && (x<mWidth) && (y<mHeight);
 	}
 
 	/*Возвращает true, если в точке с координатами (x, y) находится любой робот*/

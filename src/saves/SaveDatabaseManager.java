@@ -47,9 +47,9 @@ class SaveDatabaseManager {
 
     public void insertSave(SavedGame save){
         ContentValues cv = new ContentValues();
-        cv.put(COLUMN_SAVES_DATE, save.getCreationDate().getTime());
-        cv.put(COLUMN_SAVES_LEVEL, save.getLevel());
-        cv.put(COLUMN_SAVES_SCORE, save.getScore());
+        cv.put(COLUMN_SAVES_DATE, save.mCreationDate.getTime());
+        cv.put(COLUMN_SAVES_LEVEL, save.mLevel);
+        cv.put(COLUMN_SAVES_SCORE, save.mScore);
         save.mId = mDatabase.insert(TABLE_SAVES, null, cv);
     }
 

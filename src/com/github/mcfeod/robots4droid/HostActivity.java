@@ -12,7 +12,7 @@ public abstract class HostActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceBundle) {
         super.onCreate(savedInstanceBundle);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.activity_host);
 
         FragmentManager fm = getFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragmentContainer);

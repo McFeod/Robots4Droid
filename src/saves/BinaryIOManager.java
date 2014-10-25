@@ -108,7 +108,7 @@ public class BinaryIOManager {
         int energy = input.readInt();
         int score = input.readInt();
         //Log.d(TAG,String.format("Player x=%d, y=%d, energy=%d, score=%d\n",x,y,energy,score));
-        mWorld.player = new Player(x,y,energy,score);
+        mWorld.player = new Player(x,y,energy,score,true);
     }
 
     private void loadDesk(DataInput input)
