@@ -128,13 +128,10 @@ public class GameActivity extends Activity {
         mSoundTrack.setLooping(true);
         // при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
         // по этой причине start() и stop() размещены в onStart() и onStop()
-        String settings = getIntent().getStringExtra(MainActivity.SETTINGS);
-        isMusicOn = SettingsParser.isMusicOn(settings);
         
         if (savedInstanceState == null){
         	world = new World(width, height);
-        	String settings = getIntent().getStringExtra(MainActivity.SETTINGS);
-            isMusicOn = SettingsParser.isMusicOn(settings);
+            isMusicOn = SettingsParser.isMusicOn();
             // если выбрана соохранённая игра, загружаем из соохранения
             if(SaveManager.INSTANCE.hasLoadingGame()){
                 load();

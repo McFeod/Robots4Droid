@@ -59,8 +59,8 @@ public class DrawWorld {
         	canvas.drawLine(0,i*height,screen.x,i*height,paint); 	
         for (int i=0; i<world.mWidth; i++)
         	for (int j=0; j<world.mHeight; j++)
-        		if (!world.mBoard.isEmpty(i,j))
-        			switch (world.mBoard.GetKind(i,j)){        			
+        		if (!world.board.isEmpty(i,j))
+        			switch (world.board.GetKind(i,j)){
         				case Board.JUNK:
         					canvas.drawBitmap(bitJunk,i*width+1,j*height+1,paint);
         					break;

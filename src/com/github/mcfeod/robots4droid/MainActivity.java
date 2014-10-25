@@ -56,7 +56,6 @@ public class MainActivity extends Activity {
         super.onResume();
         if(SaveManager.INSTANCE.hasLoadingGame()){
             Intent i = new Intent(MainActivity.this, GameActivity.class);
-            i.putExtra(SETTINGS, mSettings);
             startActivity(i);
         }
     }
