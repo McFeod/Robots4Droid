@@ -11,7 +11,7 @@ public class MainActivity extends Activity {
     public static final String SETTINGS =
             "com.github.mcfeod.robots4droid.settings";
     //здесь хранятся игровые настройки
-    String mSettings = "1";
+    String mSettings = "0";
     //что означает: по умолчанию звук включен
 
     @Override

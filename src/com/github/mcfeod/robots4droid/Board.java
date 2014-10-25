@@ -8,6 +8,7 @@ public class Board{
 	public static final byte JUNK = 1;
 	public static final byte ROBOT = 2;
 	public static final byte FASTROBOT = 3;
+	public static final byte MINE = 4;
 	
     private int mAliveFastBotCount;
     private int mAliveBotCount;
@@ -24,6 +25,15 @@ public class Board{
 		mBoard = new byte[mWidth][mHeight];
 		rand = new Random(System.currentTimeMillis());
 		Clear();
+	}
+	
+	public Board(int lengthX, int lengthY, int bots, int fast){
+		mWidth = lengthX;
+		mHeight = lengthY;
+		mAliveFastBotCount = fast;
+		mAliveBotCount = bots;
+		mBoard = new byte[mWidth][];
+		rand = new Random(System.currentTimeMillis());
 	}
 
 	public void Clear(){
@@ -99,15 +109,6 @@ public class Board{
 		return false;
 	}
 
-	/*Возвращает количество объектов с типом kind*/
-	public int GetObjectCount(byte kind){
-		int count=0;
-		for (int i=0; i<mWidth; i++)
-			for (int j=0; j<mHeight; j++)
-				if (mBoard[i][j] == kind)
-					count ++;
-		return count;
-	}
 
 	/*Проверяет, принадлежит ли точка p полю*/
 	public boolean isOnBoard(Point p){
@@ -180,13 +181,28 @@ public class Board{
     	return res;
     }
     
-   public void setRobotCount(int bot, int fast){
-	   mAliveBotCount = (bot>0)? bot:0;
-	   mAliveFastBotCount = (fast>0)? fast:0;
-   }
+	public void setRobotCount(int bot, int fast){
+		mAliveBotCount = (bot>0)? bot:0;
+		mAliveFastBotCount = (fast>0)? fast:0;
+	}
+	
+	public boolean isBotsDead(){
+		return !((mAliveBotCount>0)||(mAliveFastBotCount>0));
+	}
    
-   public boolean isBotsDead(){
-	   return !((mAliveBotCount>0)||(mAliveFastBotCount>0));
-   }
-
+	public byte[] getRow(int n){
+		return(mBoard[n]);
+	}
+	
+	public void setRow(int n, byte[] row){
+		mBoard[n] = row;
+	}
+	
+	public int getAliveFastBotCount() {
+		return mAliveFastBotCount;
+	}
+	
+	public int getAliveBotCount() {
+		return mAliveBotCount;
+	}
 }

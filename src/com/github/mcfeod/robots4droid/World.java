@@ -16,12 +16,12 @@ public class World{
 	private static final byte UP_RIGHT = 2;
 	private static final byte DOWN_LEFT = 6;
 	private static final byte DOWN_RIGHT = 8;
-//	private static final byte STAY = 4;
+	//private static final byte STAY = 4;
 	private static final byte TELEPORT = 9;
 	private static final byte SAFE_TELEPORT = 10;
 
     public Player player;
-    public Board mBoard;
+    public Board board;
     
     /*вспомогательные объекты и переменные для хранения временной информации*/
     private Point junkPos, objectPos, freePos;
@@ -31,7 +31,7 @@ public class World{
     public World(int width, int height){
 		mWidth = width;
 		mHeight = height;
-		mBoard = new Board(width, height);
+		board = new Board(width, height);
         player = new Player();
         mLevel=0;
         //создание вспомогательных объектов
@@ -41,10 +41,24 @@ public class World{
         //создание первого уровня
         initLevel();
     }
+    
+    public World(int width, int height, int bots, int fastbots,
+    		int pX, int pY, int energy, int score, boolean isAlive,
+    		int level){
+		mWidth = width;
+		mHeight = height;
+		board = new Board(width, height, bots, fastbots);
+        player = new Player(pX, pY, energy, score, isAlive);
+        mLevel=level;
+        //создание вспомогательных объектов
+        freePos = new Point();
+        junkPos = new Point();
+        objectPos = new Point();
+    }
 
     /** Создание нового уровня */
     private void initLevel(){
-    	mBoard.Clear(); //очистка доски
+    	board.Clear(); //очистка доски
     	mLevel ++;
     	//увеличение энергии и очков
     	player.chEnergy((int)(mLevel*0.2+1));
@@ -53,27 +67,72 @@ public class World{
 		//определение количества роботов
     	mRobotCount = 5 + (int)(1.5 * mLevel);
     	mFastRobotCount = -4 + (int)(1.2 * mLevel);
-    	mBoard.setRobotCount(mRobotCount, mFastRobotCount);
+    	board.setRobotCount(mRobotCount, mFastRobotCount);
     	//Размещение простых роботов
     	for(int i=0; i<mRobotCount; ++i){
     		if (findFreePos());
-				mBoard.SetKind(freePos, Board.ROBOT);
+				board.SetKind(freePos, Board.ROBOT);
 		}
     	//Размещение быстрых роботов
     	for(int i=0; i<mFastRobotCount; ++i){
     		if (findFreePos());
-				mBoard.SetKind(freePos, Board.FASTROBOT);
+				board.SetKind(freePos, Board.FASTROBOT);
     	}
     	//Размещение игрока
     	if (findSafePos());
 			player.setPos(freePos);
-    	//TODO отрисовка
+    }
+
+    public boolean setMine(){
+    	byte cost = 6; //повышено до 6, мина "повреждает" робота (образуется куча). Иначе нет смысла её ставить и тратить ход.
+    	if (!isSafePos(player.getPos().x, player.getPos().y)) return false;
+    	if (player.getEnergy() >= cost){
+    			player.chEnergy(-cost);
+    			board.SetKind(player.getPos(), Board.MINE);
+    			return true;
+    		}
+    	return false;
+    }
+    
+    public boolean bomb(){
+		byte cost = 1;
+		for (int i=-1; i<2; i++){
+			for (int j=-1; j<2; j++){
+				if ((i==0)&&(j==0))
+					continue;
+				if (board.isEnemy(player.getPos().x+i, player.getPos().y+j))
+					cost++;
+			}
+		}// назначили цену = 1 + количество врагов вокруг
+		
+    	if (player.getEnergy() >= cost){
+			for (int i=-1; i<2; i++){
+    			for (int j=-1; j<2; j++){
+					if ((i==0)&&(j==0))
+						continue;
+					if (isDanger2nd(player.getPos().x, player.getPos().y, i, j))
+						return false;
+				}
+			}//проверили на безопасность
+			
+    		player.chEnergy(-cost);
+    		for (int i=-1; i<2; i++)
+    			for (int j=-1; j<2; j++){
+    				board.chDiff(board.GetKind(player.getPos().x+i, player.getPos().y+j), 1);
+    				board.SetKind(player.getPos().x+i, player.getPos().y+j, Board.EMPTY);
+    			}
+    		player.chScore(board.diff2score());
+        	if (board.isBotsDead())    		
+        		initLevel();	
+			return true;
+    	}
+		return false;
     }
 
     /** Ищет свободную случайную клетку и сохраняет ее в глобальный freePos.
       Возвращает true, если свободная клетка найдена */
 	private boolean findFreePos(){
-    	if (mBoard.RandomFindFreePos(freePos))
+    	if (board.RandomFindFreePos(freePos))
     		return true;
     	//Если свободная клетка не найдена, то игра заканчивается победой
     	winner();
@@ -90,26 +149,26 @@ public class World{
 	private boolean saveInfoAboutJunk(int startX, int startY, int endX, int endY){
 		isJunkExists = false;
 		objectKind=0;
-		if (mBoard.isJunk(startX, startY)){
+		if (board.isJunk(startX, startY)){
 			junkPos.x = startX;
 			junkPos.y = startY;
 			objectPos.x = endX;
 			objectPos.y = endY;
 			//проверки на принадлежность поля
-			if (!mBoard.isOnBoard(junkPos))
+			if (!board.isOnBoard(junkPos))
 				return false;
-			if (!mBoard.isOnBoard(objectPos))
+			if (!board.isOnBoard(objectPos))
 				return false;
 			//проверка на мусор
-			if (mBoard.isJunk(endX, endY))
+			if (board.isJunk(endX, endY))
 				return false;
 			isJunkExists = true;
 			//сохраняем информацию о конечной клетке
-			objectKind = mBoard.GetKind(endX, endY);
-			mBoard.chDiff(objectKind, 1);
+			objectKind = board.GetKind(endX, endY);
+			board.chDiff(objectKind, 1);
 			//перемещаем мусор
-			mBoard.SetKind(junkPos, Board.EMPTY);
-			mBoard.SetKind(objectPos, Board.JUNK);
+			board.SetKind(junkPos, Board.EMPTY);
+			board.SetKind(objectPos, Board.JUNK);
 		}
 		return true;
 	}
@@ -117,9 +176,9 @@ public class World{
 	/** Восстанавливает сохраненную информацию о мусоре */
 	private void backInfoAboutJunk(){
 		if (isJunkExists){
-			mBoard.chDiff(objectKind, -1);
-			mBoard.SetKind(junkPos, Board.JUNK);
-			mBoard.SetKind(objectPos, objectKind);
+			board.chDiff(objectKind, -1);
+			board.SetKind(junkPos, Board.JUNK);
+			board.SetKind(objectPos, objectKind);
 		}
 	}
 	
@@ -197,7 +256,7 @@ public class World{
     			break;
     	}
     	//если новые координаты игрока находятся за пределами доски, то возвращает false
-    	if (!mBoard.isOnBoard(freePos)){
+    	if (!board.isOnBoard(freePos)){
     		backInfoAboutJunk();//возвращаем объекты на свои места
     		return false;
     	}
@@ -224,7 +283,7 @@ public class World{
     	else
     		if (robotY < playerY)
         		newBotY ++;
-    	mBoard.MoveObject(robotX, robotY, newBotX, newBotY);    	
+    	board.MoveObject(robotX, robotY, newBotX, newBotY);    	
     }
     
 	/*Передвигает роботов, стоящих от игрока на радиусе r, к игроку.
@@ -234,9 +293,9 @@ public class World{
     	for (int i=0; i<2*r+1; i++){
     		//верхняя горизонталь
     		if (all)
-    			isExists=mBoard.isEnemy(playerX-r+i,playerY-r);
+    			isExists=board.isEnemy(playerX-r+i,playerY-r);
     		else
-    			isExists=mBoard.isFastRobot(playerX-r+i,playerY-r);
+    			isExists=board.isFastRobot(playerX-r+i,playerY-r);
     		//если робот существует, то перемещаем его
     		if (isExists){
     			moveRobot(playerX-r+i, playerY-r, playerX, playerY);
@@ -246,9 +305,9 @@ public class World{
     		}
 			//нижняя горизонталь
     		if (all)
-    			isExists=mBoard.isEnemy(playerX-r+i,playerY+r);
+    			isExists=board.isEnemy(playerX-r+i,playerY+r);
     		else
-    			isExists=mBoard.isFastRobot(playerX-r+i,playerY+r);
+    			isExists=board.isFastRobot(playerX-r+i,playerY+r);
 			if (isExists){
 				moveRobot(playerX-r+i, playerY+r, playerX, playerY);
     			if (r == 1)
@@ -256,9 +315,9 @@ public class World{
     		}
     		//левая вертикаль
 			if (all)
-				isExists=mBoard.isEnemy(playerX-r,playerY-r+i);
+				isExists=board.isEnemy(playerX-r,playerY-r+i);
     		else
-    			isExists=mBoard.isFastRobot(playerX-r,playerY-r+i);
+    			isExists=board.isFastRobot(playerX-r,playerY-r+i);
     		if (isExists){
     			moveRobot(playerX-r, playerY-r+i, playerX, playerY);
     			if (r == 1)
@@ -266,9 +325,9 @@ public class World{
     		}
     		//правая вертикаль
     		if (all)
-    			isExists=mBoard.isEnemy(playerX+r,playerY-r+i);
+    			isExists=board.isEnemy(playerX+r,playerY-r+i);
     		else
-    			isExists=mBoard.isFastRobot(playerX+r,playerY-r+i);
+    			isExists=board.isFastRobot(playerX+r,playerY-r+i);
     		if (isExists){
     			moveRobot(playerX+r, playerY-r+i, playerX, playerY);
     			if (r == 1)
@@ -294,29 +353,29 @@ public class World{
     	//передвижение быстрых роботов второй раз
     	for (int i=1; i<=d; i++)
     		moveRobots(playerPos.x, playerPos.y, i, false);
-    	player.chScore(mBoard.diff2score());
+    	player.chScore(board.diff2score());
     	//если игрок мертв, то игра заканчивается поражением
     	if (!player.isAlive){
     		return;
     	}
     	//если количество живых роботов == 0, то переходим на следующий уровень
-    	if (mBoard.isBotsDead())    		
+    	if (board.isBotsDead())    		
     		initLevel();	
 	}
 
 	/** проверка проверка соседних клеток на наличие угрозы. */
 	private boolean isSafePos(int x, int y){
 		//проверяем соседей в радиусе 1 клетки 
-		if (!mBoard.isEmpty(x,y))
+		if (!board.isEmpty(x,y))
 			return false;
 		for(byte i=-1; i<2;++i)
 			for (byte j=-1; j<2; ++j){
 				if ((i==0)&&(j==0))
 					continue;
-				if (mBoard.isEnemy(x+j,y+i))
+				if (board.isEnemy(x+j,y+i))
 					return false;
 				else
-					if (mBoard.isEmpty(x+j,y+i)&&(isDanger2nd(x, y, i, j))) //и в радиусе 2
+					if (board.isEmpty(x+j,y+i)&&(isDanger2nd(x, y, i, j))) //и в радиусе 2
 						return false;
 			}
 		return true;
@@ -329,7 +388,7 @@ public class World{
 	 * возвращает true, если p небезопасна */
 	private boolean isDanger2nd(int px, int py, int y, int x){
 		if ((x!=0)&&(y!=0)){		//диагонали
-			if (mBoard.isFastRobot(px+2*x, py+y*2))
+			if (board.isFastRobot(px+2*x, py+y*2))
 				return true;
 		}
 		else{ 	// проверка 3 клеток, с которых за 2 хода достигается p через (p.x+x;p.y+y)
@@ -337,17 +396,17 @@ public class World{
 			int count = 0;
 			if (x==0){	//по горизонтали
 				for(byte j=-1; j<2; ++j)
-					if (mBoard.isEnemy(px+j,y*2+py)){
+					if (board.isEnemy(px+j,y*2+py)){
 						count++;
-						if (mBoard.isFastRobot(px+j,y*2+py))
+						if (board.isFastRobot(px+j,y*2+py))
 							fast=true;
 					}
 			}
 			else{	//по вертикали
 				for(byte i=-1; i<2; ++i)
-					if (mBoard.isEnemy(px+x*2, py+i)){
+					if (board.isEnemy(px+x*2, py+i)){
 						count++;
-						if (mBoard.isFastRobot(px+x*2, py+i))
+						if (board.isFastRobot(px+x*2, py+i))
 							fast=true;
 					}
 			}
@@ -376,8 +435,12 @@ public class World{
     public void winner(){
 
     }
+    
+    public int getLevel() {
+		return mLevel;
+	}
 
-    public void defeat(){
+	public void defeat(){
     	mLevel = 0;
 		player.chEnergy(-player.getEnergy());    		
 		player.isAlive = true;
