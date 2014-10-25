@@ -205,4 +205,8 @@ public class Board{
 	public int getAliveBotCount() {
 		return mAliveBotCount;
 	}
+
+    public void giveLinkToManager(BinaryIOManager manager){
+        manager.setBoard(mBoard);
+    }
 }

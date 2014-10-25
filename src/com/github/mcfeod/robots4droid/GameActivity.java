@@ -12,6 +12,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
+import saves.BinaryIOManager;
+import saves.SaveManager;
+
 
 public class GameActivity extends Activity {
 	private int width=20, height=15; //размеры сторон
@@ -90,6 +93,26 @@ public class GameActivity extends Activity {
 		}
 	};
 
+    public void load(){
+        BinaryIOManager loader = new BinaryIOManager(getApplicationContext(), world);
+        world.mBoard.giveLinkToManager(loader);
+        SaveManager.INSTANCE.loadGameFromBinary(loader);
+    }
+
+    public void save(){
+        BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
+        world.mBoard.giveLinkToManager(saver);
+        SaveManager.INSTANCE.saveGameToBinary(saver);
+    }
+
+    private void changeText(){
+        String str="Level: "+Integer.toString(world.mLevel)+
+                "  Score: "+Integer.toString(world.player.getScore())+
+                "  Energy: "+Integer.toString(world.player.getEnergy())+
+                "  isAlive: "+world.player.isAlive;
+        text.setText(str);
+    }
+
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +139,8 @@ public class GameActivity extends Activity {
         mSoundTrack.setLooping(true);
         // при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
         // по этой причине start() и stop() размещены в onStart() и onStop()
+        String settings = getIntent().getStringExtra(MainActivity.SETTINGS);
+        isMusicOn = SettingsParser.isMusicOn(settings);
         
         
         if (savedInstanceState == null){
@@ -164,7 +189,7 @@ public class GameActivity extends Activity {
 			mNeedCrutchForLaunch = false;
 		}
 	}
-	
+
     @Override
     protected void onResume(){
         super.onResume();
