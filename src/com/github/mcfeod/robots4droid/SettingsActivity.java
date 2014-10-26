@@ -69,14 +69,11 @@ public class SettingsActivity extends Activity {
             }
         });
     }
-}
-
-//    Даже так не работает
+//    Не знаю, почему, но так не работает. Было бы эффективнее.
 //    @Override
-//    protected void onPause(){
+//    protected void onDestroy(){
 //        mIntent.putExtra(MainActivity.SETTINGS,
-//                SettingsParser.getSettingsString(musicBox.isChecked(), false, 0));
+//                SettingsParser.getSettingsString(musicBox.isChecked()));
 //        setResult(RESULT_OK, mIntent);
-//        Log.i("Settings", "stopped\n");
-//        super.onPause();
 //    }
+}

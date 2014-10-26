@@ -45,7 +45,7 @@ public class BinaryIOManager {
             throw new RuntimeException("Board for load is not initialised");
         }
 
-        SavedGame save = new SavedGame(mWorld.mLevel, mWorld.player.getScore(), new Date());
+        SavedGame save = new SavedGame(mWorld.getLevel(), mWorld.player.getScore(), new Date());
         String fileName = save.getFileName();
         BufferedOutputStream stream = null;
         try {

@@ -1,7 +1,8 @@
 package saves;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+
 import com.github.mcfeod.robots4droid.HostActivity;
 
 public class SaveWindowActivity extends HostActivity {

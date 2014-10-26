@@ -1,9 +1,9 @@
 package com.github.mcfeod.robots4droid;
 
 public class World{	
-	public int mLevel;
-    public int mHeight;
-    public int mWidth;
+	private int mLevel;
+	private int mHeight;
+	private int mWidth;
     private int mFastRobotCount;
     private int mRobotCount;
 
@@ -27,8 +27,6 @@ public class World{
     private Point junkPos, objectPos, freePos;
     private boolean isJunkExists;
     private byte objectKind;
-
-    private boolean areSuicidesForbidden;
     
     public World(int width, int height){
 		mWidth = width;
@@ -42,10 +40,6 @@ public class World{
         objectPos = new Point();
         //создание первого уровня
         initLevel();
-
-        areSuicidesForbidden = !SettingsParser.areSuicidesOn();
-        // Побочный эффект:эту настройку нельзя изменять во время партии
-        // Но, пока нет соохранения партии в Bundle, изменение настроек во время партии вообще невозможно
     }
     
     public World(int width, int height, int bots, int fastbots,
@@ -66,6 +60,7 @@ public class World{
     private void initLevel(){
     	board.Clear(); //очистка доски
     	mLevel ++;
+    	//увеличение энергии и очков
 		if (mLevel>1)
 			player.chScore((mLevel*5));
 		//определение количества роботов
@@ -90,13 +85,14 @@ public class World{
 				board.SetKind(freePos, Board.FASTROBOT);
     	}
     	//Размещение игрока
-    	if (findSafePos())
+    	if (findSafePos());
 			player.setPos(freePos);
     }
 
     public boolean setMine(){
     	byte cost = 6; //повышено до 6, мина "повреждает" робота (образуется куча). Иначе нет смысла её ставить и тратить ход.
-    	if (!isSafePos(player.getPos().x, player.getPos().y)) return false;
+    	if (player.areSuicidesForbidden)
+    		if (!isSafePos(player.getPos().x, player.getPos().y)) return false;
     	if (player.getEnergy() >= cost){
     			player.chEnergy(-cost);
     			board.SetKind(player.getPos(), Board.MINE);
@@ -121,8 +117,9 @@ public class World{
     			for (int j=-1; j<2; j++){
 					if ((i==0)&&(j==0))
 						continue;
-					if (isDanger2nd(player.getPos().x, player.getPos().y, i, j))
-						return false;
+					if (player.areSuicidesForbidden)
+						if (isDanger2nd(player.getPos().x, player.getPos().y, i, j))
+							return false;
 				}
 			}//проверили на безопасность
 			
@@ -271,7 +268,7 @@ public class World{
     		backInfoAboutJunk();//возвращаем объекты на свои места
     		return false;
     	}
-    	if (areSuicidesForbidden && !isSafePos(freePos.x, freePos.y)){
+    	if (player.areSuicidesForbidden && !isSafePos(freePos.x, freePos.y)){
     		backInfoAboutJunk();
     		return false;
     	}
@@ -446,13 +443,22 @@ public class World{
 
     }
     
-    public int getLevel() {
+    public int getHeight() {
+		return mHeight;
+	}
+
+	public int getWidth() {
+		return mWidth;
+	}
+
+	public int getLevel() {
 		return mLevel;
 	}
 
 	public void defeat(){
     	mLevel = 0;
-		player.chEnergy(-player.getEnergy());    		
+		player.chEnergy(-player.getEnergy());
+		
 		player.isAlive = true;
 		initLevel();
     }

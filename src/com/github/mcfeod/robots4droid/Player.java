@@ -5,6 +5,7 @@ public class Player{
     private int mScore;
     private int mEnergy;
     public boolean isAlive; 
+    public boolean areSuicidesForbidden;
 
 	public Player(){
 		mPos = new Point();

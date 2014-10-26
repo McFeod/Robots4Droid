@@ -1,17 +1,18 @@
 package saves;
 
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.github.mcfeod.robots4droid.R;
 
-class SaveFragment extends Fragment {
+public class SaveFragment extends Fragment {
     public static final String SAVED_GAME_NUMBER =
             "com.github.mcfeod.robots4droid.saved_game";
 
@@ -26,7 +27,7 @@ class SaveFragment extends Fragment {
 
         //
         mGameNumber = getArguments().getInt(SAVED_GAME_NUMBER);
-        mGame = SaveManager.INSTANCE.mGames.get(mGameNumber);
+        mGame = SaveManager.getInstance().mGames.get(mGameNumber);
         getActivity().setTitle("Save Fragment");
     }
 
@@ -41,8 +42,8 @@ class SaveFragment extends Fragment {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity activity = getActivity();
-                SaveManager.INSTANCE.removeSave(mGameNumber, activity.getApplicationContext());
+                FragmentActivity activity = getActivity();
+                SaveManager.getInstance().removeSave(mGameNumber, activity.getApplicationContext());
                 activity.finish();
             }
         });
@@ -51,7 +52,7 @@ class SaveFragment extends Fragment {
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SaveManager.INSTANCE.rememberGame(mGameNumber);
+                SaveManager.getInstance().rememberGame(mGameNumber);
                 getActivity().finish();
             }
         });

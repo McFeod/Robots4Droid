@@ -9,15 +9,17 @@ class SavedGame {
     public int mScore;
     public java.util.Date mCreationDate;
 
-    private static StringBuilder sBuilder = new StringBuilder();
+    private static StringBuilder sBuilder;
 
     public SavedGame(int level, int score, Date creationDate){
+    	sBuilder = new StringBuilder();
         mLevel = level;
         mScore = score;
         mCreationDate = creationDate;
     }
 
     public SavedGame(int level, int score, Date creationDate, long id){
+    	sBuilder = new StringBuilder();
         mLevel = level;
         mScore = score;
         mCreationDate = creationDate;

@@ -1,25 +1,28 @@
 package saves;
 
-import android.content.Context;
-import android.util.Log;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
+import android.content.Context;
+import android.util.Log;
+
 public class SaveManager {
     public static final String TAG = "SaveManager";
-    public static final SaveManager INSTANCE = new SaveManager();
+    private static final SaveManager INSTANCE = new SaveManager();
     public static final int UNDEFINED_NUMBER = -2;
 
-    public ArrayList<SavedGame> mGames = new ArrayList<SavedGame>();
+    public ArrayList<SavedGame> mGames  = new ArrayList<SavedGame>();
 
     private int mLoadingGameNumber = UNDEFINED_NUMBER;
-    private SaveDatabaseManager mDAO;
     private boolean mIsDatabaseClosed = true;
 
-    public void closeDatabaseConnection(){
+    public static SaveManager getInstance() {
+		return INSTANCE;
+	}
+
+	public void closeDatabaseConnection(){
         if(!mIsDatabaseClosed){
-            mDAO.closeDatabase();
+        	SaveDatabaseManager.getInstance().closeDatabase();
             mIsDatabaseClosed = true;
         }
     }
@@ -36,9 +39,9 @@ public class SaveManager {
             // удаляем соохранение из списка
             mGames.remove(mLoadingGameNumber);
             // удаляем запись о соохранении из базы данных
-            mDAO.openDatabase();
-            mDAO.deleteSave(loadingGame);
-            mDAO.closeDatabase();
+            SaveDatabaseManager.getInstance().openDatabase();
+            SaveDatabaseManager.getInstance().deleteSave(loadingGame);
+            SaveDatabaseManager.getInstance().closeDatabase();
             // удаляем файл соохранения
             fileManager.deleteGame(loadingGame);
             // стираем память о соохранении
@@ -52,12 +55,12 @@ public class SaveManager {
     }
 
     public void loadSavesFromDatabase(){
-        mDAO.loadSaves();
+    	SaveDatabaseManager.getInstance().loadSaves();
     }
 
     public void openDatabaseConnection(){
         if(mIsDatabaseClosed){
-            mDAO.openDatabase();
+        	SaveDatabaseManager.getInstance().openDatabase();
             mIsDatabaseClosed = false;
         }
     }
@@ -71,7 +74,7 @@ public class SaveManager {
         // удаляем соохранение из списка
         mGames.remove(saveNumber);
         // удаляем запись о соохранении из базы данных
-        mDAO.deleteSave(save);
+        SaveDatabaseManager.getInstance().deleteSave(save);
         // удаляем файл соохранения
         BinaryIOManager.deleteGameFile(save, context);
     }
@@ -80,9 +83,9 @@ public class SaveManager {
         try {
             SavedGame save = fileManager.saveGame();
             mGames.add(save);
-            mDAO.openDatabase();
-            mDAO.insertSave(save);
-            mDAO.closeDatabase();
+            SaveDatabaseManager.getInstance().openDatabase();
+            SaveDatabaseManager.getInstance().insertSave(save);
+            SaveDatabaseManager.getInstance().closeDatabase();
         }
         catch (IOException e){
             Log.d(TAG, "IOException during save");
@@ -90,7 +93,5 @@ public class SaveManager {
         }
     }
 
-    private SaveManager(){
-        mDAO = new SaveDatabaseManager();
-    }
+    private SaveManager(){}
 }

@@ -1,16 +1,14 @@
 package saves;
 
+import java.util.Date;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import java.util.Date;
-
 class SaveDatabaseManager {
-
-    private static final String TAG = "SaveDatabaseManager";
+	private static final String TAG = "SaveDatabaseManager";
     private static final String DB_PATH = "/data/data/com.github.mcfeod.robots4droid/database";
     private static final String TABLE_SAVES = "saves";
 
@@ -28,13 +26,19 @@ class SaveDatabaseManager {
     private static final int DATE_INDEX = 1;
     private static final int LEVEL_INDEX = 2;
     private static final int SCORE_INDEX = 3;
+    
+    private static final SaveDatabaseManager INSTANCE = new SaveDatabaseManager();
 
     private SQLiteDatabase mDatabase;
     private String[] mArg = new String[1];
 
-    public SaveDatabaseManager(){}
+    private SaveDatabaseManager(){}
 
-    public void closeDatabase(){
+    public static SaveDatabaseManager getInstance() {
+		return INSTANCE;
+	}
+
+	public void closeDatabase(){
         mDatabase.close();
         Log.d(TAG, "Database closed");
     }
@@ -56,7 +60,7 @@ class SaveDatabaseManager {
     /*Очищает список mScore и загружает в него соохранения из базы данных*/
     public void loadSaves(){
         Log.d(TAG, "Loading saves");
-        SaveManager.INSTANCE.mGames.clear();
+        SaveManager.getInstance().mGames.clear();
 
         // выгружаем всё из базы
         Cursor cursor = mDatabase.query(TABLE_SAVES, sAllColumns, null, null, null, null, null);
@@ -72,7 +76,7 @@ class SaveDatabaseManager {
             date = new Date(cursor.getLong(DATE_INDEX));
             level = cursor.getInt(LEVEL_INDEX);
             score = cursor.getInt(SCORE_INDEX);
-            SaveManager.INSTANCE.mGames.add(new SavedGame(level, score, date, id));
+            SaveManager.getInstance().mGames.add(new SavedGame(level, score, date, id));
             cursor.moveToNext();
         }
     }

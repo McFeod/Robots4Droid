@@ -1,10 +1,13 @@
 package com.github.mcfeod.robots4droid;
 
+import saves.BinaryIOManager;
+import saves.SaveManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,8 +16,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import saves.BinaryIOManager;
-import saves.SaveManager;
 
 
 public class GameActivity extends Activity {
@@ -23,14 +24,13 @@ public class GameActivity extends Activity {
     private int mLastLevel=-1;
     private boolean mNeedCrutchForLaunch = true;
 
-    private MediaPlayer mSoundTrack;
+    private MediaPlayer mSoundTrack; 
     private boolean isMusicOn;
 
     private TextView text;
-    private Button saveButton;
     private boolean isSaveUsed = false;
     private GameSurfaceView view;
-
+	private Button saveButton;
 
 	public OnClickListener listener = new OnClickListener() {
 		@Override
@@ -54,7 +54,7 @@ public class GameActivity extends Activity {
 				}
 				if (succ){
 					view.mDrawThread.moveTo(world.player.getPos());
-					view.mDrawThread.delay(400);
+					view.mDrawThread.delay(200);
 					//передвигаем роботов
 					world.moveBots();
 					if (world.player.isAlive){
@@ -85,8 +85,8 @@ public class GameActivity extends Activity {
 				}
 					
 			}
-			if (mLastLevel != world.mLevel){
-				mLastLevel = world.mLevel;
+			if (mLastLevel != world.getLevel()){
+				mLastLevel = world.getLevel();
 				Toast.makeText(GameActivity.this, "NEW LEVEL: " + mLastLevel , Toast.LENGTH_SHORT).show();
 				
 			}
@@ -115,12 +115,12 @@ public class GameActivity extends Activity {
         findViewById(R.id.stay_button).setOnClickListener(listener);
 		findViewById(R.id.mine_button).setOnClickListener(listener);
 		findViewById(R.id.bomb_button).setOnClickListener(listener);
-
-        saveButton = (Button)findViewById(R.id.save_button);
-        saveButton.setOnClickListener(new OnClickListener() {
+		
+		saveButton = (Button)findViewById(R.id.save_button);
+		saveButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                save();
+                if (Build.VERSION.SDK_INT >= 11) save();
             }
         });
         
@@ -129,13 +129,16 @@ public class GameActivity extends Activity {
         // при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
         // по этой причине start() и stop() размещены в onStart() и onStop()
         
+        
         if (savedInstanceState == null){
         	world = new World(width, height);
             isMusicOn = SettingsParser.isMusicOn();
+            world.player.areSuicidesForbidden = !SettingsParser.areSuicidesOn();
             // если выбрана соохранённая игра, загружаем из соохранения
-            if(SaveManager.INSTANCE.hasLoadingGame()){
-                load();
-            }
+			if (Build.VERSION.SDK_INT >= 11)  
+			     if(SaveManager.getInstance().hasLoadingGame()){
+		        	  load();
+		        }
         }else{
         	world = new World(
         			savedInstanceState.getInt("width"),
@@ -152,14 +155,13 @@ public class GameActivity extends Activity {
         	for(int i=0; i<width; ++i){
         		 world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
         	}
+        	world.player.areSuicidesForbidden = savedInstanceState.getBoolean("areSuicidesForbidden");
         	isMusicOn = savedInstanceState.getBoolean("isMusicOn");
         	if (isMusicOn)
         		mSoundTrack.seekTo(savedInstanceState.getInt("musicTime")+400);
         }
 		view = (GameSurfaceView)findViewById(R.id.game);
         view.SetWorld(world);
-        
-        
         view.CreateThread();
         view.mDrawThread.SetActivity(this);
         text=(TextView)findViewById(R.id.textView1);
@@ -176,7 +178,7 @@ public class GameActivity extends Activity {
 			mNeedCrutchForLaunch = false;
 		}
 	}
-
+	
     @Override
     protected void onResume(){
         super.onResume();
@@ -198,7 +200,7 @@ public class GameActivity extends Activity {
     protected void onDestroy(){
     	super.onDestroy();
     	view.StopThread();
-        mSoundTrack.release();
+    	mSoundTrack.release();
     }
     
     @Override
@@ -217,26 +219,28 @@ public class GameActivity extends Activity {
     	savedInstanceState.putInt("playerX", world.player.getPos().x);
     	savedInstanceState.putInt("playerY", world.player.getPos().y);
     	savedInstanceState.putBoolean("isAlive", world.player.isAlive);
+    	savedInstanceState.putBoolean("areSuicidesForbidden", world.player.areSuicidesForbidden);
     	savedInstanceState.putBoolean("isMusicOn", isMusicOn);
+    	//!//savedInstanceState.putBoolean("safeMoves", safeMoves);
     	if (isMusicOn)
     		savedInstanceState.putInt("musicTime",mSoundTrack.getCurrentPosition());
     }
 
     private void changeText(){
         text.setText(String.format("L: %d, S: %d, E: %d",
-                world.mLevel, world.player.getScore(), world.player.getEnergy()));
+                world.getLevel(), world.player.getScore(), world.player.getEnergy()));
     }
 
     private void load(){
         BinaryIOManager loader = new BinaryIOManager(getApplicationContext(), world);
         world.board.giveLinkToManager(loader);
-        SaveManager.INSTANCE.loadGameFromBinary(loader);
+        SaveManager.getInstance().loadGameFromBinary(loader);
     }
 
     private void save(){
         BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
         world.board.giveLinkToManager(saver);
-        SaveManager.INSTANCE.saveGameToBinary(saver);
+        SaveManager.getInstance().saveGameToBinary(saver);
         // костыль, чтобы не соохранялисб больше одного раза
         saveButton.setEnabled(false);
         isSaveUsed = true;

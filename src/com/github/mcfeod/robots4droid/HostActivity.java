@@ -1,12 +1,11 @@
 package com.github.mcfeod.robots4droid;
 
-
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 
-public abstract class HostActivity extends Activity {
+public abstract class HostActivity extends FragmentActivity {
     protected abstract Fragment createFragment();
 
     @Override
@@ -14,7 +13,7 @@ public abstract class HostActivity extends Activity {
         super.onCreate(savedInstanceBundle);
         setContentView(R.layout.activity_host);
 
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragmentContainer);
         if(fragment == null){
             fragment = createFragment();
@@ -22,6 +21,5 @@ public abstract class HostActivity extends Activity {
                     .add(R.id.fragmentContainer, fragment)
                     .commit();
         }
-
     }
 }

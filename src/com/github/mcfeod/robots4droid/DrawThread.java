@@ -131,8 +131,8 @@ public class DrawThread extends Thread {
     public void moveTo(Point p){
     	movePos.x = (p.x*widthPX+widthPX/2) - view.getWidth()/2 + indent;
     	movePos.y = (p.y*heightPX+heightPX/2) - view.getHeight()/2 + indent;
-        int boardX=world.mWidth*widthPX+indent*2;
-        int boardY=world.mHeight*heightPX+indent*2;
+        int boardX=world.getWidth()*widthPX+indent*2;
+        int boardY=world.getHeight()*heightPX+indent*2;
         //проверка выхода за пределы экрана
         if (movePos.x < 0)
         	movePos.x = 0;
@@ -164,8 +164,8 @@ public class DrawThread extends Thread {
     
     public void repaint(){
 		canvas.drawColor(Color.WHITE);
-		for (int i=0; i<world.mWidth; i++)
-        	for (int j=0; j<world.mHeight; j++)
+		for (int i=0; i<world.getWidth(); i++)
+        	for (int j=0; j<world.getHeight(); j++)
         		if (isVisible(i,j)){
         			if ((i+j)%2 == 0)
         				canvas.drawBitmap(bitCell2,widthPX*i+indent-startPos.x,
@@ -201,8 +201,8 @@ public class DrawThread extends Thread {
 	        startPos.x += dX;
 	        startPos.y += dY;
 	        //int screenX = view.getWidth(), screenY = view.getHeight();
-	        int boardX=world.mWidth*widthPX+indent*2;
-	        int boardY=world.mHeight*heightPX+indent*2;
+	        int boardX=world.getWidth()*widthPX+indent*2;
+	        int boardY=world.getHeight()*heightPX+indent*2;
 	        //проверка выхода за пределы экрана
 	        if (startPos.x < 0)
 	        	startPos.x = 0;
