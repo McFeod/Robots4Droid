@@ -60,6 +60,7 @@ public class World{
     private void initLevel(){
     	board.Clear(); //очистка доски
     	mLevel ++;
+        player.chEnergy((int)(Math.sqrt(mLevel)));
     	//увеличение энергии и очков
 		if (mLevel>1)
 			player.chScore((mLevel*5));
@@ -67,11 +68,9 @@ public class World{
         if(SettingsParser.needExtraFastBots()){
             mRobotCount = 5 + (int)(0.5 * mLevel);
             mFastRobotCount = mLevel;
-            player.chEnergy(mLevel);
         }else{
             mRobotCount = 5 + (int)(1.5 * mLevel);
             mFastRobotCount = -4 + (int)(1.2 * mLevel);
-            player.chEnergy((int)(mLevel*0.2+1));
         }
     	board.setRobotCount(mRobotCount, mFastRobotCount);
     	//Размещение простых роботов
@@ -307,8 +306,6 @@ public class World{
     		if (isExists){
     			moveRobot(playerX-r+i, playerY-r, playerX, playerY);
     			//если радиус == 1, то игрок убит
-    			if (r == 1)
-    				player.isAlive = false;
     		}
 			//нижняя горизонталь
     		if (all)
@@ -317,8 +314,6 @@ public class World{
     			isExists=board.isFastRobot(playerX-r+i,playerY+r);
 			if (isExists){
 				moveRobot(playerX-r+i, playerY+r, playerX, playerY);
-    			if (r == 1)
-    				player.isAlive = false;
     		}
     		//левая вертикаль
 			if (all)
@@ -327,8 +322,6 @@ public class World{
     			isExists=board.isFastRobot(playerX-r,playerY-r+i);
     		if (isExists){
     			moveRobot(playerX-r, playerY-r+i, playerX, playerY);
-    			if (r == 1)
-    				player.isAlive = false;
     		}
     		//правая вертикаль
     		if (all)
@@ -337,8 +330,6 @@ public class World{
     			isExists=board.isFastRobot(playerX+r,playerY-r+i);
     		if (isExists){
     			moveRobot(playerX+r, playerY-r+i, playerX, playerY);
-    			if (r == 1)
-    				player.isAlive = false;
     		}
     	}
     }
@@ -361,10 +352,16 @@ public class World{
     	for (int i=1; i<=d; i++)
     		moveRobots(playerPos.x, playerPos.y, i, false);
     	player.chScore(board.diff2score());
+    	/*костыль для сочетания "Ваниной спиральки" и наглости игрока, 
+    	 * прущего на робота.*/ 
+    	if (board.wasEnemy(player.getPos()))
+			player.isAlive = false;
     	//если игрок мертв, то игра заканчивается поражением
     	if (!player.isAlive){
     		return;
     	}
+    	
+			
     	//если количество живых роботов == 0, то переходим на следующий уровень
     	if (board.isBotsDead())    		
     		initLevel();	
@@ -457,9 +454,8 @@ public class World{
 
 	public void defeat(){
     	mLevel = 0;
-		player.chEnergy(-player.getEnergy());
-		
-		player.isAlive = true;
+    	player.reset();
+		//TODO запись рекорда
 		initLevel();
     }
 

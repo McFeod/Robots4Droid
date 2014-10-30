@@ -163,7 +163,7 @@ public class DrawThread extends Thread {
     }
     
     public void repaint(){
-		canvas.drawColor(Color.WHITE);
+		canvas.drawColor(Color.GRAY);
 		for (int i=0; i<world.getWidth(); i++)
         	for (int j=0; j<world.getHeight(); j++)
         		if (isVisible(i,j)){

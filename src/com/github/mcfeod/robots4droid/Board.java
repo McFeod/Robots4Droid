@@ -148,6 +148,10 @@ public class Board{
 				return true;
 		return false;
     }
+    
+    public boolean wasEnemy(Point p){
+		return (isEnemy(p.x, p.y)||isJunk(p.x, p.y));
+	}
 
 	/*Возвращает true, если точке с координатами (x, y) пустая*/
 	public boolean isEmpty(int x, int y){

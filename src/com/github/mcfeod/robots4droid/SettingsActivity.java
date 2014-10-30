@@ -69,11 +69,4 @@ public class SettingsActivity extends Activity {
             }
         });
     }
-//    Не знаю, почему, но так не работает. Было бы эффективнее.
-//    @Override
-//    protected void onDestroy(){
-//        mIntent.putExtra(MainActivity.SETTINGS,
-//                SettingsParser.getSettingsString(musicBox.isChecked()));
-//        setResult(RESULT_OK, mIntent);
-//    }
 }

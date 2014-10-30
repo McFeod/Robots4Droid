@@ -43,6 +43,7 @@ public class MainActivity extends Activity {
             	 }
             }
         });
+        findViewById(R.id.load_button).setVisibility(8);
     }
 
 }

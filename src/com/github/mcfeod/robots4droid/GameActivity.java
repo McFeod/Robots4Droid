@@ -117,6 +117,7 @@ public class GameActivity extends Activity {
 		findViewById(R.id.bomb_button).setOnClickListener(listener);
 		
 		saveButton = (Button)findViewById(R.id.save_button);
+		saveButton.setVisibility(8);
 		saveButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,8 +228,9 @@ public class GameActivity extends Activity {
     }
 
     private void changeText(){
-        text.setText(String.format("L: %d, S: %d, E: %d",
-                world.getLevel(), world.player.getScore(), world.player.getEnergy()));
+        text.setText(String.format("Lvl: %d, Score: %d, Energy: %d, Bots :%d",
+                world.getLevel(), world.player.getScore(), world.player.getEnergy(), 
+                (world.board.getAliveBotCount()+world.board.getAliveFastBotCount())));
     }
 
     private void load(){
@@ -245,5 +247,10 @@ public class GameActivity extends Activity {
         saveButton.setEnabled(false);
         isSaveUsed = true;
     }
-  
+    
+    @Override
+    public void onBackPressed() {
+    	//save()
+    	super.onBackPressed();
+    }
 }

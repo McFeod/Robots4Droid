@@ -52,5 +52,10 @@ public class Player{
 	public void chEnergy(int diff){
 		mEnergy += diff;
 	}
-
+	
+	public void reset(){
+		mEnergy = 0;
+		mScore = 0;
+		isAlive = true;
+	}
 }

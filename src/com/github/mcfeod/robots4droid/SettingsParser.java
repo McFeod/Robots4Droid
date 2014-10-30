@@ -4,8 +4,8 @@ public class SettingsParser {
     public static final char NORMAL_MODE = '0';
     public static final char EXTRA_FAST_BOTS = '1';
 
-    private static boolean isMusicOn = false;
-    private static boolean areSuicidesPermitted = false;
+    private static boolean isMusicOn = true;
+    private static boolean areSuicidesPermitted = true;
     private static char gameMode = NORMAL_MODE;
 
     public static void setMusicMode(boolean on){
