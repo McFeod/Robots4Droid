@@ -1,31 +1,36 @@
 package com.github.mcfeod.robots4droid;
 
+import saves.BinaryIOManager;
+import saves.SaveManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 public class GameActivity extends Activity {
 	private int width=20, height=15; //размеры сторон
     private World world;
-    private String mMsgStr;
     private int mLastLevel=-1;
     private boolean mNeedCrutchForLaunch = true;
 
-    private MediaPlayer mSoundTrack;
+    private MediaPlayer mSoundTrack; 
     private boolean isMusicOn;
 
     private TextView text;
+    private boolean isSaveUsed = false;
     private GameSurfaceView view;
-
+	private Button saveButton;
 
 	public OnClickListener listener = new OnClickListener() {
 		@Override
@@ -49,17 +54,15 @@ public class GameActivity extends Activity {
 				}
 				if (succ){
 					view.mDrawThread.moveTo(world.player.getPos());
-					view.mDrawThread.delay(400);
+					view.mDrawThread.delay(200);
 					//передвигаем роботов
 					world.moveBots();
 					if (world.player.isAlive){
-						mMsgStr="L: "+Integer.toString(world.mLevel)+
-						 "  S: "+Integer.toString(world.player.getScore())+
-						 "  E: "+Integer.toString(world.player.getEnergy());
-						text.setText(mMsgStr);
+						changeText();
 						//отрисовываем роботов
 						view.mDrawThread.moveTo(world.player.getPos());
 					}else{
+                        saveButton.setEnabled(false);
 						AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
 						builder.setTitle(R.string.dialog);
 						builder.setMessage(R.string.dialog);
@@ -70,6 +73,7 @@ public class GameActivity extends Activity {
 						    	world.defeat();
 						    	view.mDrawThread.moveTo(world.player.getPos());
 								dialog.dismiss();
+                                saveButton.setEnabled(!isSaveUsed);
 						    }
 						});
 						AlertDialog dialog = builder.create();
@@ -81,8 +85,8 @@ public class GameActivity extends Activity {
 				}
 					
 			}
-			if (mLastLevel != world.mLevel){
-				mLastLevel = world.mLevel;
+			if (mLastLevel != world.getLevel()){
+				mLastLevel = world.getLevel();
 				Toast.makeText(GameActivity.this, "NEW LEVEL: " + mLastLevel , Toast.LENGTH_SHORT).show();
 				
 			}
@@ -110,7 +114,16 @@ public class GameActivity extends Activity {
         findViewById(R.id.safe_teleport_button).setOnClickListener(listener); 
         findViewById(R.id.stay_button).setOnClickListener(listener);
 		findViewById(R.id.mine_button).setOnClickListener(listener);
-		findViewById(R.id.bomb_button).setOnClickListener(listener); 
+		findViewById(R.id.bomb_button).setOnClickListener(listener);
+		
+		saveButton = (Button)findViewById(R.id.save_button);
+		saveButton.setVisibility(8);
+		saveButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= 11) save();
+            }
+        });
         
         mSoundTrack = MediaPlayer.create(this, R.raw.muz);
         mSoundTrack.setLooping(true);
@@ -120,8 +133,13 @@ public class GameActivity extends Activity {
         
         if (savedInstanceState == null){
         	world = new World(width, height);
-        	String settings = getIntent().getStringExtra(MainActivity.SETTINGS);
-            isMusicOn = SettingsParser.isMusicOn(settings);
+            isMusicOn = SettingsParser.isMusicOn();
+            world.player.areSuicidesForbidden = !SettingsParser.areSuicidesOn();
+            // если выбрана соохранённая игра, загружаем из соохранения
+			if (Build.VERSION.SDK_INT >= 11)  
+			     if(SaveManager.getInstance().hasLoadingGame()){
+		        	  load();
+		        }
         }else{
         	world = new World(
         			savedInstanceState.getInt("width"),
@@ -138,22 +156,19 @@ public class GameActivity extends Activity {
         	for(int i=0; i<width; ++i){
         		 world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
         	}
+        	world.player.areSuicidesForbidden = savedInstanceState.getBoolean("areSuicidesForbidden");
         	isMusicOn = savedInstanceState.getBoolean("isMusicOn");
         	if (isMusicOn)
         		mSoundTrack.seekTo(savedInstanceState.getInt("musicTime")+400);
         }
 		view = (GameSurfaceView)findViewById(R.id.game);
         view.SetWorld(world);
-        
-        
         view.CreateThread();
         view.mDrawThread.SetActivity(this);
         text=(TextView)findViewById(R.id.textView1);
         view.mDrawThread.SetText(text);
         view.StartThread();
-		text.setText("L: "+Integer.toString(world.mLevel)+
-    			"  S: "+Integer.toString(world.player.getScore())+
-    			"  E: "+Integer.toString(world.player.getEnergy()));
+		changeText();
     }
 
 	@Override
@@ -186,6 +201,7 @@ public class GameActivity extends Activity {
     protected void onDestroy(){
     	super.onDestroy();
     	view.StopThread();
+    	mSoundTrack.release();
     }
     
     @Override
@@ -204,9 +220,37 @@ public class GameActivity extends Activity {
     	savedInstanceState.putInt("playerX", world.player.getPos().x);
     	savedInstanceState.putInt("playerY", world.player.getPos().y);
     	savedInstanceState.putBoolean("isAlive", world.player.isAlive);
+    	savedInstanceState.putBoolean("areSuicidesForbidden", world.player.areSuicidesForbidden);
     	savedInstanceState.putBoolean("isMusicOn", isMusicOn);
+    	//!//savedInstanceState.putBoolean("safeMoves", safeMoves);
     	if (isMusicOn)
     		savedInstanceState.putInt("musicTime",mSoundTrack.getCurrentPosition());
     }
-  
+
+    private void changeText(){
+        text.setText(String.format("Lvl: %d, Score: %d, Energy: %d, Bots :%d",
+                world.getLevel(), world.player.getScore(), world.player.getEnergy(), 
+                (world.board.getAliveBotCount()+world.board.getAliveFastBotCount())));
+    }
+
+    private void load(){
+        BinaryIOManager loader = new BinaryIOManager(getApplicationContext(), world);
+        world.board.giveLinkToManager(loader);
+        SaveManager.getInstance().loadGameFromBinary(loader);
+    }
+
+    private void save(){
+        BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
+        world.board.giveLinkToManager(saver);
+        SaveManager.getInstance().saveGameToBinary(saver);
+        // костыль, чтобы не соохранялисб больше одного раза
+        saveButton.setEnabled(false);
+        isSaveUsed = true;
+    }
+    
+    @Override
+    public void onBackPressed() {
+    	//save()
+    	super.onBackPressed();
+    }
 }

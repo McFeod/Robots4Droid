@@ -5,6 +5,7 @@ public class Player{
     private int mScore;
     private int mEnergy;
     public boolean isAlive; 
+    public boolean areSuicidesForbidden;
 
 	public Player(){
 		mPos = new Point();
@@ -51,5 +52,10 @@ public class Player{
 	public void chEnergy(int diff){
 		mEnergy += diff;
 	}
-
+	
+	public void reset(){
+		mEnergy = 0;
+		mScore = 0;
+		isAlive = true;
+	}
 }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Robots4Droid</string>
     <string name="action_settings">Settings</string>
     <string name="button_teleport">Tele</string>
-    <string name="button_safe_teleport">Safe-Tele</string>
+    <string name="button_safe_teleport">SafeT</string>
+    <string name="button_save_level">Sav</string>
     <string name="game_button">Play game</string>
     <string name="settings_button">Settings</string>
 	<string name="button_mine">Mine</string>
@@ -13,4 +13,5 @@
     <string name="restart">Начать сначала</string>
     <string name="settings_button_hint">Push, if you don\'t like game</string>
     <string name="game_button_hint">Push, if you like game</string>
+    <string name="load_button">Load saved game</string>
 </resources>

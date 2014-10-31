@@ -10,4 +10,31 @@
             android:layout_height="wrap_content"
             android:text="Music On"
             android:id="@+id/musicBox" android:longClickable="false" android:enabled="true" android:checked="false"/>
+    <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Suicides On"
+            android:id="@+id/suicideBox"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Complexity"
+            android:id="@+id/textView"/>
+
+    <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/complexityGroup">
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Normal"
+                android:id="@+id/normalRadio"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Extra Fast Bots"
+                android:id="@+id/extraRadio"/>
+    </RadioGroup>
 </LinearLayout>

@@ -1,9 +1,9 @@
 package com.github.mcfeod.robots4droid;
 
 public class World{	
-	public int mLevel;
-    public int mHeight;
-    public int mWidth;
+	private int mLevel;
+	private int mHeight;
+	private int mWidth;
     private int mFastRobotCount;
     private int mRobotCount;
 
@@ -60,13 +60,18 @@ public class World{
     private void initLevel(){
     	board.Clear(); //очистка доски
     	mLevel ++;
+        player.chEnergy((int)(Math.sqrt(mLevel)));
     	//увеличение энергии и очков
-    	player.chEnergy((int)(mLevel*0.2+1));
 		if (mLevel>1)
 			player.chScore((mLevel*5));
 		//определение количества роботов
-    	mRobotCount = 5 + (int)(1.5 * mLevel);
-    	mFastRobotCount = -4 + (int)(1.2 * mLevel);
+        if(SettingsParser.needExtraFastBots()){
+            mRobotCount = 5 + (int)(0.5 * mLevel);
+            mFastRobotCount = mLevel;
+        }else{
+            mRobotCount = 5 + (int)(1.5 * mLevel);
+            mFastRobotCount = -4 + (int)(1.2 * mLevel);
+        }
     	board.setRobotCount(mRobotCount, mFastRobotCount);
     	//Размещение простых роботов
     	for(int i=0; i<mRobotCount; ++i){
@@ -85,7 +90,8 @@ public class World{
 
     public boolean setMine(){
     	byte cost = 6; //повышено до 6, мина "повреждает" робота (образуется куча). Иначе нет смысла её ставить и тратить ход.
-    	if (!isSafePos(player.getPos().x, player.getPos().y)) return false;
+    	if (player.areSuicidesForbidden)
+    		if (!isSafePos(player.getPos().x, player.getPos().y)) return false;
     	if (player.getEnergy() >= cost){
     			player.chEnergy(-cost);
     			board.SetKind(player.getPos(), Board.MINE);
@@ -110,8 +116,9 @@ public class World{
     			for (int j=-1; j<2; j++){
 					if ((i==0)&&(j==0))
 						continue;
-					if (isDanger2nd(player.getPos().x, player.getPos().y, i, j))
-						return false;
+					if (player.areSuicidesForbidden)
+						if (isDanger2nd(player.getPos().x, player.getPos().y, i, j))
+							return false;
 				}
 			}//проверили на безопасность
 			
@@ -260,8 +267,7 @@ public class World{
     		backInfoAboutJunk();//возвращаем объекты на свои места
     		return false;
     	}
-    	//TODO сделать опционально отключение "безопасных" ходов:
-    	if (!isSafePos(freePos.x, freePos.y)){
+    	if (player.areSuicidesForbidden && !isSafePos(freePos.x, freePos.y)){
     		backInfoAboutJunk();
     		return false;
     	}
@@ -300,8 +306,6 @@ public class World{
     		if (isExists){
     			moveRobot(playerX-r+i, playerY-r, playerX, playerY);
     			//если радиус == 1, то игрок убит
-    			if (r == 1)
-    				player.isAlive = false;
     		}
 			//нижняя горизонталь
     		if (all)
@@ -310,8 +314,6 @@ public class World{
     			isExists=board.isFastRobot(playerX-r+i,playerY+r);
 			if (isExists){
 				moveRobot(playerX-r+i, playerY+r, playerX, playerY);
-    			if (r == 1)
-    				player.isAlive = false;
     		}
     		//левая вертикаль
 			if (all)
@@ -320,8 +322,6 @@ public class World{
     			isExists=board.isFastRobot(playerX-r,playerY-r+i);
     		if (isExists){
     			moveRobot(playerX-r, playerY-r+i, playerX, playerY);
-    			if (r == 1)
-    				player.isAlive = false;
     		}
     		//правая вертикаль
     		if (all)
@@ -330,8 +330,6 @@ public class World{
     			isExists=board.isFastRobot(playerX+r,playerY-r+i);
     		if (isExists){
     			moveRobot(playerX+r, playerY-r+i, playerX, playerY);
-    			if (r == 1)
-    				player.isAlive = false;
     		}
     	}
     }
@@ -354,10 +352,16 @@ public class World{
     	for (int i=1; i<=d; i++)
     		moveRobots(playerPos.x, playerPos.y, i, false);
     	player.chScore(board.diff2score());
+    	/*костыль для сочетания "Ваниной спиральки" и наглости игрока, 
+    	 * прущего на робота.*/ 
+    	if (board.wasEnemy(player.getPos()))
+			player.isAlive = false;
     	//если игрок мертв, то игра заканчивается поражением
     	if (!player.isAlive){
     		return;
     	}
+    	
+			
     	//если количество живых роботов == 0, то переходим на следующий уровень
     	if (board.isBotsDead())    		
     		initLevel();	
@@ -436,14 +440,22 @@ public class World{
 
     }
     
-    public int getLevel() {
+    public int getHeight() {
+		return mHeight;
+	}
+
+	public int getWidth() {
+		return mWidth;
+	}
+
+	public int getLevel() {
 		return mLevel;
 	}
 
 	public void defeat(){
     	mLevel = 0;
-		player.chEnergy(-player.getEnergy());    		
-		player.isAlive = true;
+    	player.reset();
+		//TODO запись рекорда
 		initLevel();
     }
 

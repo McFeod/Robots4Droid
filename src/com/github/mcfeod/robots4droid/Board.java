@@ -1,5 +1,7 @@
 package com.github.mcfeod.robots4droid;
 
+import saves.BinaryIOManager;
+
 import java.util.Random;
 
 public class Board{
@@ -120,9 +122,7 @@ public class Board{
 
 	/*Проверяет, принадлежит ли точка с координатами (x, y) полю*/
 	public boolean isOnBoard(int x, int y){
-		if ((x>=0) && (y>=0) && (x<mWidth) && (y<mHeight))
-			return true;
-		return false;
+		return  (x>=0) && (y>=0) && (x<mWidth) && (y<mHeight);
 	}
 
 	/*Возвращает true, если в точке с координатами (x, y) находится любой робот*/
@@ -148,6 +148,10 @@ public class Board{
 				return true;
 		return false;
     }
+    
+    public boolean wasEnemy(Point p){
+		return (isEnemy(p.x, p.y)||isJunk(p.x, p.y));
+	}
 
 	/*Возвращает true, если точке с координатами (x, y) пустая*/
 	public boolean isEmpty(int x, int y){
@@ -205,4 +209,8 @@ public class Board{
 	public int getAliveBotCount() {
 		return mAliveBotCount;
 	}
+
+    public void giveLinkToManager(BinaryIOManager manager){
+        manager.setBoard(mBoard);
+    }
 }
