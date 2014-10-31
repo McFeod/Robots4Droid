@@ -3,7 +3,7 @@ package saves;
 import java.util.Date;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteCantOpenDatabaseException;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -79,6 +79,7 @@ class SaveDatabaseManager {
             SaveManager.getInstance().mGames.add(new SavedGame(level, score, date, id));
             cursor.moveToNext();
         }
+        cursor.close();
     }
 
     public void openDatabase(){
@@ -86,7 +87,7 @@ class SaveDatabaseManager {
             mDatabase = SQLiteDatabase.openDatabase(DB_PATH, null, SQLiteDatabase.OPEN_READWRITE);
             Log.d(TAG, "Existing database opened");
         }
-        catch (SQLiteCantOpenDatabaseException e){
+        catch (SQLiteException e){
             mDatabase = SQLiteDatabase.openDatabase(DB_PATH, null, SQLiteDatabase.CREATE_IF_NECESSARY);
             mDatabase.execSQL(CREATE_DATABASE_SQL);
             Log.d(TAG, "New database created");

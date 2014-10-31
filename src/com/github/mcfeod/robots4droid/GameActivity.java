@@ -117,11 +117,11 @@ public class GameActivity extends Activity {
 		findViewById(R.id.bomb_button).setOnClickListener(listener);
 		
 		saveButton = (Button)findViewById(R.id.save_button);
-		saveButton.setVisibility(8);
+		saveButton.setVisibility(View.VISIBLE);
 		saveButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= 11) save();
+                /*if (Build.VERSION.SDK_INT >= 11)*/ save();
             }
         });
         
@@ -136,7 +136,7 @@ public class GameActivity extends Activity {
             isMusicOn = SettingsParser.isMusicOn();
             world.player.areSuicidesForbidden = !SettingsParser.areSuicidesOn();
             // если выбрана соохранённая игра, загружаем из соохранения
-			if (Build.VERSION.SDK_INT >= 11)  
+			//if (Build.VERSION.SDK_INT >= 11)
 			     if(SaveManager.getInstance().hasLoadingGame()){
 		        	  load();
 		        }

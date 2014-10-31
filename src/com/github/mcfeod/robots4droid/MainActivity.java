@@ -37,13 +37,21 @@ public class MainActivity extends Activity {
         findViewById(R.id.load_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            	 if (Build.VERSION.SDK_INT >= 11){
+            	 //if (Build.VERSION.SDK_INT >= 11){
             		 Intent i = new Intent(MainActivity.this, LoadActivity.class);
             		 startActivity(i);
-            	 }
+            //	 }
             }
         });
-        findViewById(R.id.load_button).setVisibility(8);
+        //findViewById(R.id.load_button).setVisibility();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(SaveManager.getInstance().hasLoadingGame()){
+            Intent i = new Intent(MainActivity.this, GameActivity.class);
+            startActivity(i);
+        }
+    }
 }

@@ -136,9 +136,7 @@ public class BinaryIOManager {
     private void saveDesk(DataOutput output)
             throws IOException{
         output.writeInt(mBoard.length);
-        Log.d(TAG, String.valueOf(mBoard.length));
         output.writeInt(mBoard[0].length);
-        Log.d(TAG, String.valueOf(mBoard.length));
 
         for (int i = 0; i < mBoard.length; i++) {
             output.write(mBoard[i]);
