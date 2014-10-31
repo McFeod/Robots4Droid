@@ -1,5 +1,7 @@
 package com.github.mcfeod.robots4droid;
 
+import saves.BinaryIOManager;
+
 import java.util.Random;
 
 public class Board{
@@ -26,6 +28,15 @@ public class Board{
 		rand = new Random(System.currentTimeMillis());
 		Clear();
 	}
+	
+	public Board(int lengthX, int lengthY, int bots, int fast){
+		mWidth = lengthX;
+		mHeight = lengthY;
+		mAliveFastBotCount = fast;
+		mAliveBotCount = bots;
+		mBoard = new byte[mWidth][];
+		rand = new Random(System.currentTimeMillis());
+	}
 
 	public void Clear(){
 		for (int i=0; i<mWidth; i++)
@@ -41,10 +52,7 @@ public class Board{
 			if (mBoard[newX][newY] != EMPTY){
 				chDiff(mBoard[oldX][oldY],1);
 				chDiff(mBoard[newX][newY],1);
-				if (mBoard[newX][newY] == MINE)
-					mBoard[newX][newY] = EMPTY;
-				else
-					mBoard[newX][newY] = JUNK;
+				mBoard[newX][newY] = JUNK;
 			}
 			else
 				mBoard[newX][newY] = mBoard[oldX][oldY];
@@ -103,16 +111,6 @@ public class Board{
 		return false;
 	}
 
-	/*Возвращает количество объектов с типом kind*/
-	public int GetObjectCount(byte kind){
-		int count=0;
-		for (int i=0; i<mWidth; i++)
-			for (int j=0; j<mHeight; j++)
-				if (mBoard[i][j] == kind)
-					count ++;
-		return count;
-	}
-
 	/*Проверяет, принадлежит ли точка p полю*/
 	public boolean isOnBoard(Point p){
 		if (p != null)
@@ -123,9 +121,7 @@ public class Board{
 
 	/*Проверяет, принадлежит ли точка с координатами (x, y) полю*/
 	public boolean isOnBoard(int x, int y){
-		if ((x>=0) && (y>=0) && (x<mWidth) && (y<mHeight))
-			return true;
-		return false;
+		return  (x>=0) && (y>=0) && (x<mWidth) && (y<mHeight);
 	}
 
 	/*Возвращает true, если в точке с координатами (x, y) находится любой робот*/
@@ -151,6 +147,10 @@ public class Board{
 				return true;
 		return false;
     }
+    
+    public boolean wasEnemy(Point p){
+		return (isEnemy(p.x, p.y)||isJunk(p.x, p.y));
+	}
 
 	/*Возвращает true, если точке с координатами (x, y) пустая*/
 	public boolean isEmpty(int x, int y){
@@ -184,13 +184,32 @@ public class Board{
     	return res;
     }
     
-   public void setRobotCount(int bot, int fast){
-	   mAliveBotCount = (bot>0)? bot:0;
-	   mAliveFastBotCount = (fast>0)? fast:0;
-   }
+	public void setRobotCount(int bot, int fast){
+		mAliveBotCount = (bot>0)? bot:0;
+		mAliveFastBotCount = (fast>0)? fast:0;
+	}
+	
+	public boolean isBotsDead(){
+		return !((mAliveBotCount>0)||(mAliveFastBotCount>0));
+	}
    
-   public boolean isBotsDead(){
-	   return !((mAliveBotCount>0)||(mAliveFastBotCount>0));
-   }
+	public byte[] getRow(int n){
+		return(mBoard[n]);
+	}
+	
+	public void setRow(int n, byte[] row){
+		mBoard[n] = row;
+	}
+	
+	public int getAliveFastBotCount() {
+		return mAliveFastBotCount;
+	}
+	
+	public int getAliveBotCount() {
+		return mAliveBotCount;
+	}
 
+    public void giveLinkToManager(BinaryIOManager manager){
+        manager.setBoard(mBoard);
+    }
 }

@@ -14,24 +14,25 @@ public class DrawThread extends Thread {
 	
 	private Bitmap bitRobot, bitFastRobot, bitPlayer, bitCell, bitCell2,
 	 bitJunk, bitMine;
-	public int widthPX=35, heightPX=35;//размеры клетки в пикселях
+	private Bitmap bitRobotOriginal, bitFastRobotOriginal, bitPlayerOriginal,
+	 bitCellOriginal, bitCell2Original, bitJunkOriginal, bitMineOriginal;
+	public int widthPX=35, heightPX=35;//СЂР°Р·РјРµСЂС‹ РєР»РµС‚РєРё РІ РїРёРєСЃРµР»СЏС…
 	private World world;
 	private int indent=30;
 	private Canvas canvas;
 	private Paint paint;
 	private Point startPos, movePos;
 	private GameSurfaceView view;
-	private boolean toDraw, toMove;
+	private boolean toDraw, toMove, mustDie = false;
 	private int step = 8;
-	private SurfaceHolder mSurfaceHolder; //Область для рисования
+	private SurfaceHolder mSurfaceHolder; //РћР±Р»Р°СЃС‚СЊ РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ
 	Context context;
 	TextView text;
-	Activity ac;
-
+	Activity activity;
+	
 	public DrawThread(SurfaceHolder surfaceHolder, Context context, World world,
-	 GameSurfaceView view)
-    {
-        mSurfaceHolder = surfaceHolder;
+	 GameSurfaceView view){
+    	mSurfaceHolder = surfaceHolder;
         this.world = world;
         startPos = new Point(0, 0);
         movePos = new Point(0, 0);
@@ -39,33 +40,110 @@ public class DrawThread extends Thread {
         toDraw = false;
         toMove = false;
         this.context = context;
-
-        bitRobot=BitmapFactory.decodeResource(context.getResources(),R.drawable.robot);
-        bitFastRobot=BitmapFactory.decodeResource(context.getResources(),R.drawable.fastrobot);
-        bitPlayer=BitmapFactory.decodeResource(context.getResources(),R.drawable.player); 
-        bitJunk=BitmapFactory.decodeResource(context.getResources(),R.drawable.junk);
-               
-        bitCell=BitmapFactory.decodeResource(context.getResources(),R.drawable.cell);
-        bitCell2=BitmapFactory.decodeResource(context.getResources(),R.drawable.cell2);
-        bitMine=BitmapFactory.decodeResource(context.getResources(),R.drawable.mine); 
-
-        //подгоняем размеры bitmap-ов под размеры клеток
-        bitRobot=Bitmap.createScaledBitmap(bitRobot,widthPX-2,heightPX-2,false);
-        bitFastRobot=Bitmap.createScaledBitmap(bitFastRobot,widthPX-2,heightPX-2,false);
-        bitPlayer=Bitmap.createScaledBitmap(bitPlayer,widthPX-2,heightPX-2,false);
-        bitJunk=Bitmap.createScaledBitmap(bitJunk,widthPX-2,heightPX-2,false);
-       	    
-        bitCell2=Bitmap.createScaledBitmap(bitCell2,widthPX-2,heightPX-2,false);
-        bitCell=Bitmap.createScaledBitmap(bitCell,widthPX-2,heightPX-2,false);
-        bitMine=Bitmap.createScaledBitmap(bitMine,widthPX-2,heightPX-2,false);
-
         paint = new Paint();
+        
+        bitRobotOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.robot);
+        bitFastRobotOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.fastrobot);
+        bitPlayerOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.player); 
+        bitJunkOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.junk);               
+        bitCellOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.cell);
+        bitCell2Original=BitmapFactory.decodeResource(context.getResources(),R.drawable.cell2);
+        bitMineOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.mine);
     }
+	
+	public boolean GetToMove(){
+		return toMove;
+	}
+	
+	public void SetToMove(boolean toMove){
+		this.toMove = toMove;
+	}
+	
+	public void ChangeBitmapSize(boolean toCompare){
+		boolean isEqual = false;
+		if (toCompare)
+			if (bitRobot.getWidth() == widthPX - 2)
+				isEqual = true;
+		if (!isEqual){
+			bitRobot = Bitmap.createScaledBitmap(bitRobotOriginal, widthPX-2,
+			 heightPX-2, false);
+			bitFastRobot = Bitmap.createScaledBitmap(bitFastRobotOriginal, widthPX-2,
+			 heightPX-2,false);
+			bitPlayer = Bitmap.createScaledBitmap(bitPlayerOriginal, widthPX-2,
+			 heightPX-2,false);
+			bitJunk = Bitmap.createScaledBitmap(bitJunkOriginal, widthPX-2,
+			 heightPX-2,false);
+			bitCell2 = Bitmap.createScaledBitmap(bitCell2Original, widthPX-2,
+			 heightPX-2,false);
+			bitCell = Bitmap.createScaledBitmap(bitCellOriginal, widthPX-2,
+			 heightPX-2,false);
+        	bitMine = Bitmap.createScaledBitmap(bitMineOriginal, widthPX-2,
+        	 heightPX-2,false);
+		}
+	}
 
+	public void ChangeStep(){
+		//step = widthPX / 3;
+		step = (int)(Math.sqrt((startPos.x-movePos.x)*(startPos.x-movePos.x)+
+		 (startPos.y-movePos.y)*(startPos.y-movePos.y))/10);
+	}
+	
+	public void ChangeIndent(){
+		indent = widthPX / 3;
+	}
+	
+	public void CheckCellSize(){
+		if (widthPX * world.getWidth() + indent * 2 < view.getWidth()){
+			widthPX = (view.getWidth() - indent * 2) / world.getWidth();
+			heightPX = widthPX;
+		}
+		if (heightPX * world.getHeight() + indent * 2 < view.getHeight()){
+			heightPX = (view.getHeight() - indent * 2) / world.getHeight();
+			widthPX = heightPX;
+		}
+		if (widthPX * 5 > view.getWidth()){
+			widthPX = view.getWidth() / 5;
+			heightPX = widthPX;
+		}
+		if (heightPX * 5 > view.getHeight()){
+			heightPX = view.getHeight() / 5;
+			widthPX = heightPX;
+		}
+	}
+	
+	public void SetDefaultCellSize(){
+    	widthPX = view.getWidth() / world.getWidth() * 2;
+    	heightPX = widthPX;
+    	CheckCellSize();
+    	ChangeStep();
+    	ChangeIndent();
+    	ChangeBitmapSize(false);
+	}
+	
+	public void ChangeCellSize(int d){
+		widthPX += d;
+		heightPX += d;
+		CheckCellSize();
+		ChangeStep();
+		ChangeIndent();
+		ChangeBitmapSize(true);		
+		ChangeStartPos(0, 0);
+		if (toMove)
+			MoveToPlayer();
+	}
+
+	
+	public void delay(int n){
+		while (toMove)
+	    	try{
+	    		Thread.sleep(n);
+	        }catch (InterruptedException e) {}
+	}
+	
     @Override
     public void run()
     {
-        while (true){
+        while (!mustDie){
         	try{
         		Thread.sleep(40);
             }catch (InterruptedException e) {}
@@ -108,24 +186,10 @@ public class DrawThread extends Thread {
         }
     }
     
-    public void SetActivity(Activity ac){
-    	this.ac = ac;
+    public void SetActivity(Activity activity){
+    	this.activity = activity;
     }
-    
-    /*Runnable runnable = new Runnable(){
-    	@Override
-    	public void run(){
-    		int boardX=world.mWidth*widthPX+indent*2;
-	        int boardY=world.mHeight*heightPX+indent*2;
-    		text.setText(Integer.toString(startPos.x)+" "+
-					Integer.toString(startPos.y)+" "+
-					Integer.toString(movePos.x)+" "+
-					Integer.toString(movePos.y)+" "+
-					Integer.toString(boardX - view.getWidth())+" "+
-					Integer.toString(boardY - view.getHeight()));
-    	}
-    };*/
-    
+        
     public void Draw(){
     	toDraw = true;
     }
@@ -134,12 +198,12 @@ public class DrawThread extends Thread {
     	this.text = text;
     }
     
-    public void moveTo(int x, int y){
-    	movePos.x = x - view.getWidth()/2 + indent;
-    	movePos.y = y - view.getHeight()/2 + indent;
-        int boardX=world.mWidth*widthPX+indent*2;
-        int boardY=world.mHeight*heightPX+indent*2;
-        //проверка выхода за пределы экрана
+    public void MoveToPlayer(){
+    	movePos.x = (world.player.getPos().x*widthPX+widthPX/2) - view.getWidth()/2 + indent;
+    	movePos.y = (world.player.getPos().y*heightPX+heightPX/2) - view.getHeight()/2 + indent;
+        int boardX=world.getWidth()*widthPX+indent*2;
+        int boardY=world.getHeight()*heightPX+indent*2;
+        //РїСЂРѕРІРµСЂРєР° РІС‹С…РѕРґР° Р·Р° РїСЂРµРґРµР»С‹ СЌРєСЂР°РЅР°
         if (movePos.x < 0)
         	movePos.x = 0;
         if (movePos.y < 0)
@@ -148,6 +212,7 @@ public class DrawThread extends Thread {
         	movePos.x = boardX - view.getWidth();
         if (movePos.y + view.getHeight() > boardY)
         	movePos.y = boardY - view.getHeight();
+        ChangeStep();
     	toMove = true;
     }
     
@@ -169,9 +234,9 @@ public class DrawThread extends Thread {
     }
     
     public void repaint(){
-		canvas.drawColor(Color.WHITE);
-		for (int i=0; i<world.mWidth; i++)
-        	for (int j=0; j<world.mHeight; j++)
+		canvas.drawColor(Color.GRAY);
+		for (int i=0; i<world.getWidth(); i++)
+        	for (int j=0; j<world.getHeight(); j++)
         		if (isVisible(i,j)){
         			if ((i+j)%2 == 0)
         				canvas.drawBitmap(bitCell2,widthPX*i+indent-startPos.x,
@@ -179,7 +244,7 @@ public class DrawThread extends Thread {
         			else
         				canvas.drawBitmap(bitCell,widthPX*i+indent-startPos.x,
                			 heightPX*j+indent-startPos.y,paint);
-        			switch (world.mBoard.GetKind(i,j)){
+        			switch (world.board.GetKind(i,j)){
         				case Board.JUNK:
         					canvas.drawBitmap(bitJunk,widthPX*i+indent-startPos.x,
         	        		 heightPX*j+indent-startPos.y,paint);
@@ -203,13 +268,13 @@ public class DrawThread extends Thread {
 	}
     
     public void ChangeStartPos(int dX, int dY){
-			//меняем начальную точку
+			//РјРµРЅСЏРµРј РЅР°С‡Р°Р»СЊРЅСѓСЋ С‚РѕС‡РєСѓ
 	        startPos.x += dX;
 	        startPos.y += dY;
 	        //int screenX = view.getWidth(), screenY = view.getHeight();
-	        int boardX=world.mWidth*widthPX+indent*2;
-	        int boardY=world.mHeight*heightPX+indent*2;
-	        //проверка выхода за пределы экрана
+	        int boardX=world.getWidth()*widthPX+indent*2;
+	        int boardY=world.getHeight()*heightPX+indent*2;
+	        //РїСЂРѕРІРµСЂРєР° РІС‹С…РѕРґР° Р·Р° РїСЂРµРґРµР»С‹ СЌРєСЂР°РЅР°
 	        if (startPos.x < 0)
 	        	startPos.x = 0;
 	        if (startPos.y < 0)
@@ -219,5 +284,9 @@ public class DrawThread extends Thread {
 	        if (startPos.y + view.getHeight() > boardY)
 	        	startPos.y = boardY - view.getHeight();
     }
-
+    
+    public void customKill(){
+    	mustDie = true;
+    	this.interrupt();
+    }
 }

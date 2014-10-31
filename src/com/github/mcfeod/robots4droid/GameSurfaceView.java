@@ -2,7 +2,9 @@ package com.github.mcfeod.robots4droid;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -12,33 +14,32 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	public DrawThread mDrawThread;
 	World world;
 	Context context;
-	Point startTouchPos, endTouchPos;
+	private GestureDetector gestureDetector;
+	private ScaleGestureDetector scaleGestureDetector;
 
-	/** Три следующих метода обязательны, не удалять! */
-	/** Создание области рисования */
+	/** РўСЂРё СЃР»РµРґСѓСЋС‰РёС… РјРµС‚РѕРґР° РѕР±СЏР·Р°С‚РµР»СЊРЅС‹, РЅРµ СѓРґР°Р»СЏС‚СЊ! */
+	/** РЎРѕР·РґР°РЅРёРµ РѕР±Р»Р°СЃС‚Рё СЂРёСЃРѕРІР°РЅРёСЏ */
 	//@Override
 	public void surfaceCreated(SurfaceHolder holder){
 	}
 
-	/** Изменение области рисования */
+	/** РР·РјРµРЅРµРЅРёРµ РѕР±Р»Р°СЃС‚Рё СЂРёСЃРѕРІР°РЅРёСЏ */
 	//@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
 	}
 
-	/** Уничтожение области рисования */
+	/** РЈРЅРёС‡С‚РѕР¶РµРЅРёРµ РѕР±Р»Р°СЃС‚Рё СЂРёСЃРѕРІР°РЅРёСЏ */
 	//@Override
 	public void surfaceDestroyed(SurfaceHolder holder){
 	}
     
-	/** Конструктор */
+	/** РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ */
     public GameSurfaceView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
         mSurfaceHolder = getHolder();
         mSurfaceHolder.addCallback(this);
         this.context = context;
-        startTouchPos = new Point(0,0);
-        endTouchPos = new Point(0,0);
     }
     
     public void SetWorld(World world){
@@ -47,40 +48,31 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     
     public void CreateThread(){
         mDrawThread = new DrawThread(mSurfaceHolder, context, world, this);
+        gestureDetector = new GestureDetector(context,
+         new ScrollGestureListener(mDrawThread));
+        scaleGestureDetector = new ScaleGestureDetector(context,
+         new ScaleGestureListener(mDrawThread));
     }
     
     public void StartThread(){
-    	//mDrawThread.setRunning(true);
     	mDrawThread.start();
+    }
+    
+	public void StopThread(){
+    	mDrawThread.customKill();
+    	mDrawThread = null;
     }
     
 	@Override
     public boolean onTouchEvent(MotionEvent event) {
-		switch (event.getAction()) {
-			//событие возникает при нажатии на экран
-			case MotionEvent.ACTION_DOWN:
-				//запоминаем координаты нажатия
-				startTouchPos.x = (int) event.getX();
-				startTouchPos.y = (int) event.getY();
-				break;
-			//событие возникает при движении по экрану
-			case MotionEvent.ACTION_MOVE:
-				//запоминаем координаты касания
-				endTouchPos.x = (int) event.getX();
-				endTouchPos.y = (int) event.getY();
-				/*перерисовываем поле startTouchPos.x - endTouchPos.x и
-				  startTouchPos.y - endTouchPos.y - разница между предыдущей
-				  точкой касания и текущей. Определяет, на сколько необходимо
-				  передвинуть поле по x и по y*/
-				mDrawThread.ChangeStartPos(startTouchPos.x - endTouchPos.x,
-				 startTouchPos.y - endTouchPos.y);
-				mDrawThread.Draw();
-				//запоминаем новые координаты начальной точки касания
-				startTouchPos.x = endTouchPos.x;
-				startTouchPos.y = endTouchPos.y;
-				break;
+		if (event.getPointerCount() > 1)
+			scaleGestureDetector.onTouchEvent(event);
+		else{
+			//РЅРµСѓРґР°С‡РЅР°СЏ РїРѕРїС‹С‚РєР° РѕСЃС‚Р°РЅРѕРІРёС‚СЊ РїРµСЂРµРґРІРёР¶РµРЅРёРµ РїРѕР»Рµ СЃРєСЂРѕР»Р»РёРЅРіРѕРј
+			if (mDrawThread.GetToMove())
+				mDrawThread.SetToMove(false);
+			gestureDetector.onTouchEvent(event);
 		}
 		return true;
 	}
-    
 }
