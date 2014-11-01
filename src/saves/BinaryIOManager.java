@@ -112,6 +112,8 @@ public class BinaryIOManager {
 
 	private void loadDesk(DataInput input)
 	throws IOException{
+		int x = input.readInt();
+		int y = input.readInt();
 		for (int i = 0; i < mBoard.length ; i++) {
 			input.readFully(mBoard[i]);
 		}
