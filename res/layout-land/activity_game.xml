@@ -1,164 +1,135 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.github.mcfeod.robots4droid.GameActivity" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context="com.github.mcfeod.robots4droid.GameActivity" >
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:orientation="vertical" >
 	
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="50dp"
-    android:orientation="horizontal" >
-
-	    <ImageButton
-	        android:id="@+id/teleport_button"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:background="@null"
-	        android:src="@drawable/tele" />
-
-	    <ImageButton
-	        android:id="@+id/safe_teleport_button"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:background="@null"
-	        android:src="@drawable/safe_tele" />
-
-	    <ImageButton
-	        android:id="@+id/mine_button"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:background="@null"
-	        android:src="@drawable/button_mine" />
-
-		<ImageButton
-		    android:id="@+id/bomb_button"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:background="@null"
-		    android:src="@drawable/bomb"/>
-
-		<Button
-		    android:id="@+id/save_button"
-		    android:layout_width="35dp"
-		    android:layout_height="35dp"
-		    android:text="@string/button_save_level" />
-			    
-	    <TextView
+			<ImageButton
+				android:id="@+id/teleport_button"
+				style="@style/GameImageButton.Action"
+				android:src="@drawable/tele" />
+	
+			<ImageButton
+				android:id="@+id/safe_teleport_button"
+				style="@style/GameImageButton.Action"
+				android:src="@drawable/safe_tele" />
+	
+			<ImageButton
+				android:id="@+id/mine_button"
+				style="@style/GameImageButton.Action"
+				android:src="@drawable/button_mine" />
+	
+			<ImageButton
+				android:id="@+id/bomb_button"
+				style="@style/GameImageButton.Action"
+				android:src="@drawable/bomb"/>
+		</LinearLayout>
+	
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="vertical" >				
+		<TextView
 			android:id="@+id/textView1"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" />
-
-	</LinearLayout>
-
-	<FrameLayout
-	    android:id="@+id/frameLayout"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content">
-
-		<com.github.mcfeod.robots4droid.GameSurfaceView
-      		android:id="@+id/game"
-      		android:layout_width="fill_parent"
-      		android:layout_height="fill_parent"/>
-
-		<RelativeLayout
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:orientation="vertical" >
-
+		<FrameLayout
+			android:id="@+id/frameLayout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+	
+			<com.github.mcfeod.robots4droid.GameSurfaceView
+				android:id="@+id/game"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"/>
+	
 			<RelativeLayout
-				android:layout_alignParentTop="true"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content" >
-
-				<ImageButton
-				    android:id="@+id/left_up_button"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:background="@null"
-				    android:src="@drawable/left_up" />
-
-				<ImageButton
-				    android:id="@+id/up_button"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_centerHorizontal="true"
-				    android:background="@null"
-				    android:src="@drawable/up" />
+				android:layout_height="match_parent"
+				android:orientation="vertical" >
 	
-				<ImageButton
-				    android:id="@+id/right_up_button"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentRight="true"
-				    android:background="@null"
-				    android:src="@drawable/right_up" />
-
-			</RelativeLayout>
-
-			<RelativeLayout
-				android:layout_centerVertical="true"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" >
+				<RelativeLayout
+					android:layout_alignParentTop="true"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content" >
 	
-				<ImageButton
-				    android:id="@+id/left_button"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:background="@null"
-				    android:src="@drawable/left" />
+					<ImageButton
+						android:id="@+id/left_up_button"
+						android:layout_alignParentLeft="true"
+						style="@style/GameImageButton"
+						android:src="@drawable/left_up" />
 	
-				<ImageButton
-				    android:background="@null"
-				    android:src="@drawable/point"
-					android:id="@+id/stay_button"
+					<ImageButton
+						android:id="@+id/up_button"
+						android:layout_centerHorizontal="true"
+						style="@style/GameImageButton"
+						android:src="@drawable/up" />
+	
+					<ImageButton
+						android:id="@+id/right_up_button"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentRight="true"
+						android:background="@null"
+						android:src="@drawable/right_up" />
+	
+				</RelativeLayout>
+	
+				<RelativeLayout
+					android:layout_centerVertical="true"
 					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_centerHorizontal="true"/>
+					android:layout_height="wrap_content" >
+		
+					<ImageButton
+						android:id="@+id/left_button"
+						android:layout_alignParentLeft="true"
+						style="@style/GameImageButton"
+						android:src="@drawable/left" />
+		
+					<ImageButton
+						android:src="@drawable/point"
+						android:id="@+id/stay_button"
+						style="@style/GameImageButton"
+						android:layout_centerHorizontal="true"/>
+		
+					<ImageButton
+						android:id="@+id/right_button"
+						android:layout_alignParentRight="true"
+						style="@style/GameImageButton"
+						android:src="@drawable/right"/>
 	
-				<ImageButton
-				    android:id="@+id/right_button"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentRight="true"
-				    android:background="@null"
-				    android:src="@drawable/right"/>
+				</RelativeLayout>
 	
-			</RelativeLayout>
+				<RelativeLayout
+					android:layout_alignParentBottom="true"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" >
 	
-			<RelativeLayout
-				android:layout_alignParentBottom="true"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" >
+					<ImageButton
+						android:id="@+id/left_down_button"
+						style="@style/GameImageButton"
+						android:layout_alignParentLeft="true"
+						android:src="@drawable/left_down" />
 	
-				<ImageButton
-				    android:id="@+id/left_down_button"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:background="@null"
-				    android:src="@drawable/left_down" />
+					<ImageButton
+						android:id="@+id/down_button"
+						style="@style/GameImageButton"
+						android:layout_centerHorizontal="true"
+						android:src="@drawable/down"/>
 	
-				<ImageButton
-				    android:id="@+id/down_button"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_centerHorizontal="true"
-				    android:background="@null"
-				    android:src="@drawable/down"/>
+					<ImageButton
+						android:id="@+id/right_down_button"
+						android:layout_alignParentRight="true"
+						style="@style/GameImageButton"
+						android:src="@drawable/right_down"/>
 	
-				<ImageButton
-				    android:id="@+id/right_down_button"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentRight="true"
-				    android:background="@null"
-				    android:src="@drawable/right_down"/>
-	
-			</RelativeLayout>
-		</RelativeLayout>
-	</FrameLayout>
-
+					</RelativeLayout>
+				</RelativeLayout>
+			</FrameLayout>
+	</LinearLayout>
 </LinearLayout>

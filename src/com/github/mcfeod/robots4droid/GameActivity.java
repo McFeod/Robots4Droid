@@ -7,13 +7,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,9 +26,7 @@ public class GameActivity extends Activity {
     private boolean isMusicOn;
 
     private TextView text;
-    private boolean isSaveUsed = false;
     private GameSurfaceView view;
-	private Button saveButton;
 
 	public OnClickListener listener = new OnClickListener() {
 		@Override
@@ -57,12 +53,11 @@ public class GameActivity extends Activity {
 					view.mDrawThread.delay(200);
 					//передвигаем роботов
 					world.moveBots();
+					changeText();
 					if (world.player.isAlive){
-						changeText();
 						//отрисовываем роботов
 						view.mDrawThread.moveTo(world.player.getPos());
 					}else{
-                        saveButton.setEnabled(false);
 						AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
 						builder.setTitle(R.string.dialog);
 						builder.setMessage(R.string.dialog);
@@ -73,7 +68,13 @@ public class GameActivity extends Activity {
 						    	world.defeat();
 						    	view.mDrawThread.moveTo(world.player.getPos());
 								dialog.dismiss();
-                                saveButton.setEnabled(!isSaveUsed);
+						    }
+						});
+						builder.setNegativeButton(R.string.away, new DialogInterface.OnClickListener() { // Кнопка неОК
+						    @Override
+						    public void onClick(DialogInterface dialog, int which) {
+						    	GameActivity.this.finish();
+								dialog.dismiss();
 						    }
 						});
 						AlertDialog dialog = builder.create();
@@ -116,15 +117,6 @@ public class GameActivity extends Activity {
 		findViewById(R.id.mine_button).setOnClickListener(listener);
 		findViewById(R.id.bomb_button).setOnClickListener(listener);
 		
-		saveButton = (Button)findViewById(R.id.save_button);
-		saveButton.setVisibility(View.VISIBLE);
-		saveButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*if (Build.VERSION.SDK_INT >= 11)*/ save();
-            }
-        });
-        
         mSoundTrack = MediaPlayer.create(this, R.raw.muz);
         mSoundTrack.setLooping(true);
         // при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
@@ -222,7 +214,6 @@ public class GameActivity extends Activity {
     	savedInstanceState.putBoolean("isAlive", world.player.isAlive);
     	savedInstanceState.putBoolean("areSuicidesForbidden", world.player.areSuicidesForbidden);
     	savedInstanceState.putBoolean("isMusicOn", isMusicOn);
-    	//!//savedInstanceState.putBoolean("safeMoves", safeMoves);
     	if (isMusicOn)
     		savedInstanceState.putInt("musicTime",mSoundTrack.getCurrentPosition());
     }
@@ -243,14 +234,11 @@ public class GameActivity extends Activity {
         BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
         world.board.giveLinkToManager(saver);
         SaveManager.getInstance().saveGameToBinary(saver);
-        // костыль, чтобы не соохранялисб больше одного раза
-        saveButton.setEnabled(false);
-        isSaveUsed = true;
     }
     
     @Override
     public void onBackPressed() {
-    	//save()
+    	save();
     	super.onBackPressed();
     }
 }

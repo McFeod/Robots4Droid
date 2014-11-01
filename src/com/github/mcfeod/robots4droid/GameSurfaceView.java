@@ -29,37 +29,37 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	//@Override
 	public void surfaceDestroyed(SurfaceHolder holder){
 	}
-    
+
 	/** Конструктор */
-    public GameSurfaceView(Context context, AttributeSet attrs)
-    {
-        super(context, attrs);
-        mSurfaceHolder = getHolder();
-        mSurfaceHolder.addCallback(this);
-        this.context = context;
-        startTouchPos = new Point(0,0);
-        endTouchPos = new Point(0,0);
-    }
-    
-    public void SetWorld(World world){
-    	this.world = world;
-    }
-    
-    public void CreateThread(){
-        mDrawThread = new DrawThread(mSurfaceHolder, context, world, this);
-    }
-    
-    public void StartThread(){
-    	mDrawThread.start();
-    }
-    
+	public GameSurfaceView(Context context, AttributeSet attrs)
+	{
+		super(context, attrs);
+		mSurfaceHolder = getHolder();
+		mSurfaceHolder.addCallback(this);
+		this.context = context;
+		startTouchPos = new Point(0,0);
+		endTouchPos = new Point(0,0);
+	}
+
+	public void SetWorld(World world){
+		this.world = world;
+	}
+
+	public void CreateThread(){
+		mDrawThread = new DrawThread(mSurfaceHolder, context, world, this);
+	}
+
+	public void StartThread(){
+		mDrawThread.start();
+	}
+
 	public void StopThread(){
-    	mDrawThread.customKill();
-    	mDrawThread = null;
-    }
-    
+		mDrawThread.customKill();
+		mDrawThread = null;
+	}
+
 	@Override
-    public boolean onTouchEvent(MotionEvent event) {
+	public boolean onTouchEvent(MotionEvent event) {
 		switch (event.getAction()) {
 			//событие возникает при нажатии на экран
 			case MotionEvent.ACTION_DOWN:
@@ -86,5 +86,5 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 		}
 		return true;
 	}
-    
+
 }

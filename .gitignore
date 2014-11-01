@@ -20,7 +20,9 @@ proguard-project.txt
 *.log
 # Backup files
 *~
-# Eclipse settings
+# Eclipse/IDEA settings
 .settings/
 .project
 .classpath
+.idea/
+project.properties
