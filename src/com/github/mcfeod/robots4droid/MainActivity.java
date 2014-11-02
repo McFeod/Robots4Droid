@@ -3,6 +3,7 @@ package com.github.mcfeod.robots4droid;
 import saves.LoadActivity;
 import saves.SaveManager;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -52,6 +53,17 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 					 Intent i = new Intent(MainActivity.this, LoadActivity.class);
 					 startActivity(i);
+			}
+		});
+
+		findViewById(R.id.about_button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+				builder.setMessage(R.string.dialog_about_message);
+				builder.setCancelable(true);
+				AlertDialog dialog = builder.create();
+				dialog.show();
 			}
 		});
 	}
