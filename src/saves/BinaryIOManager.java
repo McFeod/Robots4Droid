@@ -56,6 +56,7 @@ public class BinaryIOManager {
 			// пишем данные в файл
 			savePlayer(out);
 			saveDesk(out);
+			saveSettings(out);
 		}
 		catch (FileNotFoundException e){
 			Log.d(TAG, "No save file");
@@ -85,6 +86,8 @@ public class BinaryIOManager {
 			Log.d(TAG, "Player loaded");
 			loadDesk(in);
 			Log.d(TAG, "Desk loaded");
+			loadSettings(in);
+			Log.d(TAG, "Settings loaded");
 		}
 		catch (FileNotFoundException e){
 			Log.d(TAG, "No save file");
@@ -118,7 +121,20 @@ public class BinaryIOManager {
 			input.readFully(mBoard[i]);
 		}
 	}
-
+	
+	private void  loadSettings(DataInput input)
+			throws IOException{
+		SettingsParser.setMusicMode(input.readBoolean());
+		SettingsParser.setSuicidePermission(input.readBoolean());
+		SettingsParser.setGameComplexity(input.readBoolean() ? '1': '0');
+	}
+	
+	private void saveSettings(DataOutput output)
+			throws IOException{
+		output.writeBoolean(SettingsParser.isMusicOn());
+		output.writeBoolean(SettingsParser.areSuicidesOn());
+		output.writeBoolean(SettingsParser.needExtraFastBots());
+	}
 	private void savePlayer(DataOutput output)
 			throws IOException{
 		Point pos = mWorld.player.getPos();

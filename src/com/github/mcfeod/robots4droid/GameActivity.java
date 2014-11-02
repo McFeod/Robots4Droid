@@ -18,15 +18,15 @@ import android.widget.Toast;
 
 public class GameActivity extends Activity {
 	private int width=20, height=15; //размеры сторон
-    private World world;
-    private int mLastLevel=-1;
-    private boolean mNeedCrutchForLaunch = true;
+	private World world;
+	private int mLastLevel=-1;
+	private boolean mNeedCrutchForLaunch = true;
 
-    private MediaPlayer mSoundTrack; 
-    private boolean isMusicOn;
+	private MediaPlayer mSoundTrack; 
+	private boolean isMusicOn;
 
-    private TextView text;
-    private GameSurfaceView view;
+	private TextView text;
+	private GameSurfaceView view;
 
 	public OnClickListener listener = new OnClickListener() {
 		@Override
@@ -63,19 +63,19 @@ public class GameActivity extends Activity {
 						builder.setMessage(R.string.dialog);
 						builder.setCancelable(false);
 						builder.setPositiveButton(R.string.restart, new DialogInterface.OnClickListener() { // Кнопка ОК
-						    @Override
-						    public void onClick(DialogInterface dialog, int which) {
-						    	world.defeat();
-						    	view.mDrawThread.moveTo(world.player.getPos());
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								world.defeat();
+								view.mDrawThread.moveTo(world.player.getPos());
 								dialog.dismiss();
-						    }
+							}
 						});
 						builder.setNegativeButton(R.string.away, new DialogInterface.OnClickListener() { // Кнопка неОК
-						    @Override
-						    public void onClick(DialogInterface dialog, int which) {
-						    	GameActivity.this.finish();
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								GameActivity.this.finish();
 								dialog.dismiss();
-						    }
+							}
 						});
 						AlertDialog dialog = builder.create();
 						dialog.show();
@@ -96,72 +96,70 @@ public class GameActivity extends Activity {
 	};
 
 	@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-         WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_game);
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+		 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		setContentView(R.layout.activity_game);
 
-        findViewById(R.id.left_button).setOnClickListener(listener);
-        findViewById(R.id.right_button).setOnClickListener(listener);
-        findViewById(R.id.up_button).setOnClickListener(listener);
-        findViewById(R.id.down_button).setOnClickListener(listener);
-        findViewById(R.id.left_up_button).setOnClickListener(listener);
-        findViewById(R.id.left_down_button).setOnClickListener(listener);
-        findViewById(R.id.right_up_button).setOnClickListener(listener);
-        findViewById(R.id.right_down_button).setOnClickListener(listener); 
-        findViewById(R.id.teleport_button).setOnClickListener(listener); 
-        findViewById(R.id.safe_teleport_button).setOnClickListener(listener); 
-        findViewById(R.id.stay_button).setOnClickListener(listener);
+		findViewById(R.id.left_button).setOnClickListener(listener);
+		findViewById(R.id.right_button).setOnClickListener(listener);
+		findViewById(R.id.up_button).setOnClickListener(listener);
+		findViewById(R.id.down_button).setOnClickListener(listener);
+		findViewById(R.id.left_up_button).setOnClickListener(listener);
+		findViewById(R.id.left_down_button).setOnClickListener(listener);
+		findViewById(R.id.right_up_button).setOnClickListener(listener);
+		findViewById(R.id.right_down_button).setOnClickListener(listener); 
+		findViewById(R.id.teleport_button).setOnClickListener(listener); 
+		findViewById(R.id.safe_teleport_button).setOnClickListener(listener); 
+		findViewById(R.id.stay_button).setOnClickListener(listener);
 		findViewById(R.id.mine_button).setOnClickListener(listener);
 		findViewById(R.id.bomb_button).setOnClickListener(listener);
 		
-        mSoundTrack = MediaPlayer.create(this, R.raw.muz);
-        mSoundTrack.setLooping(true);
-        // при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
-        // по этой причине start() и stop() размещены в onStart() и onStop()
-        
-        
-        if (savedInstanceState == null){
-        	world = new World(width, height);
-            isMusicOn = SettingsParser.isMusicOn();
-            world.player.areSuicidesForbidden = !SettingsParser.areSuicidesOn();
-            // если выбрана соохранённая игра, загружаем из соохранения
-			//if (Build.VERSION.SDK_INT >= 11)
-			     if(SaveManager.getInstance().hasLoadingGame()){
-		        	  load();
-		        }
-        }else{
-        	world = new World(
-        			savedInstanceState.getInt("width"),
-        			savedInstanceState.getInt("height"),
-        			savedInstanceState.getInt("bots"),
-        			savedInstanceState.getInt("fastbots"),
-        			savedInstanceState.getInt("playerX"),
-        			savedInstanceState.getInt("playerY"),
-        			savedInstanceState.getInt("energy"),
-        			savedInstanceState.getInt("score"),
-        			savedInstanceState.getBoolean("isAlive"),
-        			savedInstanceState.getInt("level")
-        			);
-        	for(int i=0; i<width; ++i){
-        		 world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
-        	}
-        	world.player.areSuicidesForbidden = savedInstanceState.getBoolean("areSuicidesForbidden");
-        	isMusicOn = savedInstanceState.getBoolean("isMusicOn");
-        	if (isMusicOn)
-        		mSoundTrack.seekTo(savedInstanceState.getInt("musicTime")+400);
-        }
+		mSoundTrack = MediaPlayer.create(this, R.raw.muz);
+		mSoundTrack.setLooping(true);
+		// при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
+		// по этой причине start() и stop() размещены в onStart() и onStop()
+		
+		
+		if (savedInstanceState == null){
+			world = new World(width, height);
+			if(SaveManager.getInstance().hasLoadingGame()){
+				load();
+			}
+			isMusicOn = SettingsParser.isMusicOn();
+			world.player.areSuicidesForbidden = !SettingsParser.areSuicidesOn();
+		}else{
+			world = new World(
+					savedInstanceState.getInt("width"),
+					savedInstanceState.getInt("height"),
+					savedInstanceState.getInt("bots"),
+					savedInstanceState.getInt("fastbots"),
+					savedInstanceState.getInt("playerX"),
+					savedInstanceState.getInt("playerY"),
+					savedInstanceState.getInt("energy"),
+					savedInstanceState.getInt("score"),
+					savedInstanceState.getBoolean("isAlive"),
+					savedInstanceState.getInt("level")
+					);
+			for(int i=0; i<width; ++i){
+				 world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
+			}
+			world.player.areSuicidesForbidden = savedInstanceState.getBoolean("areSuicidesForbidden");
+			isMusicOn = savedInstanceState.getBoolean("isMusicOn");
+			if (isMusicOn)
+				mSoundTrack.seekTo(savedInstanceState.getInt("musicTime")+400);
+		}
 		view = (GameSurfaceView)findViewById(R.id.game);
-        view.SetWorld(world);
-        view.CreateThread();
-        view.mDrawThread.SetActivity(this);
-        text=(TextView)findViewById(R.id.textView1);
-        view.mDrawThread.SetText(text);
-        view.StartThread();
+		view.SetWorld(world);
+		view.CreateThread();
+		view.mDrawThread.SetActivity(this);
+		text=(TextView)findViewById(R.id.textView1);
+		view.mDrawThread.SetText(text);
+		view.StartThread();
 		changeText();
-    }
+	}
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
@@ -172,73 +170,73 @@ public class GameActivity extends Activity {
 		}
 	}
 	
-    @Override
-    protected void onResume(){
-        super.onResume();
-        if(isMusicOn) {
-            mSoundTrack.start();
-        }
-        view.mDrawThread.moveTo(world.player.getPos());
-    }
+	@Override
+	protected void onResume(){
+		super.onResume();
+		if(isMusicOn) {
+			mSoundTrack.start();
+		}
+		view.mDrawThread.moveTo(world.player.getPos());
+	}
 
-    @Override
-    protected void onPause(){
-        super.onPause();
-        if(isMusicOn) {
-        	mSoundTrack.pause();
-        }
-    }
-    
-    @Override
-    protected void onDestroy(){
-    	super.onDestroy();
-    	view.StopThread();
-    	mSoundTrack.release();
-    }
-    
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-    	super.onSaveInstanceState(savedInstanceState);
-    	savedInstanceState.putInt("width", width);
-    	savedInstanceState.putInt("height", height);
-    	for(int i=0; i<width; ++i){
-    		savedInstanceState.putByteArray("board_"+i, world.board.getRow(i));
-    	}
-    	savedInstanceState.putInt("fastbots", world.board.getAliveFastBotCount());
-    	savedInstanceState.putInt("bots", world.board.getAliveBotCount());
-    	savedInstanceState.putInt("level", world.getLevel());
-    	savedInstanceState.putInt("score", world.player.getScore());
-    	savedInstanceState.putInt("energy", world.player.getEnergy());
-    	savedInstanceState.putInt("playerX", world.player.getPos().x);
-    	savedInstanceState.putInt("playerY", world.player.getPos().y);
-    	savedInstanceState.putBoolean("isAlive", world.player.isAlive);
-    	savedInstanceState.putBoolean("areSuicidesForbidden", world.player.areSuicidesForbidden);
-    	savedInstanceState.putBoolean("isMusicOn", isMusicOn);
-    	if (isMusicOn)
-    		savedInstanceState.putInt("musicTime",mSoundTrack.getCurrentPosition());
-    }
+	@Override
+	protected void onPause(){
+		super.onPause();
+		if(isMusicOn) {
+			mSoundTrack.pause();
+		}
+	}
+	
+	@Override
+	protected void onDestroy(){
+		super.onDestroy();
+		view.StopThread();
+		mSoundTrack.release();
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+		savedInstanceState.putInt("width", width);
+		savedInstanceState.putInt("height", height);
+		for(int i=0; i<width; ++i){
+			savedInstanceState.putByteArray("board_"+i, world.board.getRow(i));
+		}
+		savedInstanceState.putInt("fastbots", world.board.getAliveFastBotCount());
+		savedInstanceState.putInt("bots", world.board.getAliveBotCount());
+		savedInstanceState.putInt("level", world.getLevel());
+		savedInstanceState.putInt("score", world.player.getScore());
+		savedInstanceState.putInt("energy", world.player.getEnergy());
+		savedInstanceState.putInt("playerX", world.player.getPos().x);
+		savedInstanceState.putInt("playerY", world.player.getPos().y);
+		savedInstanceState.putBoolean("isAlive", world.player.isAlive);
+		savedInstanceState.putBoolean("areSuicidesForbidden", world.player.areSuicidesForbidden);
+		savedInstanceState.putBoolean("isMusicOn", isMusicOn);
+		if (isMusicOn)
+			savedInstanceState.putInt("musicTime",mSoundTrack.getCurrentPosition());
+	}
 
-    private void changeText(){
-        text.setText(String.format("Lvl: %d, Score: %d, Energy: %d, Bots :%d",
-                world.getLevel(), world.player.getScore(), world.player.getEnergy(), 
-                (world.board.getAliveBotCount()+world.board.getAliveFastBotCount())));
-    }
+	private void changeText(){
+		text.setText(String.format("Lvl: %d, Score: %d, Energy: %d, Bots :%d",
+				world.getLevel(), world.player.getScore(), world.player.getEnergy(), 
+				(world.board.getAliveBotCount()+world.board.getAliveFastBotCount())));
+	}
 
-    private void load(){
-        BinaryIOManager loader = new BinaryIOManager(getApplicationContext(), world);
-        world.board.giveLinkToManager(loader);
-        SaveManager.getInstance().loadGameFromBinary(loader);
-    }
+	private void load(){
+		BinaryIOManager loader = new BinaryIOManager(getApplicationContext(), world);
+		world.board.giveLinkToManager(loader);
+		SaveManager.getInstance().loadGameFromBinary(loader);
+	}
 
-    private void save(){
-        BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
-        world.board.giveLinkToManager(saver);
-        SaveManager.getInstance().saveGameToBinary(saver);
-    }
-    
-    @Override
-    public void onBackPressed() {
-    	save();
-    	super.onBackPressed();
-    }
+	private void save(){
+		BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
+		world.board.giveLinkToManager(saver);
+		SaveManager.getInstance().saveGameToBinary(saver);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		save();
+		super.onBackPressed();
+	}
 }
