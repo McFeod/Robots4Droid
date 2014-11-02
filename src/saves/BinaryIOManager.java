@@ -116,7 +116,10 @@ public class BinaryIOManager {
 	private void loadDesk(DataInput input)
 	throws IOException{
 		int x = input.readInt();
-		int y = input.readInt();
+		int y = input.readInt(); //размеры доски. Зачем-то.
+		x = input.readInt();
+		y = input.readInt();
+		mWorld.board.setRobotCount(x, y);
 		for (int i = 0; i < mBoard.length ; i++) {
 			input.readFully(mBoard[i]);
 		}
@@ -147,7 +150,8 @@ public class BinaryIOManager {
 	private void saveDesk(DataOutput output) throws IOException{
 		output.writeInt(mBoard.length);
 		output.writeInt(mBoard[0].length);
-
+		output.writeInt(mWorld.board.getAliveBotCount());
+		output.writeInt(mWorld.board.getAliveFastBotCount());
 		for (int i = 0; i < mBoard.length; i++) {
 			output.write(mBoard[i]);
 		}
