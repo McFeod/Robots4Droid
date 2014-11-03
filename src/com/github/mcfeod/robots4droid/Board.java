@@ -1,7 +1,5 @@
 package com.github.mcfeod.robots4droid;
 
-import saves.BinaryIOManager;
-
 import java.util.Random;
 
 public class Board{
@@ -209,10 +207,6 @@ public class Board{
 	public int getAliveBotCount() {
 		return mAliveBotCount;
 	}
-
-    public void giveLinkToManager(BinaryIOManager manager){
-        manager.setBoard(mBoard);
-    }
 
     public int getWidth() {
         return mWidth;

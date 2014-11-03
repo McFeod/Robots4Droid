@@ -99,7 +99,6 @@ public class GameActivity extends Activity {
 				mLastLevel = world.getLevel();
 				Toast.makeText(GameActivity.this, "NEW LEVEL: " + mLastLevel , Toast.LENGTH_SHORT).show();				
 			}
-
 		}
 	};
 
@@ -222,21 +221,20 @@ public class GameActivity extends Activity {
                 (world.board.getAliveBotCount()+world.board.getAliveFastBotCount())));
     }
 
-    private void load(){
-        BinaryIOManager loader = new BinaryIOManager(getApplicationContext(), world);
-        world.board.giveLinkToManager(loader);
-        SaveManager.getInstance().loadGameFromBinary(loader);
-    }
+	private void load(){
+		BinaryIOManager loader = new BinaryIOManager(getApplicationContext(), world);
+		SaveManager.getInstance().loadGameFromBinary(loader);
+		world = loader.updatedWorld();
+	}
 
-    private void save(){
-        BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
-        world.board.giveLinkToManager(saver);
-        SaveManager.getInstance().saveGameToBinary(saver);
-    }
-    
-    @Override
-    public void onBackPressed() {
-    	save();
-    	super.onBackPressed();
-    }
+	private void save(){
+		BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
+		SaveManager.getInstance().saveGameToBinary(saver);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		save();
+		super.onBackPressed();
+	}
 }
