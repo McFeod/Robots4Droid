@@ -8,18 +8,28 @@
 	<CheckBox
 			android:layout_width="125dp"
 			android:layout_height="wrap_content"
-			android:text="Music On"
+			android:text="@string/music_setting"
 			android:id="@+id/musicBox" android:longClickable="false" android:enabled="true" android:checked="false"/>
 	<CheckBox
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Suicides On"
+			android:text="@string/suicide_setting"
 			android:id="@+id/suicideBox"/>
+	<CheckBox
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/mine_setting"
+			android:id="@+id/mineBox"/>
+	<CheckBox
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/bomb_setting"
+			android:id="@+id/bombBox"/>
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:text="Complexity"
+			android:text="@string/complexity_setting"
 			android:id="@+id/textView"/>
 
 	<RadioGroup
@@ -29,12 +39,12 @@
 			<RadioButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="Normal"
+				android:text="@string/easy_setting"
 				android:id="@+id/normalRadio"/>
 			<RadioButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="Extra Fast Bots"
+				android:text="@string/hard_setting"
 				android:id="@+id/extraRadio"/>
 	</RadioGroup>
 </LinearLayout>

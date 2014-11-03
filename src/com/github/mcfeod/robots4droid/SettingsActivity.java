@@ -1,5 +1,8 @@
 package com.github.mcfeod.robots4droid;
 
+import java.io.IOException;
+
+import saves.SaveManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +17,8 @@ public class SettingsActivity extends Activity {
 
 	private CheckBox musicBox;
 	private CheckBox suicideBox;
+	private CheckBox mineBox;
+	private CheckBox bombBox;
 	private RadioButton mNormalButton;
 	private RadioButton mExtraFastButton;
 	private RadioGroup complexityGroup;
@@ -29,12 +34,16 @@ public class SettingsActivity extends Activity {
 
 		musicBox = (CheckBox) findViewById(R.id.musicBox);
 		suicideBox = (CheckBox) findViewById(R.id.suicideBox);
+		mineBox = (CheckBox) findViewById(R.id.mineBox);
+		bombBox = (CheckBox) findViewById(R.id.bombBox);
 		complexityGroup = (RadioGroup) findViewById(R.id.complexityGroup);
 		mNormalButton = (RadioButton) findViewById(R.id.normalRadio);
 		mExtraFastButton = (RadioButton) findViewById(R.id.extraRadio);
 
 		musicBox.setChecked(SettingsParser.isMusicOn());
 		suicideBox.setChecked(SettingsParser.areSuicidesOn());
+		mineBox.setChecked(SettingsParser.areMinesOn());
+		bombBox.setChecked(SettingsParser.areBombsOn());
 		if(SettingsParser.needExtraFastBots()){
 			mExtraFastButton.setChecked(true);
 		}else{
@@ -55,6 +64,19 @@ public class SettingsActivity extends Activity {
 			}
 		});
 
+		mineBox.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				SettingsParser.setMineMode(mineBox.isChecked());
+			}
+		});
+
+		bombBox.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				SettingsParser.setBombMode(bombBox.isChecked());
+			}
+		});
 		complexityGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -68,5 +90,13 @@ public class SettingsActivity extends Activity {
 				}
 			}
 		});
+	}
+
+	@Override
+	public void onBackPressed() {
+		try {
+			SaveManager.getInstance().saveGeneralSettings(SettingsActivity.this);
+		} catch (IOException e) {}
+		super.onBackPressed();
 	}
 }

@@ -1,6 +1,7 @@
 package saves;
 
 import com.github.mcfeod.robots4droid.*;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -111,14 +112,16 @@ public class BinaryIOManager {
 	
 	private void  loadSettings(DataInput input)
 			throws IOException{
-		SettingsParser.setMusicMode(input.readBoolean());
+		SettingsParser.setBombMode(input.readBoolean());
+		SettingsParser.setMineMode(input.readBoolean());
 		SettingsParser.setSuicidePermission(input.readBoolean());
 		SettingsParser.setGameComplexity(input.readBoolean() ? '1': '0');
 	}
 	
 	private void saveSettings(DataOutput output)
 			throws IOException{
-		output.writeBoolean(SettingsParser.isMusicOn());
+		output.writeBoolean(SettingsParser.areBombsOn());
+		output.writeBoolean(SettingsParser.areMinesOn());
 		output.writeBoolean(SettingsParser.areSuicidesOn());
 		output.writeBoolean(SettingsParser.needExtraFastBots());
 	}

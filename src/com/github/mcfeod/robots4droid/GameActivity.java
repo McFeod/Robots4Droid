@@ -15,7 +15,6 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 public class GameActivity extends Activity {
 	private int width=20, height=15; //размеры сторон
 	private World world;
@@ -24,6 +23,8 @@ public class GameActivity extends Activity {
 
 	private MediaPlayer mSoundTrack; 
 	private boolean isMusicOn;
+	private boolean areMinesOn;
+	private boolean areBombsOn;
 
 	private TextView text;
 	private GameSurfaceView view;
@@ -113,7 +114,7 @@ public class GameActivity extends Activity {
 		findViewById(R.id.stay_button).setOnClickListener(listener);
 		findViewById(R.id.mine_button).setOnClickListener(listener);
 		findViewById(R.id.bomb_button).setOnClickListener(listener);
-		
+
 		mSoundTrack = MediaPlayer.create(this, R.raw.muz);
 		mSoundTrack.setLooping(true);
 		// при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
@@ -125,6 +126,8 @@ public class GameActivity extends Activity {
 				world = new World(width, height);
 			}
 			isMusicOn = SettingsParser.isMusicOn();
+			areBombsOn = SettingsParser.areBombsOn();
+			areMinesOn = SettingsParser.areMinesOn();
 			world.player.areSuicidesForbidden = !SettingsParser.areSuicidesOn();
 		}else{
 			world = new World(
@@ -144,9 +147,16 @@ public class GameActivity extends Activity {
 			}
 			world.player.areSuicidesForbidden = savedInstanceState.getBoolean("areSuicidesForbidden");
 			isMusicOn = savedInstanceState.getBoolean("isMusicOn");
+			areBombsOn = savedInstanceState.getBoolean("areBombsOn");
+			areMinesOn = savedInstanceState.getBoolean("areMinesOn");
 			if (isMusicOn)
 				mSoundTrack.seekTo(savedInstanceState.getInt("musicTime")+400);
 		}
+
+		if (!areBombsOn)
+			findViewById(R.id.bomb_button).setVisibility(8);
+		if (!areMinesOn)
+			findViewById(R.id.mine_button).setVisibility(8);
 		view = (GameSurfaceView)findViewById(R.id.game);
 		view.SetWorld(world);
 		view.CreateThread();
@@ -208,6 +218,8 @@ public class GameActivity extends Activity {
 		savedInstanceState.putBoolean("isAlive", world.player.isAlive);
 		savedInstanceState.putBoolean("areSuicidesForbidden", world.player.areSuicidesForbidden);
 		savedInstanceState.putBoolean("isMusicOn", isMusicOn);
+		savedInstanceState.putBoolean("areMinesOn", areMinesOn);
+		savedInstanceState.putBoolean("areBombsOn", areBombsOn);
 		if (isMusicOn)
 			savedInstanceState.putInt("musicTime",mSoundTrack.getCurrentPosition());
 	}

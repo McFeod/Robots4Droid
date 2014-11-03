@@ -1,7 +1,15 @@
 package saves;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import com.github.mcfeod.robots4droid.SettingsParser;
 
 import android.content.Context;
 import android.util.Log;
@@ -101,5 +109,22 @@ public class SaveManager {
 		}
 	}
 
+	public void saveGeneralSettings(Context context) throws IOException{
+		BufferedOutputStream stream = null;
+		stream = new BufferedOutputStream(
+				context.openFileOutput("Gen_Settings", Context.MODE_PRIVATE));
+		DataOutput out = new DataOutputStream(stream);
+		out.writeBoolean(SettingsParser.isMusicOn());
+		stream.close();
+	}
+
+	public void loadGeneralSettings(Context context) throws IOException{
+		BufferedInputStream stream = null;
+		stream = new BufferedInputStream(
+					context.openFileInput("Gen_Settings"));
+		DataInput in = new DataInputStream(stream);
+		SettingsParser.setMusicMode(in.readBoolean());
+		stream.close();
+	}
 	private SaveManager(){}
 }
