@@ -23,7 +23,7 @@ public class GameActivity extends Activity {
 	private int width=20, height=15; //размеры сторон
     private World world;
     private int mLastLevel=-1;
-    private boolean mNeedCrutchForLaunch = true;
+//  private boolean mNeedCrutchForLaunch = true;
 
     public static final String TAG = "GameActivity";
 
@@ -31,9 +31,7 @@ public class GameActivity extends Activity {
     private boolean isMusicOn;
 
     private TextView text;
-    private boolean isSaveUsed = false;
     private GameSurfaceView view;
-	private Button saveButton;
 
 	public OnClickListener listener = new OnClickListener() {
 		@Override
@@ -83,7 +81,6 @@ public class GameActivity extends Activity {
 						    	//view.mDrawThread.moveTo(world.player.getPos());
                                 view.mDrawThread.setTargetCorner();
 								dialog.dismiss();
-                                //saveButton.setEnabled(!isSaveUsed);
 						    }
 						});
 						AlertDialog dialog = builder.create();
@@ -93,7 +90,6 @@ public class GameActivity extends Activity {
 				}else{
 					Toast.makeText(GameActivity.this, "You can't do it", Toast.LENGTH_SHORT).show();
 				}
-					
 			}
 			if (mLastLevel != world.getLevel()){
 				mLastLevel = world.getLevel();
@@ -125,31 +121,20 @@ public class GameActivity extends Activity {
         findViewById(R.id.stay_button).setOnClickListener(listener);
 		findViewById(R.id.mine_button).setOnClickListener(listener);
 		findViewById(R.id.bomb_button).setOnClickListener(listener);
-		
-		//saveButton = (Button)findViewById(R.id.save_button);
-		//saveButton.setVisibility(View.INVISIBLE);
-		//saveButton.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                /*if (Build.VERSION.SDK_INT >= 11)*/ save();
-//            }
-//        });
         
         mSoundTrack = MediaPlayer.create(this, R.raw.muz);
         mSoundTrack.setLooping(true);
         // при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
         // по этой причине start() и stop() размещены в onStart() и onStop()
         
-        
         if (savedInstanceState == null){
         	world = new World(width, height);
+            // если выбрана соохранённая игра, загружаем из соохранения
+			if(SaveManager.getInstance().hasLoadingGame()){
+		        load();
+		    }
             isMusicOn = SettingsParser.isMusicOn();
             world.player.areSuicidesForbidden = !SettingsParser.areSuicidesOn();
-            // если выбрана соохранённая игра, загружаем из соохранения
-			//if (Build.VERSION.SDK_INT >= 11)
-			     if(SaveManager.getInstance().hasLoadingGame()){
-		        	  load();
-		        }
         }else{
         	world = new World(
         			savedInstanceState.getInt("width"),
@@ -181,15 +166,6 @@ public class GameActivity extends Activity {
 		changeText();
     }
 
-//	@Override
-//	public void onWindowFocusChanged(boolean hasFocus) {
-//		super.onWindowFocusChanged(hasFocus);
-//		if (mNeedCrutchForLaunch){
-//			//view.mDrawThread.moveTo(world.player.getPos());
-//            view.mDrawThread.setTargetCorner();
-//			mNeedCrutchForLaunch = false;
-//		}
-//	}
 	
     @Override
     protected void onResume(){
@@ -233,7 +209,6 @@ public class GameActivity extends Activity {
     	savedInstanceState.putBoolean("isAlive", world.player.isAlive);
     	savedInstanceState.putBoolean("areSuicidesForbidden", world.player.areSuicidesForbidden);
     	savedInstanceState.putBoolean("isMusicOn", isMusicOn);
-    	//!//savedInstanceState.putBoolean("safeMoves", safeMoves);
     	if (isMusicOn)
     		savedInstanceState.putInt("musicTime",mSoundTrack.getCurrentPosition());
     }
@@ -254,14 +229,11 @@ public class GameActivity extends Activity {
         BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
         world.board.giveLinkToManager(saver);
         SaveManager.getInstance().saveGameToBinary(saver);
-        // костыль, чтобы не соохранялисб больше одного раза
-        saveButton.setEnabled(false);
-        isSaveUsed = true;
     }
     
     @Override
     public void onBackPressed() {
-    	//save()
+    	save();
     	super.onBackPressed();
     }
 }

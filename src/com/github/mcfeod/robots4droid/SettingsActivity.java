@@ -12,61 +12,61 @@ import android.widget.RadioGroup;
 
 public class SettingsActivity extends Activity {
 
-    private CheckBox musicBox;
-    private CheckBox suicideBox;
-    private RadioButton mNormalButton;
-    private RadioButton mExtraFastButton;
-    private RadioGroup complexityGroup;
-    private Intent mIntent;
+	private CheckBox musicBox;
+	private CheckBox suicideBox;
+	private RadioButton mNormalButton;
+	private RadioButton mExtraFastButton;
+	private RadioGroup  complexityGroup;
+	private Intent mIntent;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceBundle) {
-        super.onCreate(savedInstanceBundle);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-         WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_settings);
+	@Override
+	protected void onCreate(Bundle savedInstanceBundle) {
+		super.onCreate(savedInstanceBundle);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+		 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		setContentView(R.layout.activity_settings);
 
-        musicBox = (CheckBox) findViewById(R.id.musicBox);
-        suicideBox = (CheckBox) findViewById(R.id.suicideBox);
-        complexityGroup = (RadioGroup) findViewById(R.id.complexityGroup);
-        mNormalButton = (RadioButton) findViewById(R.id.normalRadio);
-        mExtraFastButton = (RadioButton) findViewById(R.id.extraRadio);
+		musicBox = (CheckBox) findViewById(R.id.musicBox);
+		suicideBox = (CheckBox) findViewById(R.id.suicideBox);
+		complexityGroup = (RadioGroup) findViewById(R.id.complexityGroup);
+		mNormalButton = (RadioButton) findViewById(R.id.normalRadio);
+		mExtraFastButton = (RadioButton) findViewById(R.id.extraRadio);
 
-        musicBox.setChecked(SettingsParser.isMusicOn());
-        suicideBox.setChecked(SettingsParser.areSuicidesOn());
-        if(SettingsParser.needExtraFastBots()){
-            mExtraFastButton.setChecked(true);
-        }else{
-            mNormalButton.setChecked(true);
-        }
+		musicBox.setChecked(SettingsParser.isMusicOn());
+		suicideBox.setChecked(SettingsParser.areSuicidesOn());
+		if(SettingsParser.needExtraFastBots()){
+			mExtraFastButton.setChecked(true);
+		}else{
+			mNormalButton.setChecked(true);
+		}
 
-        musicBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SettingsParser.setMusicMode(musicBox.isChecked());
-            }
-        });
+		musicBox.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				SettingsParser.setMusicMode(musicBox.isChecked());
+			}
+		});
 
-        suicideBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SettingsParser.setSuicidePermission(suicideBox.isChecked());
-            }
-        });
+		suicideBox.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				SettingsParser.setSuicidePermission(suicideBox.isChecked());
+			}
+		});
 
-        complexityGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.normalRadio:
-                        SettingsParser.setGameComplexity(SettingsParser.NORMAL_MODE);
-                        break;
-                    case R.id.extraRadio:
-                        SettingsParser.setGameComplexity(SettingsParser.EXTRA_FAST_BOTS);
-                        break;
-                }
-            }
-        });
-    }
+		complexityGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				switch (checkedId) {
+					case R.id.normalRadio:
+						SettingsParser.setGameComplexity(SettingsParser.NORMAL_MODE);
+						break;
+					case R.id.extraRadio:
+						SettingsParser.setGameComplexity(SettingsParser.EXTRA_FAST_BOTS);
+						break;
+				}
+			}
+		});
+	}
 }

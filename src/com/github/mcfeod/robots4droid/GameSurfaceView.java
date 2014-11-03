@@ -2,7 +2,6 @@ package com.github.mcfeod.robots4droid;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -33,7 +32,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	//@Override
 	public void surfaceDestroyed(SurfaceHolder holder){
 	}
-    
+
 	/** Конструктор */
     public GameSurfaceView(Context context, AttributeSet attrs)
     {
@@ -79,14 +78,13 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 				//запоминаем координаты нажатия
 				startTouchPos.x = (int) event.getX();
 				startTouchPos.y = (int) event.getY();
-                //Log.d("Touch", String.format("StartX = %d, StartY = %d",startTouchPos.x,startTouchPos.y));
 				break;
 			//событие возникает при движении по экрану
 			case MotionEvent.ACTION_MOVE:
 				//запоминаем координаты касания
 				endTouchPos.x = (int) event.getX();
 				endTouchPos.y = (int) event.getY();
-                //Log.d("Touch", String.format("EndX = %d, EndY = %d",endTouchPos.x,endTouchPos.y));
+
 				/*перерисовываем поле startTouchPos.x - endTouchPos.x и
 				  startTouchPos.y - endTouchPos.y - разница между предыдущей
 				  точкой касания и текущей. Определяет, на сколько необходимо
@@ -104,5 +102,4 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 		}
 		return true;
 	}
-    
 }
