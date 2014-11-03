@@ -2,6 +2,7 @@ package com.github.mcfeod.robots4droid;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -19,7 +20,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	/** Создание области рисования */
 	//@Override
 	public void surfaceCreated(SurfaceHolder holder){
-        CreateThread();
+        mDrawThread = new DrawThread1(mSurfaceHolder, context, world, this);
         mDrawThread.start();
 	}
 
@@ -48,15 +49,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     	this.world = world;
     }
     
-    public void CreateThread(){
-        //mDrawThread = new DrawThread1(mSurfaceHolder, context, world, this);
-        mDrawThread = new DrawThread1(mSurfaceHolder, context, world, this);
-    }
-    
-    public void StartThread(){
-    	mDrawThread.start();
-    }
-    
 	public void StopThread(){
     	//mDrawThread.customKill();
         mDrawThread.interrupt();
@@ -66,6 +58,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         catch (InterruptedException e){
             e.printStackTrace();
         }
+        Log.d("View","Thread interrupted");
     	mDrawThread = null;
     }
     

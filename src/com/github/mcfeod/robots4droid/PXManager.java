@@ -7,7 +7,7 @@ public class PXManager {
 
     private static int WIDTH_PX_160_DPI      = 35;
     private static int HEIGHT_PX_160_DPI     = 35;
-    private static int STEP_PX_160_DPI       = 10;
+    private static int STEP_PX_160_DPI       = 8;
     private static int INTENT_PX_160_DPI     = 30;
     private static int LINE_WIDTH_PX_160_DPI = 10;
 
