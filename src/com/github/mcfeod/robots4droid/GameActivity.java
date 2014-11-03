@@ -84,14 +84,11 @@ public class GameActivity extends Activity {
 				}else{
 					Toast.makeText(GameActivity.this, "You can't do it", Toast.LENGTH_SHORT).show();
 				}
-					
 			}
 			if (mLastLevel != world.getLevel()){
 				mLastLevel = world.getLevel();
 				Toast.makeText(GameActivity.this, "NEW LEVEL: " + mLastLevel , Toast.LENGTH_SHORT).show();
-				
 			}
-
 		}
 	};
 
@@ -121,12 +118,11 @@ public class GameActivity extends Activity {
 		mSoundTrack.setLooping(true);
 		// при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
 		// по этой причине start() и stop() размещены в onStart() и onStop()
-		
-		
 		if (savedInstanceState == null){
-			world = new World(width, height);
 			if(SaveManager.getInstance().hasLoadingGame()){
 				load();
+			}else{
+				world = new World(width, height);
 			}
 			isMusicOn = SettingsParser.isMusicOn();
 			world.player.areSuicidesForbidden = !SettingsParser.areSuicidesOn();
@@ -224,13 +220,12 @@ public class GameActivity extends Activity {
 
 	private void load(){
 		BinaryIOManager loader = new BinaryIOManager(getApplicationContext(), world);
-		world.board.giveLinkToManager(loader);
 		SaveManager.getInstance().loadGameFromBinary(loader);
+		world = loader.updatedWorld();
 	}
 
 	private void save(){
 		BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
-		world.board.giveLinkToManager(saver);
 		SaveManager.getInstance().saveGameToBinary(saver);
 	}
 	

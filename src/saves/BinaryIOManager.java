@@ -10,7 +10,6 @@ import java.util.Date;
 public class BinaryIOManager {
 	private static final String TAG = "BinaryIOManager";
 
-	private byte[][] mBoard = null;
 	private Context mContext;
 	private World mWorld;
 
@@ -29,22 +28,11 @@ public class BinaryIOManager {
 		BinaryIOManager.deleteGameFile(save, mContext);
 	}
 
-	/* SaveFileManager создаёт новый экземпляр класса Player и присваивает ему соохранённые в файле свойства.
-	* Специально для этого в класс Player добавлен новый конструктор Player(x, y, energy, score)
-	* После этого в поле player объекта world помещается ссылка на свежесозданный экземпляр.
-	*
-	* Для изменения игрового поля пока используется костыль: метод giveLinkToManager класса Board,
-	* который вызывает метод setBoard данного класса.
-	* C помощью этого костыля инициализируется внутреннее поле mBoard.
-	*
-	* В перспективе нужно создавать новый объект Board и помещать ссылку в соответствующее поле объекта world
+	/* SaveFileManager создаёт новый экземпляр класса World и присваивает ему соохранённые в файле свойства.
+	* После этого в GameActivity.world помещается ссылка на свежесозданный экземпляр.
 	* */
 
 	public SavedGame saveGame() throws IOException{
-		if(mBoard == null){
-			throw new RuntimeException("Board for load is not initialised");
-		}
-
 		SavedGame save = new SavedGame(mWorld.getLevel(), mWorld.player.getScore(), new Date());
 		String fileName = save.getFileName();
 		BufferedOutputStream stream = null;
@@ -54,10 +42,18 @@ public class BinaryIOManager {
 			);
 			DataOutput out = new DataOutputStream(stream);
 			// пишем данные в файл
-			savePlayer(out);
-			saveDesk(out);
+			saveWorld(out);
 			saveSettings(out);
-		}
+		}	/* SaveFileManager создаёт новый экземпляр класса Player и присваивает ему соохранённые в файле свойства.
+		* Специально для этого в класс Player добавлен новый конструктор Player(x, y, energy, score)
+		* После этого в поле player объекта world помещается ссылка на свежесозданный экземпляр.
+		*
+		* Для изменения игрового поля пока используется костыль: метод giveLinkToManager класса Board,
+		* который вызывает метод setBoard данного класса.
+		* C помощью этого костыля инициализируется внутреннее поле mBoard.
+		*
+		* В перспективе нужно создавать новый объект Board и помещать ссылку в соответствующее поле объекта world
+		* */
 		catch (FileNotFoundException e){
 			Log.d(TAG, "No save file");
 		}
@@ -70,10 +66,6 @@ public class BinaryIOManager {
 	}
 
 	public void loadGame(SavedGame save) throws IOException{
-		if(mBoard == null){
-			throw new RuntimeException("Board for load is not initialised");
-		}
-
 		String fileName = save.getFileName();
 		BufferedInputStream stream = null;
 		try {
@@ -82,10 +74,8 @@ public class BinaryIOManager {
 			);
 			DataInput in = new DataInputStream(stream);
 			// читаем данные из файла
-			loadPlayer(in);
-			Log.d(TAG, "Player loaded");
-			loadDesk(in);
-			Log.d(TAG, "Desk loaded");
+			loadWorld(in);
+			Log.d(TAG, "World loaded");
 			loadSettings(in);
 			Log.d(TAG, "Settings loaded");
 		}
@@ -99,29 +89,23 @@ public class BinaryIOManager {
 		}
 	}
 
-	public void setBoard(byte[][] board) {
-		mBoard = board;
-	}
-
-	//TODO проверить, не устроит ли старый игрок утечку памяти
-	private void loadPlayer(DataInput input)
-	throws IOException{
+	private void loadWorld(DataInput input)
+			throws IOException{
 		int x = input.readInt();
 		int y = input.readInt();
 		int energy = input.readInt();
 		int score = input.readInt();
-		mWorld.player = new Player(x,y,energy,score,true);
-	}
-
-	private void loadDesk(DataInput input)
-	throws IOException{
-		int x = input.readInt();
-		int y = input.readInt(); //размеры доски. Зачем-то.
-		x = input.readInt();
-		y = input.readInt();
-		mWorld.board.setRobotCount(x, y);
-		for (int i = 0; i < mBoard.length ; i++) {
-			input.readFully(mBoard[i]);
+		int lvl = input.readInt();
+		int width = input.readInt();
+		int height = input.readInt();
+		int bots = input.readInt();
+		int fast = input.readInt();
+		mWorld = new World(width, height, bots, fast, x, y, energy, score, true, lvl);
+		byte[] row;
+		for (int i = 0; i < width ; ++i) {
+			row = new byte[height];
+			input.readFully(row, 0, height);
+			mWorld.board.setRow(i, row);
 		}
 	}
 	
@@ -138,22 +122,25 @@ public class BinaryIOManager {
 		output.writeBoolean(SettingsParser.areSuicidesOn());
 		output.writeBoolean(SettingsParser.needExtraFastBots());
 	}
-	private void savePlayer(DataOutput output)
+	private void saveWorld(DataOutput output) //I'm Superman!
 			throws IOException{
 		Point pos = mWorld.player.getPos();
 		output.writeInt(pos.x);
 		output.writeInt(pos.y);
 		output.writeInt(mWorld.player.getEnergy());
 		output.writeInt(mWorld.player.getScore());
-	}
-
-	private void saveDesk(DataOutput output) throws IOException{
-		output.writeInt(mBoard.length);
-		output.writeInt(mBoard[0].length);
+		output.writeInt(mWorld.getLevel());
+		output.writeInt(mWorld.getWidth());
+		output.writeInt(mWorld.getHeight());
 		output.writeInt(mWorld.board.getAliveBotCount());
 		output.writeInt(mWorld.board.getAliveFastBotCount());
-		for (int i = 0; i < mBoard.length; i++) {
-			output.write(mBoard[i]);
+		for (int i = 0; i < mWorld.getWidth(); ++i) {
+			output.write(mWorld.board.getRow(i));
 		}
+	}
+	
+	/* костыыыыыль :'( */
+	public World updatedWorld(){
+		return mWorld;
 	}
 }
