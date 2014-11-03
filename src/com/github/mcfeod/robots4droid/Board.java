@@ -213,4 +213,12 @@ public class Board{
     public void giveLinkToManager(BinaryIOManager manager){
         manager.setBoard(mBoard);
     }
+
+    public int getWidth() {
+        return mWidth;
+    }
+
+    public int getHeight() {
+        return mHeight;
+    }
 }

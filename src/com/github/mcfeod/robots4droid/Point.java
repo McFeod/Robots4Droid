@@ -20,4 +20,13 @@ public class Point {
 		}
 	}
 
+    public void cloneCoordinates(Point src){
+        this.x = src.x;
+        this.y = src.y;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%d %d;",x,y);
+    }
 }

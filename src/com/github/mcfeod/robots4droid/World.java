@@ -60,7 +60,9 @@ public class World{
     private void initLevel(){
     	board.Clear(); //очистка доски
     	mLevel ++;
-        player.chEnergy((int)(Math.sqrt(mLevel)));
+        //player.chEnergy((int)(Math.sqrt(mLevel)));
+        // TODO убрать после тестирования
+        player.chEnergy(10);
     	//увеличение энергии и очков
 		if (mLevel>1)
 			player.chScore((mLevel*5));

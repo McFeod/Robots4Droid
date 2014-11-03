@@ -1,5 +1,6 @@
 package com.github.mcfeod.robots4droid;
 
+import android.util.Log;
 import saves.BinaryIOManager;
 import saves.SaveManager;
 import android.app.Activity;
@@ -23,6 +24,8 @@ public class GameActivity extends Activity {
     private World world;
     private int mLastLevel=-1;
     private boolean mNeedCrutchForLaunch = true;
+
+    public static final String TAG = "GameActivity";
 
     private MediaPlayer mSoundTrack; 
     private boolean isMusicOn;
@@ -50,19 +53,25 @@ public class GameActivity extends Activity {
 					case R.id.teleport_button: succ=world.movePlayer((byte)(9)); break;	
 					case R.id.safe_teleport_button: succ=world.movePlayer((byte)(10)); break;	
 					case R.id.mine_button: succ=world.setMine(); break;	
-					case R.id.bomb_button: succ=world.bomb(); break;
+					case R.id.bomb_button:
+                        succ = world.bomb();
+                        if(succ) {
+                            view.mDrawThread.notifyBombUsage();
+                        }
 				}
 				if (succ){
-					view.mDrawThread.moveTo(world.player.getPos());
-					view.mDrawThread.delay(200);
+					//view.mDrawThread.moveTo(world.player.getPos());
+					//view.mDrawThread.delay(200);
+                    view.mDrawThread.setTargetCorner();
 					//передвигаем роботов
 					world.moveBots();
 					if (world.player.isAlive){
 						changeText();
 						//отрисовываем роботов
-						view.mDrawThread.moveTo(world.player.getPos());
+						//view.mDrawThread.moveTo(world.player.getPos());
+                        view.mDrawThread.setTargetCorner();
 					}else{
-                        saveButton.setEnabled(false);
+                        //saveButton.setEnabled(false);
 						AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
 						builder.setTitle(R.string.dialog);
 						builder.setMessage(R.string.dialog);
@@ -71,9 +80,10 @@ public class GameActivity extends Activity {
 						    @Override
 						    public void onClick(DialogInterface dialog, int which) {
 						    	world.defeat();
-						    	view.mDrawThread.moveTo(world.player.getPos());
+						    	//view.mDrawThread.moveTo(world.player.getPos());
+                                view.mDrawThread.setTargetCorner();
 								dialog.dismiss();
-                                saveButton.setEnabled(!isSaveUsed);
+                                //saveButton.setEnabled(!isSaveUsed);
 						    }
 						});
 						AlertDialog dialog = builder.create();
@@ -116,14 +126,14 @@ public class GameActivity extends Activity {
 		findViewById(R.id.mine_button).setOnClickListener(listener);
 		findViewById(R.id.bomb_button).setOnClickListener(listener);
 		
-		saveButton = (Button)findViewById(R.id.save_button);
-		saveButton.setVisibility(View.VISIBLE);
-		saveButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*if (Build.VERSION.SDK_INT >= 11)*/ save();
-            }
-        });
+		//saveButton = (Button)findViewById(R.id.save_button);
+		//saveButton.setVisibility(View.INVISIBLE);
+		//saveButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                /*if (Build.VERSION.SDK_INT >= 11)*/ save();
+//            }
+//        });
         
         mSoundTrack = MediaPlayer.create(this, R.raw.muz);
         mSoundTrack.setLooping(true);
@@ -163,22 +173,23 @@ public class GameActivity extends Activity {
         }
 		view = (GameSurfaceView)findViewById(R.id.game);
         view.SetWorld(world);
-        view.CreateThread();
-        view.mDrawThread.SetActivity(this);
+        //view.CreateThread();
+        //view.mDrawThread.SetActivity(this);
         text=(TextView)findViewById(R.id.textView1);
-        view.mDrawThread.SetText(text);
-        view.StartThread();
+        //view.mDrawThread.SetText(text);
+        //view.StartThread();
 		changeText();
     }
 
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-		if (mNeedCrutchForLaunch){
-			view.mDrawThread.moveTo(world.player.getPos());
-			mNeedCrutchForLaunch = false;
-		}
-	}
+//	@Override
+//	public void onWindowFocusChanged(boolean hasFocus) {
+//		super.onWindowFocusChanged(hasFocus);
+//		if (mNeedCrutchForLaunch){
+//			//view.mDrawThread.moveTo(world.player.getPos());
+//            view.mDrawThread.setTargetCorner();
+//			mNeedCrutchForLaunch = false;
+//		}
+//	}
 	
     @Override
     protected void onResume(){
@@ -186,7 +197,7 @@ public class GameActivity extends Activity {
         if(isMusicOn) {
             mSoundTrack.start();
         }
-        view.mDrawThread.moveTo(world.player.getPos());
+        //view.mDrawThread.moveTo(world.player.getPos());
     }
 
     @Override
@@ -195,12 +206,12 @@ public class GameActivity extends Activity {
         if(isMusicOn) {
         	mSoundTrack.pause();
         }
+        view.StopThread();
     }
     
     @Override
     protected void onDestroy(){
     	super.onDestroy();
-    	view.StopThread();
     	mSoundTrack.release();
     }
     
