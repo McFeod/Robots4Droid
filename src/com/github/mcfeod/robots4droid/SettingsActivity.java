@@ -16,7 +16,7 @@ public class SettingsActivity extends Activity {
 	private CheckBox suicideBox;
 	private RadioButton mNormalButton;
 	private RadioButton mExtraFastButton;
-	private RadioGroup complexityGroup;
+	private RadioGroup  complexityGroup;
 	private Intent mIntent;
 
 	@Override
@@ -48,12 +48,12 @@ public class SettingsActivity extends Activity {
 			}
 		});
 
-		suicideBox.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				SettingsParser.setSuicidePermission(suicideBox.isChecked());
-			}
-		});
+        suicideBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SettingsParser.setSuicidePermission(suicideBox.isChecked());
+            }
+        });
 
 		complexityGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 			@Override

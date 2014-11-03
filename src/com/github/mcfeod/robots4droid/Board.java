@@ -11,11 +11,11 @@ public class Board{
 	public static final byte ROBOT = 2;
 	public static final byte FASTROBOT = 3;
 	public static final byte MINE = 4;
-
-	private int mAliveFastBotCount;
-	private int mAliveBotCount;
-	private int mDiffFastBotCount = 0;
-	private int mDiffBotCount = 0;
+	
+    private int mAliveFastBotCount;
+    private int mAliveBotCount;
+    private int mDiffFastBotCount = 0;
+    private int mDiffBotCount = 0;
 
 	private int mWidth, mHeight;
 	private byte mBoard[][];
@@ -210,7 +210,16 @@ public class Board{
 		return mAliveBotCount;
 	}
 
-	public void giveLinkToManager(BinaryIOManager manager){
-		manager.setBoard(mBoard);
-	}
+    public void giveLinkToManager(BinaryIOManager manager){
+        manager.setBoard(mBoard);
+    }
+
+    public int getWidth() {
+        return mWidth;
+    }
+
+    public int getHeight() {
+        return mHeight;
+    }
+
 }

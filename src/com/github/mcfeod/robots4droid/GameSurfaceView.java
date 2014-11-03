@@ -9,7 +9,8 @@ import android.view.SurfaceView;
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
 
 	private SurfaceHolder mSurfaceHolder;
-	public DrawThread mDrawThread;
+	//public DrawThread mDrawThread;
+    public DrawThread1 mDrawThread;
 	World world;
 	Context context;
 	Point startTouchPos, endTouchPos;
@@ -18,6 +19,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	/** Создание области рисования */
 	//@Override
 	public void surfaceCreated(SurfaceHolder holder){
+        CreateThread();
+        mDrawThread.start();
 	}
 
 	/** Изменение области рисования */
@@ -31,35 +34,44 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	}
 
 	/** Конструктор */
-	public GameSurfaceView(Context context, AttributeSet attrs)
-	{
-		super(context, attrs);
-		mSurfaceHolder = getHolder();
-		mSurfaceHolder.addCallback(this);
-		this.context = context;
-		startTouchPos = new Point(0,0);
-		endTouchPos = new Point(0,0);
-	}
-
-	public void SetWorld(World world){
-		this.world = world;
-	}
-
-	public void CreateThread(){
-		mDrawThread = new DrawThread(mSurfaceHolder, context, world, this);
-	}
-
-	public void StartThread(){
-		mDrawThread.start();
-	}
-
+    public GameSurfaceView(Context context, AttributeSet attrs)
+    {
+        super(context, attrs);
+        mSurfaceHolder = getHolder();
+        mSurfaceHolder.addCallback(this);
+        this.context = context;
+        startTouchPos = new Point(0,0);
+        endTouchPos = new Point(0,0);
+    }
+    
+    public void SetWorld(World world){
+    	this.world = world;
+    }
+    
+    public void CreateThread(){
+        //mDrawThread = new DrawThread1(mSurfaceHolder, context, world, this);
+        mDrawThread = new DrawThread1(mSurfaceHolder, context, world, this);
+    }
+    
+    public void StartThread(){
+    	mDrawThread.start();
+    }
+    
 	public void StopThread(){
-		mDrawThread.customKill();
-		mDrawThread = null;
-	}
-
+    	//mDrawThread.customKill();
+        mDrawThread.interrupt();
+        try {
+            mDrawThread.join();
+        }
+        catch (InterruptedException e){
+            e.printStackTrace();
+        }
+    	mDrawThread = null;
+    }
+    
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent event) {
+        final int amplifier = 8;
 		switch (event.getAction()) {
 			//событие возникает при нажатии на экран
 			case MotionEvent.ACTION_DOWN:
@@ -72,19 +84,22 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 				//запоминаем координаты касания
 				endTouchPos.x = (int) event.getX();
 				endTouchPos.y = (int) event.getY();
+
 				/*перерисовываем поле startTouchPos.x - endTouchPos.x и
 				  startTouchPos.y - endTouchPos.y - разница между предыдущей
 				  точкой касания и текущей. Определяет, на сколько необходимо
 				  передвинуть поле по x и по y*/
-				mDrawThread.ChangeStartPos(startTouchPos.x - endTouchPos.x,
-				 startTouchPos.y - endTouchPos.y);
-				mDrawThread.Draw();
-				//запоминаем новые координаты начальной точки касания
-				startTouchPos.x = endTouchPos.x;
-				startTouchPos.y = endTouchPos.y;
-				break;
+                if(mDrawThread.getState() == Thread.State.RUNNABLE)  {
+//                    mDrawThread.ChangeStartPos(startTouchPos.x - endTouchPos.x,
+//                            startTouchPos.y - endTouchPos.y);
+//                    mDrawThread.Draw();
+//                    mDrawThread.delay(200);
+                      mDrawThread.setTargetCorner((startTouchPos.x - endTouchPos.x)*amplifier,
+                                                  (startTouchPos.y - endTouchPos.y)*amplifier);
+                      startTouchPos.x = endTouchPos.x;
+                      startTouchPos.y = endTouchPos.y;
+                }
 		}
 		return true;
 	}
-
 }
