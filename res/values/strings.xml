@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <string name="app_name">Robots4Droid</string>
-    <string name="menu_game">Играть</string>
-	<string name="menu_settings">Настройки</string>
-	<string name="menu_help">Справка</string>
-    
-</resources>
