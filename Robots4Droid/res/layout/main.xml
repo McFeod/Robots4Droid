@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="#c7fed8">
+
+	<Button android:id="@+id/continue_button"
+			android:text="@string/continue_button" 
+			style="@style/MainMenuButton"/>
+
+	<Button android:id="@+id/new_game_button"
+			android:text="@string/new_game_button" 
+			style="@style/MainMenuButton"/>
+
+	<Button android:id="@+id/load_button"
+			android:text="@string/load_button" 
+			style="@style/MainMenuButton"/>
+
+	<Button android:id="@+id/settings_button"
+			android:text="@string/settings_button" 
+			style="@style/MainMenuButton"/>
+
+	<Button android:id="@+id/about_button"
+			android:text="@string/about_button" 
+			style="@style/MainMenuButton"/>
+
+</LinearLayout>

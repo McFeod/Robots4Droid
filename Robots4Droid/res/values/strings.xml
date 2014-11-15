@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Robots4Droid</string>
+	<string name="action_settings">Settings</string>
+	<string name="continue_button">Continue</string>
+	<string name="new_game_button">New game</string>
+	<string name="load_button">Load</string>
+	<string name="settings_button">Settings</string>
+	<string name="about_button">About</string>
+	<string name="dialog">You died</string>
+	<string name="restart">Once more!</string>
+	<string name="away">Give me a break…</string>
+	<string name="no_saved">You have nothing to continue!</string>
+	<string name="not_possible">You can\'t do it!</string>
+	<string name="new_level">NEW LEVEL: </string>
+	<string name="dialog_about_message">
+What to do.\n\
+The aim of the game is simple: destroy all robots and get the next level.
+Higher level - more robots. More robots - more interest.\n\
+How to achieve that.\n\
+Our developers worked out game process and included a lot of features in this game: 
+teleport, safe teleport, mines and bombs. Using all that correctly, 
+you\'ll quickly learn to play good and reach the top of players rating.\n\
+What is what.\n\
+If you are incredibly clever, you can skip this part. But we advice you not to do this.\n\
+Teleport - is the only opportunity to lose in safe game mode. Using teleport, 
+you can relocate to the cell with cruel robot. And die there.\n\
+Safe teleport - costs energy, relocates you to the cell, where you guaranteed 
+won\'t be killed by robot. But it doesn\'t mean that after next movement robot will not reach you.\n\
+Mine -\n\
+Bomb - energy-intensive thing, that allows you to stay alive longer, by desroying all robots, 
+threatening you during the next movement. Junk near you will be exploded also.\n\
+What else?\n\
+When robots encounter, junk appears. When robot encounters junk, junk remains.\n\
+You can push junks on robots, or hide behind them.\n\
+Fast (blue) robots can make two steps during one movement.\n\
+When you turn safe movements off, you turn off higher power that prevents your misstep.
+In safe mode, you can\'t come close to robots. As we do in the zoo.\n\ 
+Field is scalable. \n\
+Warning! Game is almost endless. You can\'t win. But you can score more points than your friend
+and raise your self-esteem by that.\n\
+</string>
+	<string name="music_setting">Music</string>
+	<string name="easy_setting">Easy</string>
+	<string name="hard_setting">More fast robots!!!</string>
+	<string name="suicide_setting">Turn safe movements on</string>
+	<string name="complexity_setting">Difficulty:</string>
+	<string name="mine_setting">Turn mines on</string>
+	<string name="bomb_setting">Turn explosions on</string>
+	<string name="condition">Level: %1$d, Score: %2$d, Energy: %3$d, Bots : %4$d"</string>
+</resources>

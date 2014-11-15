@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+
+	<CheckBox
+			android:layout_width="125dp"
+			android:layout_height="wrap_content"
+			android:text="@string/music_setting"
+			android:id="@+id/musicBox" android:longClickable="false" android:enabled="true" android:checked="false"/>
+	<CheckBox
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/suicide_setting"
+			android:id="@+id/suicideBox"/>
+	<CheckBox
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/mine_setting"
+			android:id="@+id/mineBox"/>
+	<CheckBox
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/bomb_setting"
+			android:id="@+id/bombBox"/>
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="@string/complexity_setting"
+			android:id="@+id/textView"/>
+
+	<RadioGroup
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/complexityGroup">
+			<RadioButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/easy_setting"
+				android:id="@+id/normalRadio"/>
+			<RadioButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/hard_setting"
+				android:id="@+id/extraRadio"/>
+	</RadioGroup>
+</LinearLayout>
