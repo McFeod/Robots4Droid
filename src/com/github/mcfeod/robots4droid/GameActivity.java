@@ -83,12 +83,12 @@ public class GameActivity extends Activity {
 						dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
 					}
 				}else{
-					Toast.makeText(GameActivity.this, "You can't do it", Toast.LENGTH_SHORT).show();
+					Toast.makeText(GameActivity.this, getString(R.string.not_possible), Toast.LENGTH_SHORT).show();
 				}
 			}
 			if (mLastLevel != world.getLevel()){
 				mLastLevel = world.getLevel();
-				Toast.makeText(GameActivity.this, "NEW LEVEL: " + mLastLevel , Toast.LENGTH_SHORT).show();
+				Toast.makeText(GameActivity.this, getString(R.string.new_level) + mLastLevel , Toast.LENGTH_SHORT).show();
 			}
 		}
 	};
@@ -225,9 +225,9 @@ public class GameActivity extends Activity {
 	}
 
 	private void changeText(){
-		text.setText(String.format("Lvl: %d, Score: %d, Energy: %d, Bots :%d",
+		text.setText(String.format(getString(R.string.condition,
 				world.getLevel(), world.player.getScore(), world.player.getEnergy(), 
-				(world.board.getAliveBotCount()+world.board.getAliveFastBotCount())));
+				world.board.getAliveBotCount()+world.board.getAliveFastBotCount())));
 	}
 
 	private void load(){

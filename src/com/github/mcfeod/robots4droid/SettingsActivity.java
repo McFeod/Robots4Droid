@@ -41,7 +41,7 @@ public class SettingsActivity extends Activity {
 		mExtraFastButton = (RadioButton) findViewById(R.id.extraRadio);
 
 		musicBox.setChecked(SettingsParser.isMusicOn());
-		suicideBox.setChecked(SettingsParser.areSuicidesOn());
+		suicideBox.setChecked(!SettingsParser.areSuicidesOn());
 		mineBox.setChecked(SettingsParser.areMinesOn());
 		bombBox.setChecked(SettingsParser.areBombsOn());
 		if(SettingsParser.needExtraFastBots()){
@@ -60,7 +60,7 @@ public class SettingsActivity extends Activity {
 		suicideBox.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				SettingsParser.setSuicidePermission(suicideBox.isChecked());
+				SettingsParser.setSuicidePermission(!suicideBox.isChecked());
 			}
 		});
 

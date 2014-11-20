@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
 					Intent i = new Intent(MainActivity.this, GameActivity.class);
 					startActivity(i);}
 				else{
-					Toast.makeText(MainActivity.this, "А продолжать-то нечего!", Toast.LENGTH_SHORT).show();
+					Toast.makeText(MainActivity.this, getString(R.string.no_saved), Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
