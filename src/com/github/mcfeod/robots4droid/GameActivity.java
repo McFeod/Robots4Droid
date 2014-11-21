@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ public class GameActivity extends Activity {
 	private boolean areBombsOn;
 
 	private TextView text;
+	private Button teleButton, safeTeleButton, bombButton, mineButton;
 	private GameSurfaceView view;
 
 	public OnClickListener listener = new OnClickListener() {
@@ -109,11 +111,16 @@ public class GameActivity extends Activity {
 		findViewById(R.id.left_down_button).setOnClickListener(listener);
 		findViewById(R.id.right_up_button).setOnClickListener(listener);
 		findViewById(R.id.right_down_button).setOnClickListener(listener); 
-		findViewById(R.id.teleport_button).setOnClickListener(listener); 
-		findViewById(R.id.safe_teleport_button).setOnClickListener(listener); 
+		teleButton = (Button)findViewById(R.id.teleport_button);
+		teleButton.setOnClickListener(listener); 
+		teleButton.setText("\u221e");
+		safeTeleButton = (Button)findViewById(R.id.safe_teleport_button);
+		safeTeleButton.setOnClickListener(listener); 
 		findViewById(R.id.stay_button).setOnClickListener(listener);
-		findViewById(R.id.mine_button).setOnClickListener(listener);
-		findViewById(R.id.bomb_button).setOnClickListener(listener);
+		mineButton = (Button)findViewById(R.id.mine_button);
+		mineButton.setOnClickListener(listener);
+		bombButton = (Button)findViewById(R.id.bomb_button);
+		bombButton.setOnClickListener(listener);
 
 		mSoundTrack = MediaPlayer.create(this, R.raw.muz);
 		mSoundTrack.setLooping(true);
@@ -167,6 +174,35 @@ public class GameActivity extends Activity {
 		changeText();
 	}
 
+	public void refreshButtons(){
+		byte safeTeleportCost = world.getSafeTeleportCost();
+		byte mineCost = world.getMineCost();
+		byte bombCost = world.getBombCost();
+		int energy = world.player.getEnergy();
+		if (safeTeleportCost > energy){
+			safeTeleButton.setVisibility(View.GONE);
+		}
+		else{
+			safeTeleButton.setVisibility(View.VISIBLE);
+			safeTeleButton.setText(Byte.toString(safeTeleportCost));
+		}
+		if (areMinesOn){
+			if (mineCost > energy)
+				mineButton.setVisibility(View.GONE);
+			else{
+				mineButton.setVisibility(View.VISIBLE);
+				mineButton.setText(Byte.toString(mineCost));
+			}
+		}
+		if (areBombsOn){
+			if (bombCost > energy)
+				bombButton.setVisibility(View.GONE);
+			else{
+				bombButton.setVisibility(View.VISIBLE);
+				bombButton.setText(Byte.toString(bombCost));
+			}
+		}
+	}
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
@@ -228,6 +264,7 @@ public class GameActivity extends Activity {
 		text.setText(String.format(getString(R.string.condition,
 				world.getLevel(), world.player.getScore(), world.player.getEnergy(), 
 				world.board.getAliveBotCount()+world.board.getAliveFastBotCount())));
+				refreshButtons();
 	}
 
 	private void load(){
@@ -242,7 +279,7 @@ public class GameActivity extends Activity {
 	}
 	
 	@Override
-	public void onBackPressed() {
+	public void onBackPressed(){
 		save();
 		super.onBackPressed();
 	}

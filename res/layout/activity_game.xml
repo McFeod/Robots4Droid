@@ -9,25 +9,25 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content" >
 
-		<ImageButton
+		<Button
 			android:id="@+id/teleport_button"
 			style="@style/GameImageButton.Action"
-			android:src="@drawable/tele" />
+			android:background="@drawable/tele" />
 
-		<ImageButton
+		<Button
 			android:id="@+id/safe_teleport_button"
 			style="@style/GameImageButton.Action"
-			android:src="@drawable/safe_tele" />
+			android:background="@drawable/safe_tele" />
 
-		<ImageButton
+		<Button
 			android:id="@+id/mine_button"
 			style="@style/GameImageButton.Action"
-			android:src="@drawable/button_mine" />
+			android:background="@drawable/button_mine" />
 
-		<ImageButton
+		<Button
 			android:id="@+id/bomb_button"
 			style="@style/GameImageButton.Action"
-			android:src="@drawable/bomb"/>
+			android:background="@drawable/bomb"/>
 	</LinearLayout>
 
 	<TextView

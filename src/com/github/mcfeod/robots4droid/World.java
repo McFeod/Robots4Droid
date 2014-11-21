@@ -20,6 +20,7 @@ public class World{
 	private static final byte TELEPORT = 9;
 	private static final byte SAFE_TELEPORT = 10;
 
+	public static final byte mine_cost = 6; //повышено до 6, мина "повреждает" робота (образуется куча). Иначе нет смысла её ставить и тратить ход.
 	public Player player;
 	public Board board;
 
@@ -89,11 +90,10 @@ public class World{
 	}
 
 	public boolean setMine(){
-		byte cost = 6; //повышено до 6, мина "повреждает" робота (образуется куча). Иначе нет смысла её ставить и тратить ход.
 		if (player.areSuicidesForbidden)
 			if (!isSafePos(player.getPos().x, player.getPos().y)) return false;
-		if (player.getEnergy() >= cost){
-				player.chEnergy(-cost);
+		if (player.getEnergy() >= mine_cost){
+				player.chEnergy(-mine_cost);
 				board.SetKind(player.getPos(), Board.MINE);
 				return true;
 			}
@@ -101,15 +101,7 @@ public class World{
 	}
 
 	public boolean bomb(){
-		byte cost = 1;
-		for (int i=-1; i<2; i++){
-			for (int j=-1; j<2; j++){
-				if ((i==0)&&(j==0))
-					continue;
-				if (board.isEnemy(player.getPos().x+i, player.getPos().y+j))
-					cost++;
-			}
-		}// назначили цену = 1 + количество врагов вокруг
+		byte cost = getBombCost();
 
 		if (player.getEnergy() >= cost){
 			for (int i=-1; i<2; i++){
@@ -123,8 +115,13 @@ public class World{
 			}//проверили на безопасность
 
 			player.chEnergy(-cost);
-			for (int i=-1; i<2; i++)
-				for (int j=-1; j<2; j++){
+			for (int i=-2; i<=2; i++)
+				for (int j=-2; j<=2; j++)
+					switch (Math.abs(i)|Math.abs(j)){
+					case 0: continue;
+					case 2: 
+					case 3: if (!board.isFastRobot(player.getPos().x+i, player.getPos().y+j)) break;
+					case 1:
 					board.chDiff(board.GetKind(player.getPos().x+i, player.getPos().y+j), 1);
 					board.SetKind(player.getPos().x+i, player.getPos().y+j, Board.EMPTY);
 				}
@@ -455,5 +452,29 @@ public class World{
 		player.reset();
 		//TODO запись рекорда
 		initLevel();
+	}
+	public byte getSafeTeleportCost(){
+		return 1;
+	}
+	
+	public byte getMineCost(){
+		return mine_cost;
+	}
+	
+	public byte getBombCost(){
+		byte cost = 1;
+		for (int i=-2; i<=2; i++)
+			for (int j=-2; j<=2; j++)
+				switch (Math.abs(i)|Math.abs(j)){
+					case 0: break;
+					case 1:
+						if (board.isEnemy(player.getPos().x+i, player.getPos().y+j))
+							cost++;
+						break;
+					default:
+						if (board.isFastRobot(player.getPos().x+i, player.getPos().y+j))
+							cost+=2;
+				}
+		return cost;
 	}
 }
