@@ -12,7 +12,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 	private SurfaceHolder mSurfaceHolder;
 	public DrawThread mDrawThread;
-	World world;
 	Context context;
 	private GestureDetector gestureDetector;
 	private ScaleGestureDetector scaleGestureDetector;
@@ -32,7 +31,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	//@Override
 	public void surfaceDestroyed(SurfaceHolder holder){
 	}
-    
+
 	/** Конструктор */
     public GameSurfaceView(Context context, AttributeSet attrs)
     {
@@ -42,12 +41,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         this.context = context;
     }
     
-    public void SetWorld(World world){
-    	this.world = world;
+    public DrawThread getDrawThread(){
+    	return mDrawThread;
     }
-    
+
     public void CreateThread(){
-        mDrawThread = new DrawThread(mSurfaceHolder, context, world, this);
+        mDrawThread = new DrawThread(mSurfaceHolder, context, this);
         gestureDetector = new GestureDetector(context,
          new ScrollGestureListener(mDrawThread));
         scaleGestureDetector = new ScaleGestureDetector(context,
@@ -59,20 +58,17 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     }
     
 	public void StopThread(){
-    	mDrawThread.customKill();
-    	mDrawThread = null;
-    }
-    
+		mDrawThread.customKill();
+		mDrawThread = null;
+	}
+
 	@Override
     public boolean onTouchEvent(MotionEvent event) {
-		if (event.getPointerCount() > 1)
-			scaleGestureDetector.onTouchEvent(event);
-		else{
-			//неудачная попытка остановить передвижение поле скроллингом
-			if (mDrawThread.GetToMove())
-				mDrawThread.SetToMove(false);
-			gestureDetector.onTouchEvent(event);
+		switch (event.getPointerCount()){
+			case 1: gestureDetector.onTouchEvent(event);
+			case 2: scaleGestureDetector.onTouchEvent(event);
 		}
 		return true;
 	}
+
 }

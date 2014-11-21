@@ -13,8 +13,8 @@ public class ScrollGestureListener extends SimpleOnGestureListener{
 
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY){
-		mDrawThread.ChangeStartPos((int)distanceX,(int)distanceY);
-		mDrawThread.Draw();
+		mDrawThread.changeStartPos((int)distanceX,(int)distanceY);
+		mDrawThread.draw();
 		return true;
 	}
 

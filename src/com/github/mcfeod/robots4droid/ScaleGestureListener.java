@@ -14,8 +14,8 @@ public class ScaleGestureListener extends SimpleOnScaleGestureListener{
 	@Override
 	public boolean onScale(ScaleGestureDetector detector) {
 		int d = (int)(detector.getCurrentSpan()-detector.getPreviousSpan())/3;
-		mDrawThread.ChangeCellSize(d);
-		mDrawThread.Draw();
+		mDrawThread.changeCellSize(d);
+		mDrawThread.draw();
 		return true;
 	}
 
