@@ -33,10 +33,27 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:orientation="vertical" >				
-		<TextView
-			android:id="@+id/textView1"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+
+			<TextView
+				android:id="@+id/levelView"
+				style="@style/GameImageButton.Action"/>
+			<TextView
+				android:id="@+id/scoreView"
+				android:background="@drawable/score_icon"
+				style="@style/GameImageButton.Action"/>
+			<TextView
+				android:id="@+id/energyView"
+				android:background="@drawable/energy_icon"
+				style="@style/GameImageButton.Action"/>
+			<TextView
+				android:id="@+id/botCountView"
+				android:background="@drawable/robot_icon"
+				style="@style/GameImageButton.Action"/>
+		</LinearLayout>
 		<FrameLayout
 			android:id="@+id/frameLayout"
 			android:layout_width="wrap_content"

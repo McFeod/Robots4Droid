@@ -12,7 +12,7 @@
 	<string name="away">Give me a break…</string>
 	<string name="no_saved">You have nothing to continue!</string>
 	<string name="not_possible">You can\'t do it!</string>
-	<string name="new_level">NEW LEVEL: </string>
+	<string name="new_level">NEW LEVEL: %d</string>
 	<string name="dialog_about_message">
 What to do.\n\
 The aim of the game is simple: destroy all robots and get the next level.
@@ -47,5 +47,10 @@ and raise your self-esteem by that.\n\
 	<string name="complexity_setting">Difficulty:</string>
 	<string name="mine_setting">Turn mines on</string>
 	<string name="bomb_setting">Turn explosions on</string>
-	<string name="condition">Level: %1$d, Score: %2$d, Energy: %3$d, Bots : %4$d"</string>
+	<string name="language_setting">Language</string>
+	<string-array name="language_spinner">
+		<item>Русский</item>
+		<item>English</item>
+	</string-array>
+	<string name="level">Level: %d</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.github.mcfeod.robots4droid;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,63 +7,127 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.SurfaceHolder;
-import android.widget.TextView;
 
 public class DrawThread extends Thread {
 	private Bitmap bitRobot, bitFastRobot, bitPlayer, bitCell, bitCell2,
 	 bitJunk, bitMine;
+	private Bitmap bitRobotOriginal, bitFastRobotOriginal, bitPlayerOriginal,
+	 bitCellOriginal, bitCell2Original, bitJunkOriginal, bitMineOriginal;
 	public int widthPX=35, heightPX=35;//размеры клетки в пикселях
 	private World world;
-	private int indent=30;
 	private Canvas canvas;
 	private Paint paint;
 	private Point startPos, movePos;
 	private GameSurfaceView view;
-	private boolean toDraw, toMove, mustDie = false;
+	private boolean drawing = false, scrollingToPlayer = false, mustDie = false;
 	private int step = 8;
+	private int indent=30;
+	private int interval = 16;
 	private SurfaceHolder mSurfaceHolder; //Область для рисования
-	Context context;
-	TextView text;
-	Activity ac;
 
-	public DrawThread(SurfaceHolder surfaceHolder, Context context, World world,
-	 GameSurfaceView view)
-	{ 	widthPX =(int) (widthPX*context.getResources().getDisplayMetrics().density);
-		heightPX = widthPX;
-		step =(int) (step*context.getResources().getDisplayMetrics().density);
+	public DrawThread(SurfaceHolder surfaceHolder, Context context, GameSurfaceView view){
 		mSurfaceHolder = surfaceHolder;
-		this.world = world;
 		startPos = new Point(0, 0);
 		movePos = new Point(0, 0);
 		this.view = view;
-		toDraw = false;
-		toMove = false;
-		this.context = context;
-
-		bitRobot=BitmapFactory.decodeResource(context.getResources(),R.drawable.robot);
-		bitFastRobot=BitmapFactory.decodeResource(context.getResources(),R.drawable.fastrobot);
-		bitPlayer=BitmapFactory.decodeResource(context.getResources(),R.drawable.player); 
-		bitJunk=BitmapFactory.decodeResource(context.getResources(),R.drawable.junk);
-
-		bitCell=BitmapFactory.decodeResource(context.getResources(),R.drawable.cell);
-		bitCell2=BitmapFactory.decodeResource(context.getResources(),R.drawable.cell2);
-		bitMine=BitmapFactory.decodeResource(context.getResources(),R.drawable.mine); 
-
-		//подгоняем размеры bitmap-ов под размеры клеток
-		bitRobot=Bitmap.createScaledBitmap(bitRobot,widthPX-2,heightPX-2,false);
-		bitFastRobot=Bitmap.createScaledBitmap(bitFastRobot,widthPX-2,heightPX-2,false);
-		bitPlayer=Bitmap.createScaledBitmap(bitPlayer,widthPX-2,heightPX-2,false);
-		bitJunk=Bitmap.createScaledBitmap(bitJunk,widthPX-2,heightPX-2,false);
-
-		bitCell2=Bitmap.createScaledBitmap(bitCell2,widthPX-2,heightPX-2,false);
-		bitCell=Bitmap.createScaledBitmap(bitCell,widthPX-2,heightPX-2,false);
-		bitMine=Bitmap.createScaledBitmap(bitMine,widthPX-2,heightPX-2,false);
-
 		paint = new Paint();
+
+		bitRobotOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.robot);
+		bitFastRobotOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.fastrobot);
+		bitPlayerOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.player); 
+		bitJunkOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.junk);               
+		bitCellOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.cell);
+		bitCell2Original=BitmapFactory.decodeResource(context.getResources(),R.drawable.cell2);
+		bitMineOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.mine);
+	}
+
+	public void setScrolling(boolean scrolling){
+		scrollingToPlayer = scrolling;
+	}
+
+	public void setWorld(World world){
+		this.world = world;
+	}
+		//подгоняем размеры bitmap-ов под размеры клеток
+	public void changeBitmapSize(boolean toCompare){
+		boolean isEqual = false;
+		if (toCompare)
+			if (bitRobot.getWidth() == widthPX - 2)
+				isEqual = true;
+		if (!isEqual){
+			bitRobot = Bitmap.createScaledBitmap(bitRobotOriginal, widthPX-2,
+			 heightPX-2, false);
+			bitFastRobot = Bitmap.createScaledBitmap(bitFastRobotOriginal, widthPX-2,
+			 heightPX-2,false);
+			bitPlayer = Bitmap.createScaledBitmap(bitPlayerOriginal, widthPX-2,
+			 heightPX-2,false);
+			bitJunk = Bitmap.createScaledBitmap(bitJunkOriginal, widthPX-2,
+			 heightPX-2,false);
+			bitCell2 = Bitmap.createScaledBitmap(bitCell2Original, widthPX-2,
+			 heightPX-2,false);
+			bitCell = Bitmap.createScaledBitmap(bitCellOriginal, widthPX-2,
+			 heightPX-2,false);
+			bitMine = Bitmap.createScaledBitmap(bitMineOriginal, widthPX-2,
+			 heightPX-2,false);
+		}
+	}
+
+	public void changeStep(){
+		double l = (Math.sqrt((startPos.x-movePos.x)*(startPos.x-movePos.x)+
+		 (startPos.y-movePos.y)*(startPos.y-movePos.y)));		
+		if (l < widthPX * 2)
+			l *= 3;
+		step = (int)(l / (200 / interval));
+		if (step == 0)
+			step = 1;
+	}
+
+	public void changeIndent(){
+		indent = widthPX / 3;
+	}
+	
+	public void checkCellSize(){
+		if (widthPX * world.getWidth() + indent * 2 < view.getWidth()){
+			widthPX = (view.getWidth() - indent * 2) / world.getWidth();
+			heightPX = widthPX;
+		}
+		if (heightPX * world.getHeight() + indent * 2 < view.getHeight()){
+			heightPX = (view.getHeight() - indent * 2) / world.getHeight();
+			widthPX = heightPX;
+		}
+		if (widthPX * 5 > view.getWidth()){
+			widthPX = view.getWidth() / 5;
+			heightPX = widthPX;
+		}
+		if (heightPX * 5 > view.getHeight()){
+			heightPX = view.getHeight() / 5;
+			widthPX = heightPX;
+		}
+	}
+	
+	public void setDefaultCellSize(){
+		widthPX = view.getWidth() / world.getWidth() * 2;
+		heightPX = widthPX;
+		checkCellSize();
+		changeStep();
+		changeIndent();
+		changeBitmapSize(false);
+	}
+	
+	public void changeCellSize(int d){
+		widthPX += d;
+		heightPX += d;
+		checkCellSize();
+		changeStep();
+		changeIndent();
+		changeBitmapSize(true);		
+		changeStartPos(0, 0);
+		if (scrollingToPlayer)
+			scrollToPlayer();
 	}
 	
 	public void delay(int n){
-		while (toMove)
+		while (scrollingToPlayer)
 			try{
 				Thread.sleep(n);
 			}catch (InterruptedException e) {}
@@ -75,10 +138,10 @@ public class DrawThread extends Thread {
 	{
 		while (!mustDie){
 			try{
-				Thread.sleep(40);
+			Thread.sleep(8);
 			}catch (InterruptedException e) {}
 			
-			if (toMove){
+			if (scrollingToPlayer){
 				if (movePos.x - startPos.x >= step)
 					startPos.x += step;
 				else
@@ -93,13 +156,13 @@ public class DrawThread extends Thread {
 						startPos.y -= step;
 					else
 						startPos.y = movePos.y;
-				ChangeStartPos(0, 0);
+				changeStartPos(0, 0);
 				if ((startPos.x == movePos.x) && (startPos.y == movePos.y))
-					toMove = false;
-				toDraw = true;
+					scrollingToPlayer = false;
+				drawing = true;
 			}
 			
-			if (toDraw){
+			if (drawing){
 				try{
 					canvas = mSurfaceHolder.lockCanvas();
 					synchronized (mSurfaceHolder){
@@ -111,26 +174,18 @@ public class DrawThread extends Thread {
 					if (canvas != null)
 						mSurfaceHolder.unlockCanvasAndPost(canvas);
 				}
-				toDraw = false;
+				drawing = false;
 			}
 		}
 	}
 
-	public void SetActivity(Activity ac){
-		this.ac = ac;
+	public void draw(){
+		drawing = true;
 	}
 		
-	public void Draw(){
-		toDraw = true;
-	}
-	
-	public void SetText(TextView text){
-		this.text = text;
-	}
-
-	public void moveTo(Point p){
-		movePos.x = (p.x*widthPX+widthPX/2) - view.getWidth()/2 + indent;
-		movePos.y = (p.y*heightPX+heightPX/2) - view.getHeight()/2 + indent;
+	public void scrollToPlayer(){
+		movePos.x = (world.player.getPos().x*widthPX+widthPX/2) - view.getWidth()/2 + indent;
+		movePos.y = (world.player.getPos().y*heightPX+heightPX/2) - view.getHeight()/2 + indent;
 		int boardX=world.getWidth()*widthPX+indent*2;
 		int boardY=world.getHeight()*heightPX+indent*2;
 		//проверка выхода за пределы экрана
@@ -142,7 +197,8 @@ public class DrawThread extends Thread {
 			movePos.x = boardX - view.getWidth();
 		if (movePos.y + view.getHeight() > boardY)
 			movePos.y = boardY - view.getHeight();
-		toMove = true;
+		changeStep();
+		scrollingToPlayer = true;
 	}
 	
 	public boolean isVisible(int x, int y){
@@ -153,7 +209,7 @@ public class DrawThread extends Thread {
 		int left = startPos.x;
 		int left_width = startPos.x + view.getWidth();
 		int top = startPos.y;
-		int top_height = startPos.y + view.getHeight();		
+		int top_height = startPos.y + view.getHeight();    	
 		if ((((startX >= left) && (startX <= left_width)) ||
 		 ((endX >= left) && (endX <= left_width))) &&
 		 (((startY >= top) && (startY <= top_height)) ||
@@ -196,7 +252,7 @@ public class DrawThread extends Thread {
 		 world.player.getPos().y*heightPX+indent-startPos.y,paint);
 	}
 
-	public void ChangeStartPos(int dX, int dY){
+	public void changeStartPos(int dX, int dY){
 			//меняем начальную точку
 			startPos.x += dX;
 			startPos.y += dY;

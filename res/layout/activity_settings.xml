@@ -3,48 +3,58 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			android:orientation="vertical"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent">
+			android:layout_height="match_parent" >
 
 	<CheckBox
-			android:layout_width="125dp"
-			android:layout_height="wrap_content"
-			android:text="@string/music_setting"
-			android:id="@+id/musicBox" android:longClickable="false" android:enabled="true" android:checked="false"/>
+		android:id="@+id/musicBox"
+		android:layout_width="125dp"
+		android:layout_height="wrap_content"
+		android:text="@string/music_setting"
+		android:longClickable="false"
+		android:enabled="true" 
+		android:checked="false" />
+	
 	<CheckBox
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/suicide_setting"
-			android:id="@+id/suicideBox"/>
+		android:id="@+id/suicideBox"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/suicide_setting" />
+	
 	<CheckBox
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/mine_setting"
-			android:id="@+id/mineBox"/>
+		android:id="@+id/mineBox"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/mine_setting" />
+	
 	<CheckBox
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/bomb_setting"
-			android:id="@+id/bombBox"/>
+		android:id="@+id/bombBox"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/bomb_setting" />
+	
 	<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:text="@string/complexity_setting"
-			android:id="@+id/textView"/>
+		android:id="@+id/complexity_textView"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:text="@string/complexity_setting" />
 
 	<RadioGroup
+		android:id="@+id/complexityGroup"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" >
+		
+		<RadioButton
+			android:id="@+id/normalRadio"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:id="@+id/complexityGroup">
-			<RadioButton
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/easy_setting"
-				android:id="@+id/normalRadio"/>
-			<RadioButton
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/hard_setting"
-				android:id="@+id/extraRadio"/>
+			android:text="@string/easy_setting" />
+		
+		<RadioButton
+			android:id="@+id/extraRadio"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/hard_setting" />
 	</RadioGroup>
 </LinearLayout>
+	

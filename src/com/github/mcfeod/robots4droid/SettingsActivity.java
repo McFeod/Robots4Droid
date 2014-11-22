@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import saves.SaveManager;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -12,17 +11,11 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-
 public class SettingsActivity extends Activity {
 
-	private CheckBox musicBox;
-	private CheckBox suicideBox;
-	private CheckBox mineBox;
-	private CheckBox bombBox;
-	private RadioButton mNormalButton;
-	private RadioButton mExtraFastButton;
+	private CheckBox musicBox, suicideBox, mineBox, bombBox;
+	private RadioButton mNormalButton, mExtraFastButton;
 	private RadioGroup complexityGroup;
-	private Intent mIntent;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceBundle) {
@@ -39,7 +32,6 @@ public class SettingsActivity extends Activity {
 		complexityGroup = (RadioGroup) findViewById(R.id.complexityGroup);
 		mNormalButton = (RadioButton) findViewById(R.id.normalRadio);
 		mExtraFastButton = (RadioButton) findViewById(R.id.extraRadio);
-
 		musicBox.setChecked(SettingsParser.isMusicOn());
 		suicideBox.setChecked(!SettingsParser.areSuicidesOn());
 		mineBox.setChecked(SettingsParser.areMinesOn());
@@ -49,7 +41,6 @@ public class SettingsActivity extends Activity {
 		}else{
 			mNormalButton.setChecked(true);
 		}
-
 		musicBox.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -91,7 +82,6 @@ public class SettingsActivity extends Activity {
 			}
 		});
 	}
-
 	@Override
 	public void onBackPressed() {
 		try {

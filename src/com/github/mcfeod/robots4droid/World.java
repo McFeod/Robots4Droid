@@ -8,19 +8,20 @@ public class World{
 	private int mRobotCount;
 
 	//возможные ходы
-	private static final byte UP = 1;
-	private static final byte DOWN = 7;
-	private static final byte LEFT = 3;
-	private static final byte RIGHT = 5;
-	private static final byte UP_LEFT = 0;
-	private static final byte UP_RIGHT = 2;
-	private static final byte DOWN_LEFT = 6;
-	private static final byte DOWN_RIGHT = 8;
-	//private static final byte STAY = 4;
-	private static final byte TELEPORT = 9;
-	private static final byte SAFE_TELEPORT = 10;
+	public static final byte UP = 1;
+	public static final byte DOWN = 7;
+	public static final byte LEFT = 3;
+	public static final byte RIGHT = 5;
+	public static final byte UP_LEFT = 0;
+	public static final byte UP_RIGHT = 2;
+	public static final byte DOWN_LEFT = 6;
+	public static final byte DOWN_RIGHT = 8;
+	public static final byte STAY = 4;
+	public static final byte TELEPORT = 9;
+	public static final byte SAFE_TELEPORT = 10;
+	public static final byte MINE_COST = 6;
+	public static final byte SAFE_TELEPORT_COST = 1;
 
-	public static final byte mine_cost = 6; //повышено до 6, мина "повреждает" робота (образуется куча). Иначе нет смысла её ставить и тратить ход.
 	public Player player;
 	public Board board;
 
@@ -88,31 +89,38 @@ public class World{
 		if (findSafePos());
 			player.setPos(freePos);
 	}
-
 	public boolean setMine(){
 		if (player.areSuicidesForbidden)
-			if (!isSafePos(player.getPos().x, player.getPos().y)) return false;
-		if (player.getEnergy() >= mine_cost){
-				player.chEnergy(-mine_cost);
+			if (!isSafePos(player.getPos().x, player.getPos().y))
+				return false;
+		if (player.getEnergy() >= MINE_COST){
+				player.chEnergy(-MINE_COST);
 				board.SetKind(player.getPos(), Board.MINE);
 				return true;
 			}
 		return false;
+	}
+	
+	public byte getBombCost(){
+		byte cost = 1;
+		for (int i=-2; i<=2; i++)
+			for (int j=-2; j<=2; j++)
+				switch (Math.abs(i)|Math.abs(j)){
+					case 0: continue;
+					case 1: 
+						if (board.isEnemy(player.getPos().x+i, player.getPos().y+j))
+						cost++; break;
+					default: 
+						if (board.isFastRobot(player.getPos().x+i, player.getPos().y+j))
+							cost+=2;
+				}
+		return cost;
 	}
 
 	public boolean bomb(){
 		byte cost = getBombCost();
 
 		if (player.getEnergy() >= cost){
-			for (int i=-1; i<2; i++){
-				for (int j=-1; j<2; j++){
-					if ((i==0)&&(j==0))
-						continue;
-					if (player.areSuicidesForbidden)
-						if (isDanger2nd(player.getPos().x, player.getPos().y, i, j))
-							return false;
-				}
-			}//проверили на безопасность
 
 			player.chEnergy(-cost);
 			for (int i=-2; i<=2; i++)
@@ -132,7 +140,6 @@ public class World{
 		}
 		return false;
 	}
-
 	/** Ищет свободную случайную клетку и сохраняет ее в глобальный freePos.
 	  Возвращает true, если свободная клетка найдена */
 	private boolean findFreePos(){
@@ -452,29 +459,5 @@ public class World{
 		player.reset();
 		//TODO запись рекорда
 		initLevel();
-	}
-	public byte getSafeTeleportCost(){
-		return 1;
-	}
-	
-	public byte getMineCost(){
-		return mine_cost;
-	}
-	
-	public byte getBombCost(){
-		byte cost = 1;
-		for (int i=-2; i<=2; i++)
-			for (int j=-2; j<=2; j++)
-				switch (Math.abs(i)|Math.abs(j)){
-					case 0: break;
-					case 1:
-						if (board.isEnemy(player.getPos().x+i, player.getPos().y+j))
-							cost++;
-						break;
-					default:
-						if (board.isFastRobot(player.getPos().x+i, player.getPos().y+j))
-							cost+=2;
-				}
-		return cost;
 	}
 }

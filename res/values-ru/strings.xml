@@ -39,5 +39,6 @@
 	<string name="complexity_setting">Сложность:</string>
 	<string name="mine_setting">Включить мины</string>
 	<string name="bomb_setting">Включить взрыв</string>
-	<string name="condition">Уровень: %1$d, Очки: %2$d, Энергия: %3$d, Роботы : %4$d"</string>
+	<string name="language_setting">Язык</string>
+	<string name="level">Уровень: %d</string>
 </resources>

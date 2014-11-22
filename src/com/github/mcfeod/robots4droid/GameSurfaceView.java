@@ -2,7 +2,9 @@ package com.github.mcfeod.robots4droid;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -10,9 +12,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 	private SurfaceHolder mSurfaceHolder;
 	public DrawThread mDrawThread;
-	World world;
 	Context context;
-	Point startTouchPos, endTouchPos;
+	private GestureDetector gestureDetector;
+	private ScaleGestureDetector scaleGestureDetector;
 
 	/** Три следующих метода обязательны, не удалять! */
 	/** Создание области рисования */
@@ -37,22 +39,23 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 		mSurfaceHolder = getHolder();
 		mSurfaceHolder.addCallback(this);
 		this.context = context;
-		startTouchPos = new Point(0,0);
-		endTouchPos = new Point(0,0);
 	}
 
-	public void SetWorld(World world){
-		this.world = world;
+	public DrawThread getDrawThread(){
+		return mDrawThread;
 	}
 
 	public void CreateThread(){
-		mDrawThread = new DrawThread(mSurfaceHolder, context, world, this);
+		mDrawThread = new DrawThread(mSurfaceHolder, context, this);
+		gestureDetector = new GestureDetector(context,
+			new ScrollGestureListener(mDrawThread));
+		scaleGestureDetector = new ScaleGestureDetector(context,
+			new ScaleGestureListener(mDrawThread));
 	}
 
 	public void StartThread(){
 		mDrawThread.start();
 	}
-
 	public void StopThread(){
 		mDrawThread.customKill();
 		mDrawThread = null;
@@ -60,29 +63,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		switch (event.getAction()) {
-			//событие возникает при нажатии на экран
-			case MotionEvent.ACTION_DOWN:
-				//запоминаем координаты нажатия
-				startTouchPos.x = (int) event.getX();
-				startTouchPos.y = (int) event.getY();
-				break;
-			//событие возникает при движении по экрану
-			case MotionEvent.ACTION_MOVE:
-				//запоминаем координаты касания
-				endTouchPos.x = (int) event.getX();
-				endTouchPos.y = (int) event.getY();
-				/*перерисовываем поле startTouchPos.x - endTouchPos.x и
-				  startTouchPos.y - endTouchPos.y - разница между предыдущей
-				  точкой касания и текущей. Определяет, на сколько необходимо
-				  передвинуть поле по x и по y*/
-				mDrawThread.ChangeStartPos(startTouchPos.x - endTouchPos.x,
-				 startTouchPos.y - endTouchPos.y);
-				mDrawThread.Draw();
-				//запоминаем новые координаты начальной точки касания
-				startTouchPos.x = endTouchPos.x;
-				startTouchPos.y = endTouchPos.y;
-				break;
+		switch (event.getPointerCount()){
+			case 1: gestureDetector.onTouchEvent(event);
+			case 2: scaleGestureDetector.onTouchEvent(event);
 		}
 		return true;
 	}

@@ -30,11 +30,27 @@
 			android:background="@drawable/bomb"/>
 	</LinearLayout>
 
-	<TextView
-		android:id="@+id/textView1"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
 
+		<TextView
+			android:id="@+id/levelView"
+			style="@style/GameImageButton.Action"/>
+		<TextView
+			android:id="@+id/scoreView"
+			android:background="@drawable/score_icon"
+			style="@style/GameImageButton.Action"/>
+		<TextView
+			android:id="@+id/energyView"
+			android:background="@drawable/energy_icon"
+			style="@style/GameImageButton.Action"/>
+		<TextView
+			android:id="@+id/botCountView"
+			android:background="@drawable/robot_icon"
+			style="@style/GameImageButton.Action"/>
+	</LinearLayout>
 	<FrameLayout
 		android:id="@+id/frameLayout"
 		android:layout_width="match_parent"
@@ -86,10 +102,10 @@
 					android:src="@drawable/left" />
 
 				<ImageButton
-					android:src="@drawable/point"
-					style="@style/GameImageButton"
 					android:id="@+id/stay_button"
-					android:layout_centerHorizontal="true" />
+					style="@style/GameImageButton"
+					android:layout_centerHorizontal="true"
+					android:src="@drawable/point"/>
 
 				<ImageButton
 					android:id="@+id/right_button"
