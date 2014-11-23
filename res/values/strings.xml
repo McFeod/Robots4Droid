@@ -28,7 +28,7 @@ Traps - just drop this thing on the cell and make the robot touch it. Then say g
 Bombs - a very large boom around you that costs some points of energy depending on count of enemies around, see the number next to the bomb pictogram.\n\
 \n\
 Anything else?\n\
-When robots collide, they crush making a heap. Heaps are rather usefull. Push it on robot and robot will be lost in the heap. Another way of playing - staying besides the heap and attracting robots to crush into the dumb by your body.\n\
+When robots collide, they crush making a heap. Heaps are rather useful. Push it on robot and robot will be lost in the heap. Another way of playing - staying besides the heap and attracting robots to crush into the dumb by your body.\n\
 \n\
 Where to go?\n\
 Anywhere you want. Or just stay on the cell. It\'s your game and your life so we can\'t rule you.\n\
@@ -51,4 +51,5 @@ WARNING!!! The game is rather endless. There is no victory. But there is an oppo
 	<string name="level">Level: %d</string>
 	<string name="nil">0</string>
 	<string name="one">1</string>
+	<string name="delete">\n\ Out of sight, out of mind?</string>
 </resources>
