@@ -12,7 +12,7 @@
 	<string name="away">Да ну вас…</string>
 	<string name="no_saved">А продолжать-то нечего!</string>
 	<string name="not_possible">Вы не можете этого сделать!</string>
-	<string name="new_level">НОВЫЙ УРОВЕНЬ: </string>
+	<string name="new_level">НОВЫЙ УРОВЕНЬ: %d</string>
 	<string name="dialog_about_message">
 Что тут нужно делать.\n\
 Цель игры проста: уничтожить всех роботов и попасть на следующий уровень. Выше уровень - больше роботов. Больше роботов - интереснее игра.\n\
@@ -39,6 +39,5 @@
 	<string name="complexity_setting">Сложность:</string>
 	<string name="mine_setting">Включить мины</string>
 	<string name="bomb_setting">Включить взрыв</string>
-	<string name="language_setting">Язык</string>
 	<string name="level">Уровень: %d</string>
 </resources>

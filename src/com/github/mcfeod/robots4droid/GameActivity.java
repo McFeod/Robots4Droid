@@ -126,7 +126,6 @@ public class GameActivity extends Activity {
 		findViewById(R.id.right_down_button).setOnClickListener(listener); 
 		teleButton = (Button)findViewById(R.id.teleport_button);
 		teleButton.setOnClickListener(listener); 
-		teleButton.setText("\u221e");
 		safeTeleButton = (Button)findViewById(R.id.safe_teleport_button);
 		safeTeleButton.setOnClickListener(listener); 
 		findViewById(R.id.stay_button).setOnClickListener(listener);
@@ -197,7 +196,6 @@ public class GameActivity extends Activity {
 		}
 		else{
 			safeTeleButton.setVisibility(View.VISIBLE);
-			safeTeleButton.setText(Byte.toString(World.SAFE_TELEPORT_COST));
 		}
 		if (areMinesOn){
 			if (World.MINE_COST > energy)
