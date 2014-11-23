@@ -15,31 +15,32 @@
 	<string name="new_level">NEW LEVEL: %d</string>
 	<string name="dialog_about_message">
 What to do.\n\
-The aim of the game is simple: destroy all robots and get the next level.
-Higher level - more robots. More robots - more interest.\n\
-How to achieve that.\n\
-Our developers worked out game process and included a lot of features in this game: 
-teleport, safe teleport, mines and bombs. Using all that correctly, 
-you\'ll quickly learn to play good and reach the top of players rating.\n\
-What is what.\n\
-If you are incredibly clever, you can skip this part. But we advice you not to do this.\n\
-Teleport - is the only opportunity to lose in safe game mode. Using teleport, 
-you can relocate to the cell with cruel robot. And die there.\n\
-Safe teleport - costs energy, relocates you to the cell, where you guaranteed 
-won\'t be killed by robot. But it doesn\'t mean that after next movement robot will not reach you.\n\
-Mine -\n\
-Bomb - energy-intensive thing, that allows you to stay alive longer, by desroying all robots, 
-threatening you during the next movement. Junk near you will be exploded also.\n\
-What else?\n\
-When robots encounter, junk appears. When robot encounters junk, junk remains.\n\
-You can push junks on robots, or hide behind them.\n\
-Fast (blue) robots can make two steps during one movement.\n\
-When you turn safe movements off, you turn off higher power that prevents your misstep.
-In safe mode, you can\'t come close to robots. As we do in the zoo.\n\ 
-Field is scalable. \n\
-Warning! Game is almost endless. You can\'t win. But you can score more points than your friend
-and raise your self-esteem by that.\n\
-</string>
+All you need is to destroy all the robots and go to the next level. The  higher level you have achieved the much more robots want to kill you. The more robots you are surrounded the more interesting game is. It means you will gain more scores and have more achievement.\n\
+\n\
+How to reach it.\n\
+We worked hard to make game interesting and attractive to you. We also added  teleport, safe teleport, traps and bombs to the game process. If you use it all carefully, you will fastly learn how to play and easily will become one of the best players ever.\n\
+\n\
+Details.\n\
+We believe we did the game clear to understand, so you can skip this part and start playing right now. But remember that knowing all the rules was never harmful to anyone.\n\
+Teleport - the easiest way to travel, by the way. But we need to warn you that once it may move you to the robot\'s action zone. It means you will die there with no chance to revive screaming \"OH GOD WHYYY\"\n\
+Sefe teleport - moving that costs 1 point of energy. Good thing. Useful thing. It will place you onto the point where no robots can reach you right now. But there are no reasons to think robots won\'t kill you next turn.\n\
+Traps - just drop this thing on the cell and make the robot touch it. Then say goodbye to robot by paying 6 points of energy.\n\
+Bombs - a very large boom around you that costs some points of energy depending on count of enemies around, see the number next to the bomb pictogram.\n\
+\n\
+Anything else?\n\
+When robots collide, they crush making a heap. Heaps are rather usefull. Push it on robot and robot will be lost in the heap. Another way of playing - staying besides the heap and attracting robots to crush into the dumb by your body.\n\
+\n\
+Where to go?\n\
+Anywhere you want. Or just stay on the cell. It\'s your game and your life so we can\'t rule you.\n\
+\n\
+Settings\n\
+Sound\/ silence - simple and good preference, isn\'t it?\n\
+Safe\/ unsafe mode - if you like to risk, you must know that the unsafe mode was created especially for you. But sometimes every of us wants to be protected by mystic power, that will help you not to mistake. Thanks to us, you may try this. Playing save mode you can\'t touch robots as we do in museums and zoos.\n\
+\n\
+Difficutly - sometimes it\'s really hard to choose wheather you need difficulties in your life or not. If you really need it, try to play with fast robots.\n\
+\n\
+WARNING!!! The game is rather endless. There is no victory. But there is an opportunity to improve your self-estimete by becoming the best player ever!\n\
+	</string>
 	<string name="music_setting">Music</string>
 	<string name="easy_setting">Easy</string>
 	<string name="hard_setting">More fast robots!!!</string>
