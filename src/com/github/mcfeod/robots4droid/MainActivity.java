@@ -11,14 +11,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	
-	private Button continueButton, newGameButton, loadButton,
-	 settingsButton, aboutButton;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceBundle){
 		super.onCreate(savedInstanceBundle);
@@ -26,12 +21,6 @@ public class MainActivity extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 		 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.main);
-		
-		continueButton = (Button) findViewById(R.id.continue_button);
-		newGameButton = (Button) findViewById(R.id.new_game_button);
-		loadButton = (Button) findViewById(R.id.load_button);
-		settingsButton = (Button) findViewById(R.id.settings_button);
-		aboutButton = (Button) findViewById(R.id.about_button);
 
 		findViewById(R.id.settings_button).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -56,7 +45,7 @@ public class MainActivity extends Activity {
 					Intent i = new Intent(MainActivity.this, GameActivity.class);
 					startActivity(i);}
 				else{
-					Toast.makeText(MainActivity.this, "А продолжать-то нечего!", Toast.LENGTH_SHORT).show();
+					Toast.makeText(MainActivity.this, getString(R.string.no_saved), Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
@@ -73,14 +62,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-				switch (SettingsParser.getLanguage()){
-					case 0:
-						builder.setMessage(R.string.dialog_about_message_ru);
-						break;
-					case 1:
-						builder.setMessage(R.string.dialog_about_message);
-						break;	
-				}
+				builder.setMessage(R.string.dialog_about_message);
 				builder.setCancelable(true);
 				AlertDialog dialog = builder.create();
 				dialog.show();
@@ -97,22 +79,6 @@ public class MainActivity extends Activity {
 		if(SaveManager.getInstance().hasLoadingGame()){
 			Intent i = new Intent(MainActivity.this, GameActivity.class);
 			startActivity(i);
-		}
-		switch (SettingsParser.getLanguage()){
-		case 0:
-			continueButton.setText(R.string.continue_button_ru);
-			newGameButton.setText(R.string.new_game_button_ru);
-			loadButton.setText(R.string.load_button_ru);
-			settingsButton.setText(R.string.settings_button_ru);
-			aboutButton.setText(R.string.about_button_ru);
-	        break;
-		case 1:
-			continueButton.setText(R.string.continue_button);
-			newGameButton.setText(R.string.new_game_button);
-			loadButton.setText(R.string.load_button);
-			settingsButton.setText(R.string.settings_button);
-			aboutButton.setText(R.string.about_button);
-	        break;
 		}
 	}
 }

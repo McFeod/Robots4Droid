@@ -6,7 +6,7 @@
 			android:layout_height="match_parent" >
 
 	<CheckBox
-    	android:id="@+id/musicBox"
+		android:id="@+id/musicBox"
 		android:layout_width="125dp"
 		android:layout_height="wrap_content"
 		android:text="@string/music_setting"
@@ -51,22 +51,10 @@
 			android:text="@string/easy_setting" />
 		
 		<RadioButton
-		    android:id="@+id/extraRadio"
+			android:id="@+id/extraRadio"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/hard_setting" />
 	</RadioGroup>
-	
-	<TextView
-	    android:id="@+id/language_textView"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="@string/language_setting" />
-	
-	<Spinner
-	    android:id="@+id/language_spinner"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:entries="@array/language_spinner" />
 </LinearLayout>
+	

@@ -89,7 +89,6 @@ public class World{
 		if (findSafePos());
 			player.setPos(freePos);
 	}
-
 	public boolean setMine(){
 		if (player.areSuicidesForbidden)
 			if (!isSafePos(player.getPos().x, player.getPos().y))
@@ -120,7 +119,9 @@ public class World{
 
 	public boolean bomb(){
 		byte cost = getBombCost();
+
 		if (player.getEnergy() >= cost){
+
 			player.chEnergy(-cost);
 			for (int i=-2; i<=2; i++)
 				for (int j=-2; j<=2; j++)
@@ -129,9 +130,9 @@ public class World{
 					case 2: 
 					case 3: if (!board.isFastRobot(player.getPos().x+i, player.getPos().y+j)) break;
 					case 1:
-						board.chDiff(board.GetKind(player.getPos().x+i, player.getPos().y+j), 1);
-						board.SetKind(player.getPos().x+i, player.getPos().y+j, Board.EMPTY);
-					}
+					board.chDiff(board.GetKind(player.getPos().x+i, player.getPos().y+j), 1);
+					board.SetKind(player.getPos().x+i, player.getPos().y+j, Board.EMPTY);
+				}
 			player.chScore(board.diff2score());
 			if (board.isBotsDead())
 				initLevel();
@@ -139,7 +140,6 @@ public class World{
 		}
 		return false;
 	}
-
 	/** Ищет свободную случайную клетку и сохраняет ее в глобальный freePos.
 	  Возвращает true, если свободная клетка найдена */
 	private boolean findFreePos(){

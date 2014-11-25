@@ -34,7 +34,8 @@ public class BinaryIOManager {
 	* */
 
 	public SavedGame saveGame() throws IOException{
-		SavedGame save = new SavedGame(mWorld.getLevel(), mWorld.player.getScore(), new Date());
+		SavedGame save = new SavedGame(mWorld.getLevel(), mWorld.player.getScore(),
+		 new Date());
 		String fileName = save.getFileName();
 		BufferedOutputStream stream = null;
 		try {

@@ -9,53 +9,35 @@ public class SettingsParser {
 	private static char gameMode = NORMAL_MODE;
 	private static boolean areMinesOn = true;
 	private static boolean areBombsOn = true;
-	private static byte language = 0;
 
 	public static void setMusicMode(boolean on){
 		isMusicOn = on;
 	}
-	
 	public static void setSuicidePermission(boolean permitted){
 		areSuicidesPermitted = permitted;
 	}
-	
 	public static void setGameComplexity(char complexity){
 		gameMode = complexity;
 	}
-	
 	public static void setMineMode(boolean on){
 		areMinesOn = on;
 	}
-	
 	public static void setBombMode(boolean on){
 		areBombsOn = on;
 	}
-	
-	public static void setLanguage(byte lang){
-		language = lang;
-	}
-	
 	public static boolean areMinesOn(){
 		return areMinesOn;
 	}
-	
 	public static boolean areBombsOn(){
 		return areBombsOn;
 	}
-	
 	public static boolean isMusicOn(){
 		return isMusicOn;
 	}
-	
 	public static boolean areSuicidesOn(){
 		return areSuicidesPermitted;
 	}
-	
 	public static boolean needExtraFastBots(){
 		return  gameMode == EXTRA_FAST_BOTS;
-	}
-	
-	public static int getLanguage(){
-		return language;
 	}
 }

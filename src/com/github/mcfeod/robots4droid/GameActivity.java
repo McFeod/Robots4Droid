@@ -3,16 +3,14 @@ package com.github.mcfeod.robots4droid;
 import saves.BinaryIOManager;
 import saves.SaveManager;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,15 +24,31 @@ public class GameActivity extends Activity {
 	private boolean isMusicOn;
 	private boolean areMinesOn;
 	private boolean areBombsOn;
-
-	private TextView safeTeleportTextView, bombTextView, mineTextView, teleportTextView;
 	private TextView levelTextView, scoreTextView, energyTextView, botCountTextView;
-	private FrameLayout safeTeleportFrameLayout, mineFrameLayout, bombFrameLayout,
-	 teleportFrameLayout;
+	private Button teleButton, safeTeleButton, bombButton, mineButton;
 	private GameSurfaceView view;
 	private DrawThread mDrawThread;
+	private LinearLayout mGameOverLinearLayout;
 
-	public OnClickListener listenerArrowButtons = new OnClickListener() {
+	public OnClickListener restartButtonListener = new OnClickListener() {
+		@Override
+		public void onClick(View v){
+			mGameOverLinearLayout.setVisibility(View.GONE);
+			world.defeat();
+			mDrawThread.scrollToPlayer();
+			mLastLevel = world.getLevel();
+			showNewLevelToast();
+		}
+	};
+
+	public OnClickListener awayButtonListener = new OnClickListener() {
+		@Override
+		public void onClick(View v){
+			GameActivity.this.finish();
+		}
+	};
+
+	public OnClickListener listener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			if (world.player.isAlive){
@@ -48,27 +62,15 @@ public class GameActivity extends Activity {
 					case R.id.right_up_button: moveBots(world.movePlayer(World.UP_RIGHT)); break;
 					case R.id.right_down_button: moveBots(world.movePlayer(World.DOWN_RIGHT)); break;
 					case R.id.stay_button: moveBots(world.movePlayer(World.STAY)); break;
+					case R.id.teleport_button: moveBots(world.movePlayer(World.TELEPORT)); break;	
+					case R.id.safe_teleport_button: moveBots(world.movePlayer(World.SAFE_TELEPORT)); break;	
+					case R.id.mine_button: moveBots(world.setMine()); break;	
+					case R.id.bomb_button: moveBots(world.bomb()); break;
 				}
-			}			
-		}
-	};
-	
-	public OnClickListener listenerOtherButtons = new OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if (world.player.isAlive){
-				if (v == teleportFrameLayout.getChildAt(0))
-					moveBots(world.movePlayer(World.TELEPORT));
-				if (v == safeTeleportFrameLayout.getChildAt(0))
-					moveBots(world.movePlayer(World.SAFE_TELEPORT));
-				if (v == mineFrameLayout.getChildAt(0))
-					moveBots(world.setMine());
-				if (v == bombFrameLayout.getChildAt(0))
-					moveBots(world.bomb());
 			}
 		}
 	};
-	
+
 	private void moveBots(boolean succ){
 		if (succ){
 			mDrawThread.scrollToPlayer();
@@ -84,56 +86,12 @@ public class GameActivity extends Activity {
 					mLastLevel = world.getLevel();
 					showNewLevelToast();
 				}
-			}else{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setCancelable(false);
-				DialogInterface.OnClickListener	positiveButtonListener = new DialogInterface.OnClickListener() { // Кнопка ОК
-				    @Override
-				    public void onClick(DialogInterface dialog, int which) {
-				    	world.defeat();
-				    	mDrawThread.scrollToPlayer();
-						dialog.dismiss();
-						mLastLevel = world.getLevel();
-						showNewLevelToast();
-					}
-				};
-				DialogInterface.OnClickListener	negativeButtonListener = new DialogInterface.OnClickListener() { // Кнопка неОК
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						GameActivity.this.finish();
-						dialog.dismiss();
-					}
-				};
-				
-				switch (SettingsParser.getLanguage()) {
-					case 0:
-						builder.setTitle(R.string.dialog_ru);
-						builder.setMessage(R.string.dialog_ru);
-						builder.setPositiveButton(R.string.restart_ru, positiveButtonListener);
-						builder.setNegativeButton(R.string.away_ru, negativeButtonListener);
-						break;
-					case 1:
-						builder.setTitle(R.string.dialog);
-						builder.setMessage(R.string.dialog);
-						builder.setPositiveButton(R.string.restart, positiveButtonListener);
-						builder.setNegativeButton(R.string.away, negativeButtonListener);
-						break;
-				}
-				AlertDialog dialog = builder.create();
-				dialog.show();
-				dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-			}
+			}else
+				mGameOverLinearLayout.setVisibility(View.VISIBLE);
 		}else
-			switch (SettingsParser.getLanguage()) {
-			case 0:
-				Toast.makeText(GameActivity.this, R.string.not_possible_ru, Toast.LENGTH_SHORT).show();
-				break;
-			case 1:
-				Toast.makeText(GameActivity.this, R.string.not_possible, Toast.LENGTH_SHORT).show();
-				break;
-		}
+			Toast.makeText(GameActivity.this, R.string.not_possible, Toast.LENGTH_SHORT).show();
 	}
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -142,41 +100,33 @@ public class GameActivity extends Activity {
 		 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_game);
 
-		view = (GameSurfaceView)findViewById(R.id.game);
-		levelTextView = (TextView)findViewById(R.id.level_textView);
-		scoreTextView = (TextView)findViewById(R.id.score_textView);
-		energyTextView = (TextView)findViewById(R.id.energy_textView);
-		botCountTextView = (TextView)findViewById(R.id.bot_count_textView);
-		
-		teleportFrameLayout = (FrameLayout)findViewById(R.id.teleport_frameLayout);
-		safeTeleportFrameLayout = (FrameLayout)findViewById(R.id.safe_teleport_frameLayout);
-		mineFrameLayout = (FrameLayout)findViewById(R.id.mine_frameLayout);
-		bombFrameLayout = (FrameLayout)findViewById(R.id.bomb_frameLayout);
-		
-		findViewById(R.id.left_button).setOnClickListener(listenerArrowButtons);
-		findViewById(R.id.right_button).setOnClickListener(listenerArrowButtons);
-		findViewById(R.id.up_button).setOnClickListener(listenerArrowButtons);
-		findViewById(R.id.down_button).setOnClickListener(listenerArrowButtons);
-		findViewById(R.id.left_up_button).setOnClickListener(listenerArrowButtons);
-		findViewById(R.id.left_down_button).setOnClickListener(listenerArrowButtons);
-		findViewById(R.id.right_up_button).setOnClickListener(listenerArrowButtons);
-		findViewById(R.id.right_down_button).setOnClickListener(listenerArrowButtons);
-		findViewById(R.id.stay_button).setOnClickListener(listenerArrowButtons);
-		
-		teleportFrameLayout.getChildAt(0).setOnClickListener(listenerOtherButtons);
-		safeTeleportFrameLayout.getChildAt(0).setOnClickListener(listenerOtherButtons);
-		mineFrameLayout.getChildAt(0).setOnClickListener(listenerOtherButtons);
-		bombFrameLayout.getChildAt(0).setOnClickListener(listenerOtherButtons);
+		mGameOverLinearLayout = (LinearLayout) findViewById(R.id.defeat_linearLayout);
+		view = (GameSurfaceView) findViewById(R.id.game);
+		levelTextView = (TextView) findViewById(R.id.levelView);
+		scoreTextView = (TextView) findViewById(R.id.scoreView);
+		energyTextView = (TextView) findViewById(R.id.energyView);
+		botCountTextView = (TextView) findViewById(R.id.botCountView);
 
-		safeTeleportTextView = (TextView)safeTeleportFrameLayout.getChildAt(1);
-		mineTextView = (TextView)mineFrameLayout.getChildAt(1);
-		bombTextView = (TextView)bombFrameLayout.getChildAt(1);
-		teleportTextView = (TextView)teleportFrameLayout.getChildAt(1);
+		findViewById(R.id.restart_button).setOnClickListener(restartButtonListener);
+		findViewById(R.id.away_button).setOnClickListener(awayButtonListener);
+		findViewById(R.id.left_button).setOnClickListener(listener);
+		findViewById(R.id.right_button).setOnClickListener(listener);
+		findViewById(R.id.up_button).setOnClickListener(listener);
+		findViewById(R.id.down_button).setOnClickListener(listener);
+		findViewById(R.id.left_up_button).setOnClickListener(listener);
+		findViewById(R.id.left_down_button).setOnClickListener(listener);
+		findViewById(R.id.right_up_button).setOnClickListener(listener);
+		findViewById(R.id.right_down_button).setOnClickListener(listener); 
+		teleButton = (Button) findViewById(R.id.teleport_button);
+		teleButton.setOnClickListener(listener); 
+		safeTeleButton = (Button) findViewById(R.id.safe_teleport_button);
+		safeTeleButton.setOnClickListener(listener); 
+		findViewById(R.id.stay_button).setOnClickListener(listener);
+		mineButton = (Button) findViewById(R.id.mine_button);
+		mineButton.setOnClickListener(listener);
+		bombButton = (Button) findViewById(R.id.bomb_button);
+		bombButton.setOnClickListener(listener);
 
-		safeTeleportTextView.setText(Byte.toString(World.SAFE_TELEPORT_COST));
-		mineTextView.setText(Byte.toString(World.MINE_COST));
-		teleportTextView.setText("\u221e");
-		
 		mSoundTrack = MediaPlayer.create(this, R.raw.muz);
 		mSoundTrack.setLooping(true);
 		// при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
@@ -194,7 +144,7 @@ public class GameActivity extends Activity {
 			areBombsOn = SettingsParser.areBombsOn();
 			areMinesOn = SettingsParser.areMinesOn();
 			world.player.areSuicidesForbidden = !SettingsParser.areSuicidesOn();
-		}else{
+			}else{
 			world = new World(
 					savedInstanceState.getInt("width"),
 					savedInstanceState.getInt("height"),
@@ -218,52 +168,45 @@ public class GameActivity extends Activity {
 				mSoundTrack.seekTo(savedInstanceState.getInt("musicTime")+400);
 			mLastLevel = world.getLevel();
 		}
-
+		if (!world.player.isAlive)
+			mGameOverLinearLayout.setVisibility(View.VISIBLE);
 		if (!areBombsOn)
-			bombFrameLayout.getChildAt(0).setVisibility(View.GONE);
+			findViewById(R.id.bomb_button).setVisibility(8);
 		if (!areMinesOn)
-			mineFrameLayout.getChildAt(0).setVisibility(View.GONE);
-
+			findViewById(R.id.mine_button).setVisibility(8);
 		view.CreateThread();
 		mDrawThread = view.getDrawThread();
 		mDrawThread.setWorld(world);
 		view.StartThread();
 		changeText();
-		refreshButtons();
 	}
-	
+
 	public void refreshButtons(){
 		byte bombCost = world.getBombCost();
 		int energy = world.player.getEnergy();
-		if (World.SAFE_TELEPORT_COST > energy)
-			safeTeleportFrameLayout.setVisibility(View.GONE);
-		else
-			safeTeleportFrameLayout.setVisibility(View.VISIBLE);
-		if (World.MINE_COST > energy)
-			mineFrameLayout.setVisibility(View.GONE);
-		else
-			mineFrameLayout.setVisibility(View.VISIBLE);
-		if (bombCost > energy)
-			bombFrameLayout.setVisibility(View.GONE);
+		if (World.SAFE_TELEPORT_COST > energy){
+			safeTeleButton.setVisibility(View.INVISIBLE);
+		}
 		else{
-			bombFrameLayout.setVisibility(View.VISIBLE);
-			bombTextView.setText(Byte.toString(bombCost));
+			safeTeleButton.setVisibility(View.VISIBLE);
+		}
+		if (areMinesOn){
+			if (World.MINE_COST > energy)
+				mineButton.setVisibility(View.INVISIBLE);
+			else{
+				mineButton.setVisibility(View.VISIBLE);
+				mineButton.setText(Byte.toString(World.MINE_COST));
+			}
+		}
+		if (areBombsOn){
+			if (bombCost > energy)
+				bombButton.setVisibility(View.INVISIBLE);
+			else{
+				bombButton.setVisibility(View.VISIBLE);
+				bombButton.setText(Byte.toString(bombCost));
+			}
 		}
 	}
-	
-	private void showNewLevelToast(){
-		switch (SettingsParser.getLanguage()) {
-			case 0:
-				Toast.makeText(GameActivity.this, String.format(getString
-				 (R.string.new_level_ru), mLastLevel) , Toast.LENGTH_SHORT).show();
-				break;
-			case 1:
-				Toast.makeText(GameActivity.this, String.format(getString
-				 (R.string.new_level), mLastLevel) , Toast.LENGTH_SHORT).show();
-				break;
-		}
-	}
-
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
@@ -274,14 +217,14 @@ public class GameActivity extends Activity {
 		}
 	}
 	
-    @Override
-    protected void onResume(){
-        super.onResume();
-        if(isMusicOn) {
-            mSoundTrack.start();
-        }
-        view.mDrawThread.scrollToPlayer();
-    }
+	@Override
+	protected void onResume(){
+		super.onResume();
+		if(isMusicOn) {
+			mSoundTrack.start();
+		}
+		view.mDrawThread.scrollToPlayer();
+	}
 
 	@Override
 	protected void onPause(){
@@ -323,20 +266,12 @@ public class GameActivity extends Activity {
 	}
 
 	private void changeText(){
-		switch (SettingsParser.getLanguage()) {
-			case 0:
-				levelTextView.setText(String.format(getString(R.string.level_ru),
-				 world.getLevel()));
-				break;
-			case 1:
-				levelTextView.setText(String.format(getString(R.string.level),
-				 world.getLevel()));
-				break;
-		}
-		scoreTextView.setText(String.format("%d   ", world.player.getScore()));		
-		energyTextView.setText(String.format("%d   ", world.player.getEnergy()));
-		botCountTextView.setText(String.format("%d   ",
+		levelTextView.setText(String.format(getString(R.string.level),world.getLevel()));
+		scoreTextView.setText(String.format(" %d", world.player.getScore()));	
+		energyTextView.setText(String.format(" %d", world.player.getEnergy()));
+		botCountTextView.setText(String.format(" %d",
 		 world.board.getAliveBotCount()+world.board.getAliveFastBotCount()));
+		refreshButtons();
 	}
 
 	private void load(){
@@ -344,14 +279,18 @@ public class GameActivity extends Activity {
 		SaveManager.getInstance().loadGameFromBinary(loader);
 		world = loader.updatedWorld();
 	}
-
 	private void save(){
 		BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
 		SaveManager.getInstance().saveGameToBinary(saver);
 	}
 	
+	private void showNewLevelToast(){
+		Toast.makeText(GameActivity.this, String.format(getString
+		 (R.string.new_level), mLastLevel) , Toast.LENGTH_SHORT).show();
+	}
+	
 	@Override
-	public void onBackPressed() {
+	public void onBackPressed(){
 		save();
 		super.onBackPressed();
 	}

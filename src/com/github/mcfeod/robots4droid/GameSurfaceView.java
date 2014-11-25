@@ -33,37 +33,36 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	}
 
 	/** Конструктор */
-    public GameSurfaceView(Context context, AttributeSet attrs)
-    {
-        super(context, attrs);
-        mSurfaceHolder = getHolder();
-        mSurfaceHolder.addCallback(this);
-        this.context = context;
-    }
-    
-    public DrawThread getDrawThread(){
-    	return mDrawThread;
-    }
+	public GameSurfaceView(Context context, AttributeSet attrs)
+	{
+		super(context, attrs);
+		mSurfaceHolder = getHolder();
+		mSurfaceHolder.addCallback(this);
+		this.context = context;
+	}
 
-    public void CreateThread(){
-        mDrawThread = new DrawThread(mSurfaceHolder, context, this);
-        gestureDetector = new GestureDetector(context,
-         new ScrollGestureListener(mDrawThread));
-        scaleGestureDetector = new ScaleGestureDetector(context,
-         new ScaleGestureListener(mDrawThread));
-    }
-    
-    public void StartThread(){
-    	mDrawThread.start();
-    }
-    
+	public DrawThread getDrawThread(){
+		return mDrawThread;
+	}
+
+	public void CreateThread(){
+		mDrawThread = new DrawThread(mSurfaceHolder, context, this);
+		gestureDetector = new GestureDetector(context,
+			new ScrollGestureListener(mDrawThread));
+		scaleGestureDetector = new ScaleGestureDetector(context,
+			new ScaleGestureListener(mDrawThread));
+	}
+
+	public void StartThread(){
+		mDrawThread.start();
+	}
 	public void StopThread(){
 		mDrawThread.customKill();
 		mDrawThread = null;
 	}
 
 	@Override
-    public boolean onTouchEvent(MotionEvent event) {
+	public boolean onTouchEvent(MotionEvent event) {
 		switch (event.getPointerCount()){
 			case 1: gestureDetector.onTouchEvent(event);
 			case 2: scaleGestureDetector.onTouchEvent(event);

@@ -1,5 +1,6 @@
 package saves;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 class SavedGame {
@@ -29,8 +30,9 @@ class SavedGame {
 	@Override
 	public String toString(){
 		sBuilder.setLength(0);
-		sBuilder.append(mCreationDate.toString());
-		sBuilder.append("# Level: ");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM yy  HH:mm. EEEE");
+		sBuilder.append(simpleDateFormat.format(mCreationDate));
+		sBuilder.append("\nLevel: ");
 		sBuilder.append(mLevel);
 		sBuilder.append(" Score: ");
 		sBuilder.append(mScore);
