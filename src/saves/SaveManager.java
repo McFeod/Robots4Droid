@@ -149,14 +149,14 @@ public class SaveManager {
 		boolean found = false;
 		for (byte i=0; i<mScoreCount; i++)
 			if (mScoreArray[i] < score){
-				for (byte j=mScoreCount; j>i; j--)
-					if (j != MAX_SCORE_COUNT-1){
-						mScoreArray[j] = mScoreArray[j-1];
-						mScoreNameArray[j] = mScoreNameArray[j-1];
-					}
+				for (byte j=(byte)(mScoreCount-1); j>i; j--){
+					mScoreArray[j] = mScoreArray[j-1];
+					mScoreNameArray[j] = mScoreNameArray[j-1];
+				}
 				mScoreArray[i] = score;
 				mScoreNameArray[i] = name;
-				mScoreCount++;
+				if (mScoreCount != MAX_SCORE_COUNT)
+					mScoreCount++;
 				found = true;
 				break;
 			}
