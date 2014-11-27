@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Robots4Droid</string>
+	
+	<!-- MainActivity -->
 	<string name="action_settings">Settings</string>
 	<string name="continue_button">Continue</string>
 	<string name="new_game_button">New game</string>
 	<string name="load_button">Load</string>
+	<string name="scores_button">Scores</string>
 	<string name="settings_button">Settings</string>
 	<string name="about_button">About</string>
-	<string name="dialog">You died</string>
-	<string name="restart">Once more!</string>
-	<string name="away">Give me a break…</string>
-	<string name="no_saved">You have nothing to continue!</string>
-	<string name="not_possible">You can\'t do it!</string>
-	<string name="new_level">NEW LEVEL: %d</string>
 	<string name="dialog_about_message">
 What to do.\n\
 All you need is to destroy all the robots and go to the next level. The  higher level you have achieved the much more robots want to kill you. The more robots you are surrounded the more interesting game is. It means you will gain more scores and have more achievement.\n\
@@ -41,6 +38,24 @@ Difficutly - sometimes it\'s really hard to choose wheather you need difficultie
 \n\
 WARNING!!! The game is rather endless. There is no victory. But there is an opportunity to improve your self-estimete by becoming the best player ever!\n\
 	</string>
+	
+	<!-- GameActivity -->
+	<string name="dialog">You died</string>
+	<string name="restart">Once more!</string>
+	<string name="away">Give me a break…</string>
+	<string name="add_score">Хочу похвастаться!</string>
+	<string name="score_info">Вы набрали %d очков</string>
+	<string name="no_saved">You have nothing to continue!</string>
+	<string name="not_possible">You can\'t do it!</string>
+	<string name="new_level">NEW LEVEL: %d</string>
+	<string name="level">Level: %d</string>
+	<string name="input_name">Введите свое имя</string>
+	<string name="ok">OK</string>
+	<string name="cancel">Cancel</string>
+	<string name="nil">0</string>
+	<string name="one">1</string>
+	
+	<!-- SettingsActivity -->
 	<string name="music_setting">Music</string>
 	<string name="easy_setting">Easy</string>
 	<string name="hard_setting">More fast robots!!!</string>
@@ -48,11 +63,16 @@ WARNING!!! The game is rather endless. There is no victory. But there is an oppo
 	<string name="complexity_setting">Difficulty:</string>
 	<string name="mine_setting">Turn mines on</string>
 	<string name="bomb_setting">Turn explosions on</string>
-	<string name="level">Level: %d</string>
-	<string name="nil">0</string>
-	<string name="one">1</string>
+	
+	<!-- LoadActivity -->
+	<string name="delete">\n\ Out of sight, out of mind?</string>
 	<string name="yes">Yes</string>
 	<string name="no">NO</string>
 	<string name="maybe">Maybe</string>
-	<string name="delete">\n\ Out of sight, out of mind?</string>
+	
+	<!-- SavedGame -->
+	<string name="score">Score: %d</string>
+	
+	<!-- ReActivity -->
+	<string name="delete_scores">Delete scores</string>
 </resources>

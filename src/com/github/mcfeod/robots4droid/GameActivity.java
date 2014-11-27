@@ -3,6 +3,8 @@ package com.github.mcfeod.robots4droid;
 import saves.BinaryIOManager;
 import saves.SaveManager;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,16 +23,20 @@ public class GameActivity extends Activity {
 	private int mLastLevel=-1;
 	private boolean mNeedCrutchForLaunch = true;
 
-	private MediaPlayer mSoundTrack; 
+	private MediaPlayer mSoundTrack;
 	private boolean isMusicOn;
 	private boolean areMinesOn;
 	private boolean areBombsOn;
 	private TextView levelTextView, scoreTextView, energyTextView, botCountTextView;
+	private TextView scoreInfoTextView;
 	private Button teleButton, safeTeleButton, bombButton, mineButton;
 	private GameSurfaceView view;
 	private DrawThread mDrawThread;
 	private LinearLayout mGameOverLinearLayout;
+	private EditText inputNameEditText;
+	private AlertDialog addScoreDialog;
 
+	/** Кнопка "По новой" */
 	public OnClickListener restartButtonListener = new OnClickListener() {
 		@Override
 		public void onClick(View v){
@@ -41,10 +48,20 @@ public class GameActivity extends Activity {
 		}
 	};
 
+	/** Кнопка "Да ну вас" */
 	public OnClickListener awayButtonListener = new OnClickListener() {
 		@Override
 		public void onClick(View v){
 			GameActivity.this.finish();
+		}
+	};
+	
+	/** Кнопка "Хочу похвастаться" */
+	public OnClickListener addScoreButtonListener = new OnClickListener() {
+		@Override
+		public void onClick(View v){
+			inputNameEditText.setText("");
+			addScoreDialog.show();
 		}
 	};
 
@@ -87,7 +104,7 @@ public class GameActivity extends Activity {
 					showNewLevelToast();
 				}
 			}else
-				mGameOverLinearLayout.setVisibility(View.VISIBLE);
+				showGameOverDialog();
 		}else
 			Toast.makeText(GameActivity.this, R.string.not_possible, Toast.LENGTH_SHORT).show();
 	}
@@ -100,15 +117,43 @@ public class GameActivity extends Activity {
 		 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_game);
 
+		/** Создание диалога для ввода имени при создании нового рекорда */
+		inputNameEditText = new EditText(GameActivity.this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+		builder.setMessage(R.string.input_name);
+		builder.setView(inputNameEditText);
+		builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				try{
+					SaveManager.getInstance().addScore(GameActivity.this,
+					 inputNameEditText.getText().toString(), world.player.getScore());
+				}catch(Exception e){};
+				//прячет кнопку после создания нового рекорда
+				scoreInfoTextView.setVisibility(View.GONE);
+				findViewById(R.id.add_score_button).setVisibility(View.GONE);
+			}
+		});
+		builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		addScoreDialog = builder.create();
+		
 		mGameOverLinearLayout = (LinearLayout) findViewById(R.id.defeat_linearLayout);
 		view = (GameSurfaceView) findViewById(R.id.game);
 		levelTextView = (TextView) findViewById(R.id.levelView);
 		scoreTextView = (TextView) findViewById(R.id.scoreView);
 		energyTextView = (TextView) findViewById(R.id.energyView);
 		botCountTextView = (TextView) findViewById(R.id.botCountView);
+		scoreInfoTextView = (TextView) findViewById(R.id.score_info_textView);
 
 		findViewById(R.id.restart_button).setOnClickListener(restartButtonListener);
 		findViewById(R.id.away_button).setOnClickListener(awayButtonListener);
+		findViewById(R.id.add_score_button).setOnClickListener(addScoreButtonListener);
+		
 		findViewById(R.id.left_button).setOnClickListener(listener);
 		findViewById(R.id.right_button).setOnClickListener(listener);
 		findViewById(R.id.up_button).setOnClickListener(listener);
@@ -132,7 +177,7 @@ public class GameActivity extends Activity {
 		// при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
 		// по этой причине start() и stop() размещены в onStart() и onStop()
 		if (savedInstanceState == null){
-			if(SaveManager.getInstance().hasLoadingGame()){
+			if (SaveManager.getInstance().hasLoadingGame()){
 				load();
 				mLastLevel = world.getLevel();
 			}else{
@@ -144,22 +189,21 @@ public class GameActivity extends Activity {
 			areBombsOn = SettingsParser.areBombsOn();
 			areMinesOn = SettingsParser.areMinesOn();
 			world.player.areSuicidesForbidden = !SettingsParser.areSuicidesOn();
-			}else{
+		}else{
 			world = new World(
-					savedInstanceState.getInt("width"),
-					savedInstanceState.getInt("height"),
-					savedInstanceState.getInt("bots"),
-					savedInstanceState.getInt("fastbots"),
-					savedInstanceState.getInt("playerX"),
-					savedInstanceState.getInt("playerY"),
-					savedInstanceState.getInt("energy"),
-					savedInstanceState.getInt("score"),
-					savedInstanceState.getBoolean("isAlive"),
-					savedInstanceState.getInt("level")
-					);
-			for(int i=0; i<width; ++i){
-				 world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
-			}
+				savedInstanceState.getInt("width"),
+				savedInstanceState.getInt("height"),
+				savedInstanceState.getInt("bots"),
+				savedInstanceState.getInt("fastbots"),
+				savedInstanceState.getInt("playerX"),
+				savedInstanceState.getInt("playerY"),
+				savedInstanceState.getInt("energy"),
+				savedInstanceState.getInt("score"),
+				savedInstanceState.getBoolean("isAlive"),
+				savedInstanceState.getInt("level")
+				);
+			for(int i=0; i<width; ++i)
+				world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
 			world.player.areSuicidesForbidden = savedInstanceState.getBoolean("areSuicidesForbidden");
 			isMusicOn = savedInstanceState.getBoolean("isMusicOn");
 			areBombsOn = savedInstanceState.getBoolean("areBombsOn");
@@ -169,11 +213,11 @@ public class GameActivity extends Activity {
 			mLastLevel = world.getLevel();
 		}
 		if (!world.player.isAlive)
-			mGameOverLinearLayout.setVisibility(View.VISIBLE);
+			showGameOverDialog();
 		if (!areBombsOn)
-			findViewById(R.id.bomb_button).setVisibility(8);
+			findViewById(R.id.bomb_button).setVisibility(View.GONE);
 		if (!areMinesOn)
-			findViewById(R.id.mine_button).setVisibility(8);
+			findViewById(R.id.mine_button).setVisibility(View.GONE);
 		view.CreateThread();
 		mDrawThread = view.getDrawThread();
 		mDrawThread.setWorld(world);
@@ -279,6 +323,7 @@ public class GameActivity extends Activity {
 		SaveManager.getInstance().loadGameFromBinary(loader);
 		world = loader.updatedWorld();
 	}
+	
 	private void save(){
 		BinaryIOManager saver = new BinaryIOManager(getApplicationContext(), world);
 		SaveManager.getInstance().saveGameToBinary(saver);
@@ -287,6 +332,20 @@ public class GameActivity extends Activity {
 	private void showNewLevelToast(){
 		Toast.makeText(GameActivity.this, String.format(getString
 		 (R.string.new_level), mLastLevel) , Toast.LENGTH_SHORT).show();
+	}
+	
+	private void showGameOverDialog(){
+		if (SaveManager.getInstance().canAddScore(world.player.getScore())){
+			scoreInfoTextView.setText(String.format(getString(R.string.score_info),
+			 world.player.getScore()));
+			scoreInfoTextView.setVisibility(View.VISIBLE);
+			findViewById(R.id.add_score_button).setVisibility(View.VISIBLE);
+			mGameOverLinearLayout.setVisibility(View.VISIBLE);
+		}else{
+			scoreInfoTextView.setVisibility(View.GONE);
+			findViewById(R.id.add_score_button).setVisibility(View.GONE);
+			mGameOverLinearLayout.setVisibility(View.VISIBLE);
+		}
 	}
 	
 	@Override
