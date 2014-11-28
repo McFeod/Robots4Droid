@@ -45,6 +45,7 @@ public class GameActivity extends Activity {
 			mDrawThread.scrollToPlayer();
 			mLastLevel = world.getLevel();
 			showNewLevelToast();
+			changeText();
 		}
 	};
 
@@ -94,7 +95,6 @@ public class GameActivity extends Activity {
 			mDrawThread.delay(200);
 			//передвигаем роботов
 			world.moveBots();
-			refreshButtons();
 			changeText();
 			if (world.player.isAlive){
 				//отрисовываем роботов
@@ -129,6 +129,8 @@ public class GameActivity extends Activity {
 					SaveManager.getInstance().addScore(GameActivity.this,
 					 inputNameEditText.getText().toString(), world.player.getScore());
 				}catch(Exception e){};
+				//чтобы при повороте экрана не появлялась кнопка
+				world.player.chScore(-world.player.getScore());
 				//прячет кнопку после создания нового рекорда
 				scoreInfoTextView.setVisibility(View.GONE);
 				findViewById(R.id.add_score_button).setVisibility(View.GONE);

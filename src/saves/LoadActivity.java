@@ -1,15 +1,13 @@
-package com.github.mcfeod.robots4droid;
+package saves;
 
 import java.util.ArrayList;
 import java.util.Random;
-
-import saves.SaveManager;
-import saves.SavedGame;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -33,6 +31,13 @@ public class LoadActivity extends ListActivity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 		 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+		try{
+			SaveManager.getInstance().openDatabaseConnection();
+			SaveManager.getInstance().loadSavesFromDatabase(LoadActivity.this);
+		}catch (RuntimeException e){
+			Log.d("MyListFragment", "Loading error" + e.getMessage());
+		}
+		
 		rand = new Random();
 		SaveAdapter adapter = new SaveAdapter(SaveManager.getInstance().mGames);
 		setListAdapter(adapter);

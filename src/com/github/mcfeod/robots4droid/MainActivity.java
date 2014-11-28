@@ -2,6 +2,7 @@ package com.github.mcfeod.robots4droid;
 
 import java.io.IOException;
 
+import saves.LoadActivity;
 import saves.SaveManager;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,6 +27,7 @@ public class MainActivity extends Activity {
 		try{
 			SaveManager.getInstance().openDatabaseConnection();
 			SaveManager.getInstance().loadSavesFromDatabase(MainActivity.this);
+			SaveManager.getInstance().closeDatabaseConnection();
 		}catch (RuntimeException e){
 			Log.d("MyListFragment", "Loading error" + e.getMessage());
 		}

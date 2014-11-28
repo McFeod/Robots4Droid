@@ -7,7 +7,7 @@ import android.content.Context;
 
 import com.github.mcfeod.robots4droid.R;
 
-public class SavedGame {
+class SavedGame {
 
 	public long mId;
 	public int mLevel;
