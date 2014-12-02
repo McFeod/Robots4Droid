@@ -29,7 +29,7 @@ public class MainActivity extends Activity {
 			SaveManager.getInstance().loadSavesFromDatabase(MainActivity.this);
 			SaveManager.getInstance().closeDatabaseConnection();
 		}catch (RuntimeException e){
-			Log.d("MyListFragment", "Loading error" + e.getMessage());
+			Log.d("MainActivity", "Loading error" + e.getMessage());
 		}
 		try{
 			SaveManager.getInstance().loadScores(MainActivity.this);

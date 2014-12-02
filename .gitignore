@@ -21,6 +21,9 @@ proguard-project.txt
 # Backup files
 *~
 # Eclipse settings
+project.properties
 .settings/
 .project
 .classpath
+# litter
+*humbs.db

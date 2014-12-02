@@ -234,14 +234,14 @@ public class GameActivity extends Activity {
 		byte bombCost = world.getBombCost();
 		int energy = world.player.getEnergy();
 		if (World.SAFE_TELEPORT_COST > energy){
-			safeTeleButton.setVisibility(View.INVISIBLE);
+			safeTeleButton.setVisibility(View.GONE);
 		}
 		else{
 			safeTeleButton.setVisibility(View.VISIBLE);
 		}
 		if (areMinesOn){
 			if (World.MINE_COST > energy)
-				mineButton.setVisibility(View.INVISIBLE);
+				mineButton.setVisibility(View.GONE);
 			else{
 				mineButton.setVisibility(View.VISIBLE);
 				mineButton.setText(Byte.toString(World.MINE_COST));
@@ -249,7 +249,7 @@ public class GameActivity extends Activity {
 		}
 		if (areBombsOn){
 			if (bombCost > energy)
-				bombButton.setVisibility(View.INVISIBLE);
+				bombButton.setVisibility(View.GONE);
 			else{
 				bombButton.setVisibility(View.VISIBLE);
 				bombButton.setText(Byte.toString(bombCost));
@@ -355,7 +355,9 @@ public class GameActivity extends Activity {
 	
 	@Override
 	public void onBackPressed(){
-		save();
-		super.onBackPressed();
+		if (world.player.isAlive){
+			save();
+			super.onBackPressed();
+		}
 	}
 }

@@ -18,4 +18,20 @@
 		<item name="android:textSize">14sp</item>
 		<item name="android:textColor">#FFFFFF</item>
 	</style>
+	<style name="GameOverButton">
+		<item name="android:textColor">#FFFFFF</item>
+		<item name="android:layout_height">50dp</item>
+		<item name="android:background">#801B0000</item>
+		<item name="android:layout_marginRight">5dp</item>
+		<item name="android:layout_marginLeft">5dp</item>
+	</style>
+	<style name="GameOverButton.End">
+		<item name="android:layout_weight">1</item>
+		<item name="android:layout_width">0dip</item>
+	</style>
+	<style name="SettingsItem">
+		<item name="android:layout_height">0dip</item>
+		<item name="android:layout_weight">1</item>
+		<item name="android:layout_width">match_parent</item>
+	</style>
 </resources>
