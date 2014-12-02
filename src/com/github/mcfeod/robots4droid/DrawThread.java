@@ -1,5 +1,7 @@
 package com.github.mcfeod.robots4droid;
 
+import java.util.Random;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,12 +27,17 @@ public class DrawThread extends Thread {
 	private int interval = 16;
 	private SurfaceHolder mSurfaceHolder; //Область для рисования
 
+	private Random mLSDRandom;
+	private Paint mLSDPaint;
+
 	public DrawThread(SurfaceHolder surfaceHolder, Context context, GameSurfaceView view){
 		mSurfaceHolder = surfaceHolder;
 		startPos = new Point(0, 0);
 		movePos = new Point(0, 0);
 		this.view = view;
 		paint = new Paint();
+		mLSDRandom = new Random();
+		mLSDPaint = new Paint();
 
 		bitRobotOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.robot);
 		bitFastRobotOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.fastrobot);
@@ -182,7 +189,7 @@ public class DrawThread extends Thread {
 	public void draw(){
 		drawing = true;
 	}
-		
+
 	public void scrollToPlayer(){
 		movePos.x = (world.player.getPos().x*widthPX+widthPX/2) - view.getWidth()/2 + indent;
 		movePos.y = (world.player.getPos().y*heightPX+heightPX/2) - view.getHeight()/2 + indent;
@@ -219,16 +226,22 @@ public class DrawThread extends Thread {
 	}
 	
 	public void repaint(){
+		Canvas lsdCanvas = new Canvas(bitCell2);
 		canvas.drawColor(Color.GRAY);
 		for (int i=0; i<world.getWidth(); i++)
 			for (int j=0; j<world.getHeight(); j++)
 				if (isVisible(i,j)){
-					if ((i+j)%2 == 0)
+					if ((i+j)%2 == 0){
+						if (SettingsParser.isLSDOn()){
+							mLSDPaint.setColor(mLSDRandom.nextInt());
+							lsdCanvas.drawRect(1, 1, bitCell2.getWidth()-2,
+							 bitCell2.getHeight()-2, mLSDPaint);
+						}
 						canvas.drawBitmap(bitCell2,widthPX*i+indent-startPos.x,
 						 heightPX*j+indent-startPos.y,paint);
-					else
+					}else
 						canvas.drawBitmap(bitCell,widthPX*i+indent-startPos.x,
-						heightPX*j+indent-startPos.y,paint);
+						 heightPX*j+indent-startPos.y,paint);
 					switch (world.board.GetKind(i,j)){
 						case Board.JUNK:
 							canvas.drawBitmap(bitJunk,widthPX*i+indent-startPos.x,

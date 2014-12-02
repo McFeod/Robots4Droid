@@ -63,6 +63,7 @@ WARNING!!! The game is rather endless. There is no victory. But there is an oppo
 	<string name="complexity_setting">Difficulty:</string>
 	<string name="mine_setting">Turn mines on</string>
 	<string name="bomb_setting">Turn explosions on</string>
+	<string name="lsd_setting">LSD</string>
 	
 	<!-- LoadActivity -->
 	<string name="delete">\n\ Out of sight, out of mind?</string>

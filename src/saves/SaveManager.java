@@ -120,6 +120,7 @@ public class SaveManager {
 		 context.openFileOutput("Gen_Settings", Context.MODE_PRIVATE));
 		DataOutput out = new DataOutputStream(stream);
 		out.writeBoolean(SettingsParser.isMusicOn());
+		out.writeBoolean(SettingsParser.isLSDOn());
 		stream.close();
 	}
 
@@ -128,9 +129,10 @@ public class SaveManager {
 		stream = new BufferedInputStream(context.openFileInput("Gen_Settings"));
 		DataInput in = new DataInputStream(stream);
 		SettingsParser.setMusicMode(in.readBoolean());
+		SettingsParser.setLSDMode(in.readBoolean());
 		stream.close();
 	}
-	
+
 	/** Загрузка списка рекордов */
 	public void loadScores(Context context) throws IOException{
 		BufferedInputStream stream = new BufferedInputStream(context.openFileInput("Score"));

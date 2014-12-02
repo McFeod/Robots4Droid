@@ -60,6 +60,7 @@
 	<string name="complexity_setting">Сложность:</string>
 	<string name="mine_setting">Включить мины</string>
 	<string name="bomb_setting">Включить взрыв</string>
+	<string name="lsd_setting">LSD</string>
 	
 	<!-- LoadActivity -->
 	<string name="delete">\n\ С глаз долой - из сердца вон?</string>

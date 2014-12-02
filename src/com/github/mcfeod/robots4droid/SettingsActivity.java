@@ -13,7 +13,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 public class SettingsActivity extends Activity {
 
-	private CheckBox musicBox, suicideBox, mineBox, bombBox;
+	private CheckBox musicBox, suicideBox, mineBox, bombBox, lsdBox;
 	private RadioButton mNormalButton, mExtraFastButton;
 	private RadioGroup complexityGroup;
 
@@ -29,13 +29,17 @@ public class SettingsActivity extends Activity {
 		suicideBox = (CheckBox) findViewById(R.id.suicideBox);
 		mineBox = (CheckBox) findViewById(R.id.mineBox);
 		bombBox = (CheckBox) findViewById(R.id.bombBox);
+		lsdBox = (CheckBox) findViewById(R.id.lsdBox);
 		complexityGroup = (RadioGroup) findViewById(R.id.complexityGroup);
 		mNormalButton = (RadioButton) findViewById(R.id.normalRadio);
 		mExtraFastButton = (RadioButton) findViewById(R.id.extraRadio);
+
 		musicBox.setChecked(SettingsParser.isMusicOn());
 		suicideBox.setChecked(!SettingsParser.areSuicidesOn());
 		mineBox.setChecked(SettingsParser.areMinesOn());
 		bombBox.setChecked(SettingsParser.areBombsOn());
+		lsdBox.setChecked(SettingsParser.isLSDOn());
+		
 		if(SettingsParser.needExtraFastBots()){
 			mExtraFastButton.setChecked(true);
 		}else{
@@ -68,6 +72,14 @@ public class SettingsActivity extends Activity {
 				SettingsParser.setBombMode(bombBox.isChecked());
 			}
 		});
+
+		lsdBox.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				SettingsParser.setLSDMode(lsdBox.isChecked());
+			}
+		});
+
 		complexityGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkedId) {

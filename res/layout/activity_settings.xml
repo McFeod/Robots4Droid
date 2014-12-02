@@ -31,7 +31,13 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="@string/bomb_setting" />
-	
+
+	<CheckBox
+		android:id="@+id/lsdBox"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/lsd_setting" />
+
 	<TextView
 		android:id="@+id/complexity_textView"
 		android:layout_width="wrap_content"

@@ -174,7 +174,10 @@ public class GameActivity extends Activity {
 		bombButton = (Button) findViewById(R.id.bomb_button);
 		bombButton.setOnClickListener(listener);
 
-		mSoundTrack = MediaPlayer.create(this, R.raw.muz);
+		if (SettingsParser.isLSDOn())
+			mSoundTrack = MediaPlayer.create(this, R.raw.lsd);
+		else
+			mSoundTrack = MediaPlayer.create(this, R.raw.muz);
 		mSoundTrack.setLooping(true);
 		// при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
 		// по этой причине start() и stop() размещены в onStart() и onStop()
