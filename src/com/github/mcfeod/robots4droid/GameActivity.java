@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -260,6 +262,10 @@ public class GameActivity extends Activity {
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		if (mNeedCrutchForLaunch){
+			if (SettingsParser.isLSDOn()){
+				Animation a = AnimationUtils.loadAnimation(this, R.anim.lsd);
+				view.startAnimation(a);
+			}
 			view.mDrawThread.setDefaultCellSize();
 			view.mDrawThread.scrollToPlayer();
 			mNeedCrutchForLaunch = false;
