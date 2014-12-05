@@ -29,6 +29,7 @@ public class World{
 	private Point junkPos, objectPos, freePos;
 	private boolean isJunkExists;
 	private byte objectKind;
+	private byte mReward = 0;
 
 	public World(int width, int height){
 		mWidth = width;
@@ -156,6 +157,7 @@ public class World{
 	   1) точка (endX, endY) или точка (startX, startY) лежит за пределами поля
 	   2) точка (endX, endY) - JUNK */
 	private boolean saveInfoAboutJunk(int startX, int startY, int endX, int endY){
+		mReward = 0;
 		isJunkExists = false;
 		objectKind=0;
 		if (board.isJunk(startX, startY)){
@@ -174,6 +176,8 @@ public class World{
 			isJunkExists = true;
 			//сохраняем информацию о конечной клетке
 			objectKind = board.GetKind(endX, endY);
+			if ((objectKind == Board.ROBOT)||(objectKind == Board.FASTROBOT))
+				mReward = 1;
 			board.chDiff(objectKind, 1);
 			//перемещаем мусор
 			board.SetKind(junkPos, Board.EMPTY);
@@ -186,6 +190,7 @@ public class World{
 	private void backInfoAboutJunk(){
 		if (isJunkExists){
 			board.chDiff(objectKind, -1);
+			mReward = 0;
 			board.SetKind(junkPos, Board.JUNK);
 			board.SetKind(objectPos, objectKind);
 		}
@@ -275,6 +280,7 @@ public class World{
 		}
 		//ход игрока
 		player.setPos(freePos);
+		player.chEnergy(mReward);
 		return true;
 	}
 

@@ -21,16 +21,17 @@
 				style="@style/GameImageButton.Action"
 				android:background="@drawable/safe_tele"
 				android:text="@string/one"/>
-	
-			<Button
-				android:id="@+id/mine_button"
-				style="@style/GameImageButton.Action"
-				android:background="@drawable/button_mine"/>
-	
+
 			<Button
 				android:id="@+id/bomb_button"
 				style="@style/GameImageButton.Action"
 				android:background="@drawable/button_bomb"/>
+
+			<Button
+				android:id="@+id/mine_button"
+				style="@style/GameImageButton.Action"
+				android:background="@drawable/button_mine"/>
+
 		</LinearLayout>
 	
 	<LinearLayout

@@ -38,16 +38,16 @@ Difficutly - sometimes it\'s really hard to choose wheather you need difficultie
 WARNING!!! The game is rather endless. There is no victory. But there is an opportunity to improve your self-estimete by becoming the best player ever!\n\
 	</string>
 	<!-- GameActivity -->
-	<string name="dialog">You died</string>
+	<string name="dialog">Oooops… it looks like you died</string>
 	<string name="restart">Once more!</string>
 	<string name="away">Give me a break…</string>
-	<string name="add_score">Хочу похвастаться!</string>
-	<string name="score_info">Вы набрали %d очков</string>
+	<string name="add_score">I wanna go down in history!</string>
+	<string name="score_info">You\'ve managed to gain %d points.</string>
 	<string name="no_saved">You have nothing to continue!</string>
-	<string name="not_possible">You can\'t do it!</string>
+	<string name="not_possible">Hey, it\'s not your way!</string>
 	<string name="new_level">NEW LEVEL: %d</string>
 	<string name="level">Level: %d</string>
-	<string name="input_name">Введите свое имя</string>
+	<string name="input_name">And who is such a cool?</string>
 	<string name="ok">OK</string>
 	<string name="cancel">Cancel</string>
 	<string name="nil">0</string>
@@ -61,17 +61,15 @@ WARNING!!! The game is rather endless. There is no victory. But there is an oppo
 	<string name="complexity_setting">Difficulty:</string>
 	<string name="mine_setting">Turn mines on</string>
 	<string name="bomb_setting">Turn explosions on</string>
-	<string name="lsd_setting">LSD</string>
 	
 	<!-- LoadActivity -->
 	<string name="delete">\n\ Out of sight, out of mind?</string>
 	<string name="yes">Yes</string>
 	<string name="no">NO</string>
-	<string name="maybe">Maybe</string>
-	
+
 	<!-- SavedGame -->
 	<string name="score">Score: %d</string>
 	
-	<!-- ReActivity -->
+	<!-- ScoreActivity -->
 	<string name="delete_scores">Delete scores</string>
 </resources>
