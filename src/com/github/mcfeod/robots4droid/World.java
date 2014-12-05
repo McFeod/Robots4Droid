@@ -19,7 +19,7 @@ public class World{
 	public static final byte STAY = 4;
 	public static final byte TELEPORT = 9;
 	public static final byte SAFE_TELEPORT = 10;
-	public static final byte MINE_COST = 6;
+	public static final byte MINE_COST = 3;
 	public static final byte SAFE_TELEPORT_COST = 1;
 
 	public Player player;
@@ -62,32 +62,32 @@ public class World{
 	private void initLevel(){
 		board.Clear(); //очистка доски
 		mLevel ++;
-		player.chEnergy((int)(Math.sqrt(mLevel)));
-		//увеличение энергии и очков
+		//определение количества роботов
+		calcBots();
+		board.setRobotCount(mRobotCount, mFastRobotCount);
+		//увеличение энергии и очков (не помещать раньше подсчёта роботов!!!)
 		if (mLevel>1)
 			player.chScore((mLevel*5));
-		//определение количества роботов
-		if(SettingsParser.needExtraFastBots()){
-			mRobotCount = 5 + (int)(0.5 * mLevel);
-			mFastRobotCount = mLevel;
-		}else{
-			mRobotCount = 5 + (int)(1.5 * mLevel);
-			mFastRobotCount = -4 + (int)(1.2 * mLevel);
-		}
-		board.setRobotCount(mRobotCount, mFastRobotCount);
+		player.chEnergy(calcEnergy());
 		//Размещение простых роботов
 		for(int i=0; i<mRobotCount; ++i){
-			if (findFreePos());
+			if (findFreePos())
 				board.SetKind(freePos, Board.ROBOT);
+			else
+				board.chDiff(Board.ROBOT, 1);
 		}
 		//Размещение быстрых роботов
 		for(int i=0; i<mFastRobotCount; ++i){
-			if (findFreePos());
+			if (findFreePos())
 				board.SetKind(freePos, Board.FASTROBOT);
+			else
+				board.chDiff(Board.FASTROBOT, 1);
 		}
 		//Размещение игрока
-		if (findSafePos());
+		if (findSafePos())
 			player.setPos(freePos);
+		else
+			winner();
 	}
 	public boolean setMine(){
 		if (player.areSuicidesForbidden)
@@ -102,7 +102,7 @@ public class World{
 	}
 	
 	public byte getBombCost(){
-		byte cost = 1;
+		byte cost = 0;
 		for (int i=-2; i<=2; i++)
 			for (int j=-2; j<=2; j++)
 				switch (Math.abs(i)|Math.abs(j)){
@@ -114,7 +114,7 @@ public class World{
 						if (board.isFastRobot(player.getPos().x+i, player.getPos().y+j))
 							cost+=2;
 				}
-		return cost;
+		return (byte)(1 + cost/2);
 	}
 
 	public boolean bomb(){
@@ -145,8 +145,6 @@ public class World{
 	private boolean findFreePos(){
 		if (board.RandomFindFreePos(freePos))
 			return true;
-		//Если свободная клетка не найдена, то игра заканчивается победой
-		winner();
 		return false;
 	}
 
@@ -425,21 +423,39 @@ public class World{
 	/*Ищет координаты безопасной клетки и сохраняет их в freePos.
 	  Возвращает true, если такая клетка существует*/
 	private boolean findSafePos(){	
-	  	for(int i=0; i<2*mHeight*mWidth; ++i)
-	  		if (findFreePos())
-	  			if ((freePos.x != player.getPos().x) && (freePos.y != player.getPos().y))
-	  				if (isSafePos(freePos.x, freePos.y))
-	  					return true;
-	  	for (int i=0; i<mWidth; i++)
-	  		for (int j=0; j<mHeight; j++)
-	  			if ((i != player.getPos().x) && (j != player.getPos().y))
-	  				if (isSafePos(i, j))
-	  					return true;
-	  	return false;
+		for(int i=0; i<2*mHeight*mWidth; ++i)
+			if (findFreePos())
+				if ((freePos.x != player.getPos().x) && (freePos.y != player.getPos().y))
+					if (isSafePos(freePos.x, freePos.y))
+						return true;
+		for (int i=0; i<mWidth; i++)
+			for (int j=0; j<mHeight; j++)
+				if ((i != player.getPos().x) && (j != player.getPos().y))
+					if (isSafePos(i, j))
+						return true;
+		return false;
+	}
+
+	private void calcBots(){
+		//TODO переделать в зависимость числа роботов разных типов от большего, чем 2, количества уровней сложности,
+		// после robotCount>width заменять обычных роботов быстрыми, если не получается - добавить обычных
+		if(SettingsParser.needExtraFastBots()){
+			mRobotCount = 5 + (int)(0.5 * mLevel);
+			mFastRobotCount = mLevel;
+		}else{
+			mRobotCount = 5 + (int)(0.8 * mLevel);
+			mFastRobotCount = -4 + (int)(1.2 * mLevel);
+		}
+	}
+
+	private int calcEnergy(){
+		float linear = (9*mRobotCount + 25*mFastRobotCount)/4/(mWidth+mHeight);
+		int res = (int) (1 + Math.sqrt(linear));
+		return res>6 ? 6:res;
 	}
 
 	public void winner(){
-
+		//TODO
 	}
 	
 	public int getHeight() {
@@ -457,7 +473,6 @@ public class World{
 	public void defeat(){
 		mLevel = 0;
 		player.reset();
-		//TODO запись рекорда
 		initLevel();
 	}
 }
