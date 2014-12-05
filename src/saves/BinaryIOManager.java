@@ -1,12 +1,21 @@
 package saves;
 
-import com.github.mcfeod.robots4droid.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Date;
 
 import android.content.Context;
 import android.util.Log;
 
-import java.io.*;
-import java.util.Date;
+import com.github.mcfeod.robots4droid.Point;
+import com.github.mcfeod.robots4droid.SettingsParser;
+import com.github.mcfeod.robots4droid.World;
 
 public class BinaryIOManager {
 	private static final String TAG = "BinaryIOManager";
@@ -34,7 +43,9 @@ public class BinaryIOManager {
 	* */
 
 	public SavedGame saveGame() throws IOException{
-		SavedGame save = new SavedGame(mWorld.getLevel(), mWorld.player.getScore(), new Date());
+		SavedGame save = new SavedGame(mWorld.getLevel(), mWorld.player.getScore(),
+		 new Date(), mContext);
+
 		String fileName = save.getFileName();
 		BufferedOutputStream stream = null;
 		try {
@@ -70,9 +81,7 @@ public class BinaryIOManager {
 		String fileName = save.getFileName();
 		BufferedInputStream stream = null;
 		try {
-			stream = new BufferedInputStream(
-					mContext.openFileInput(fileName)
-			);
+			stream = new BufferedInputStream(mContext.openFileInput(fileName));
 			DataInput in = new DataInputStream(stream);
 			// читаем данные из файла
 			loadWorld(in);

@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,6 +22,16 @@ public class MainActivity extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 		 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.main);
+		try{
+			SaveManager.getInstance().openDatabaseConnection();
+			SaveManager.getInstance().loadSavesFromDatabase(MainActivity.this);
+			SaveManager.getInstance().closeDatabaseConnection();
+		}catch (RuntimeException e){
+			Log.d("MainActivity", "Loading error" + e.getMessage());
+		}
+		try{
+			SaveManager.getInstance().loadScores(MainActivity.this);
+		}catch (IOException e){}
 
 		findViewById(R.id.settings_button).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -57,6 +68,14 @@ public class MainActivity extends Activity {
 					 startActivity(i);
 			}
 		});
+		
+		findViewById(R.id.score_button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+					 Intent i = new Intent(MainActivity.this, ScoreActivity.class);
+					 startActivity(i);
+			}
+		});
 
 		findViewById(R.id.about_button).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -68,6 +87,7 @@ public class MainActivity extends Activity {
 				dialog.show();
 			}
 		});
+		
 		try {
 			SaveManager.getInstance().loadGeneralSettings(MainActivity.this);
 		} catch (IOException e) {}

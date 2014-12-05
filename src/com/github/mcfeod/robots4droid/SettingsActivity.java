@@ -13,7 +13,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 public class SettingsActivity extends Activity {
 
-	private CheckBox musicBox, suicideBox, mineBox, bombBox;
+	private CheckBox musicBox, suicideBox, mineBox, bombBox, lsdBox;
 	private RadioButton mNormalButton, mExtraFastButton;
 	private RadioGroup complexityGroup;
 
@@ -36,6 +36,7 @@ public class SettingsActivity extends Activity {
 		suicideBox.setChecked(!SettingsParser.areSuicidesOn());
 		mineBox.setChecked(SettingsParser.areMinesOn());
 		bombBox.setChecked(SettingsParser.areBombsOn());
+		
 		if(SettingsParser.needExtraFastBots()){
 			mExtraFastButton.setChecked(true);
 		}else{

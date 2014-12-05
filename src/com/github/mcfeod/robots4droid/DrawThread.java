@@ -1,5 +1,7 @@
 package com.github.mcfeod.robots4droid;
 
+import java.util.Random;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -85,7 +87,7 @@ public class DrawThread extends Thread {
 	public void changeIndent(){
 		indent = widthPX / 3;
 	}
-	
+
 	public void checkCellSize(){
 		if (widthPX * world.getWidth() + indent * 2 < view.getWidth()){
 			widthPX = (view.getWidth() - indent * 2) / world.getWidth();
@@ -104,7 +106,7 @@ public class DrawThread extends Thread {
 			widthPX = heightPX;
 		}
 	}
-	
+
 	public void setDefaultCellSize(){
 		widthPX = view.getWidth() / world.getWidth() * 2;
 		heightPX = widthPX;
@@ -113,7 +115,7 @@ public class DrawThread extends Thread {
 		changeIndent();
 		changeBitmapSize(false);
 	}
-	
+
 	public void changeCellSize(int d){
 		widthPX += d;
 		heightPX += d;
