@@ -169,14 +169,18 @@ public class Board{
 
 	public void chDiff(byte kind, int diff){
 		switch(kind){
-			case Board.ROBOT: mDiffBotCount+= diff; break;
-			case Board.FASTROBOT: mDiffFastBotCount+=diff; break;
+			case Board.ROBOT: 
+				mDiffBotCount+= diff;
+				mAliveBotCount-= diff;
+				break;
+			case Board.FASTROBOT:
+				mDiffFastBotCount+= diff;
+				mAliveFastBotCount-= diff;
+				break;
 		}
 	}
 
 	public int diff2score(){
-		mAliveBotCount-= mDiffBotCount;
-		mAliveFastBotCount-= mDiffFastBotCount;
 		int res = mDiffBotCount*5 + 10*mDiffFastBotCount;
 		mDiffBotCount = 0;
 		mDiffFastBotCount = 0;
