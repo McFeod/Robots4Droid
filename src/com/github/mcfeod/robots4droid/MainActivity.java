@@ -87,10 +87,6 @@ public class MainActivity extends Activity {
 				dialog.show();
 			}
 		});
-		
-		try {
-			SaveManager.getInstance().loadGeneralSettings(MainActivity.this);
-		} catch (IOException e) {}
 	}
 
 	@Override

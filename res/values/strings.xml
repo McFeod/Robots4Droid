@@ -19,7 +19,7 @@ Details.\n\
 We believe we did the game clear to understand, so you can skip this part and start playing right now. But remember that knowing all the rules was never harmful to anyone.\n\
 Teleport - the easiest way to travel, by the way. But we need to warn you that once it may move you to the robot\'s action zone. It means you will die there with no chance to revive screaming \"OH GOD WHYYY\"\n\
 Safe teleport - moving that costs 1 point of energy. Good thing. Useful thing. It will place you onto the point where no robots can reach you right now. But there are no reasons to think robots won\'t kill you next turn.\n\
-Traps - just drop this thing on the cell and make the robot touch it. Then say goodbye to robot by paying 6 points of energy.\n\
+Traps - just drop this thing on the cell and make the robot touch it. Then say goodbye to robot by paying 3 points of energy.\n\
 Bombs - a very large boom around you that costs some points of energy depending on count of enemies around, see the number next to the bomb pictogram.\n\
 \n\
 Anything else?\n\
@@ -54,12 +54,13 @@ WARNING!!! The game is rather endless. There is no victory. But there is an oppo
 	
 	<!-- SettingsActivity -->
 	<string name="music_setting">Music</string>
-	<string name="easy_setting">Easy</string>
-	<string name="hard_setting">More fast robots!!!</string>
 	<string name="suicide_setting">Turn safe movements on</string>
-	<string name="complexity_setting">Difficulty:</string>
+	<string name="suicide_summary">Reject suicide movements</string>
+	<string name="complexity_setting">Difficulty</string>
 	<string name="mine_setting">Turn mines on</string>
+	<string name="mine_summary">Ability to create booby traps</string>
 	<string name="bomb_setting">Turn explosions on</string>
+	<string name="bomb_summary">Ability to blow up nearby enemies</string>
 	
 	<!-- LoadActivity -->
 	<string name="delete">\n\ Out of sight, out of mind?</string>

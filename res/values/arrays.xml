@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="difficulty">
+		<item>Easy</item>
+		<item>More fast robots!!!</item>
+	</string-array>
+	<string-array name="int_difficulty">
+		<item>0</item>
+		<item>1</item>
+	</string-array>
+</resources>
