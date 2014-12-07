@@ -4,12 +4,12 @@
 		android:key="music"
 		android:title="@string/music_setting"
 		android:summary="@string/music_setting"
-		android:defaultValue="false" />
+		android:defaultValue="true" />
 	<CheckBoxPreference
 		android:key="safe"
 		android:title="@string/suicide_setting"
 		android:summary="@string/suicide_summary"
-		android:defaultValue="true" />
+		android:defaultValue="false" />
 	<CheckBoxPreference
 		android:key="mine"
 		android:title="@string/mine_setting"
