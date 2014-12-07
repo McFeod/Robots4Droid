@@ -5,8 +5,10 @@ import saves.SaveManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -37,6 +39,7 @@ public class GameActivity extends Activity {
 	private LinearLayout mGameOverLinearLayout;
 	private EditText inputNameEditText;
 	private AlertDialog addScoreDialog;
+	private SharedPreferences mSettings;
 
 	/** Кнопка "По новой" */
 	private final OnClickListener restartButtonListener = new OnClickListener() {
@@ -175,23 +178,24 @@ public class GameActivity extends Activity {
 		bombButton = (Button) findViewById(R.id.bomb_button);
 		bombButton.setOnClickListener(listener);
 
-			mSoundTrack = MediaPlayer.create(this, R.raw.muz);
+		mSoundTrack = MediaPlayer.create(this, R.raw.muz);
 		mSoundTrack.setLooping(true);
 		// при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
 		// по этой причине start() и stop() размещены в onStart() и onStop()
 		if (savedInstanceState == null){
+			mSettings = PreferenceManager.getDefaultSharedPreferences(this);
 			if (SaveManager.getInstance().hasLoadingGame()){
 				load();
 				mLastLevel = world.getLevel();
 			}else{
-				world = new World(width, height);
+				world = new World(width, height, Integer.parseInt(mSettings.getString("complexity", "0")));
 				mLastLevel = world.getLevel();
 				showNewLevelToast();
 			}
-			isMusicOn = SettingsParser.isMusicOn();
-			areBombsOn = SettingsParser.areBombsOn();
-			areMinesOn = SettingsParser.areMinesOn();
-			world.player.areSuicidesForbidden = !SettingsParser.areSuicidesOn();
+			isMusicOn = mSettings.getBoolean("music", true);
+			areBombsOn = mSettings.getBoolean("bomb", false);
+			areMinesOn = mSettings.getBoolean("mine", false);
+			world.player.areSuicidesForbidden = mSettings.getBoolean("safe", true);
 			}else{
 			world = new World(
 				savedInstanceState.getInt("width"),
@@ -203,7 +207,8 @@ public class GameActivity extends Activity {
 				savedInstanceState.getInt("energy"),
 				savedInstanceState.getInt("score"),
 				savedInstanceState.getBoolean("isAlive"),
-				savedInstanceState.getInt("level")
+				savedInstanceState.getInt("level"),
+				savedInstanceState.getInt("gameMode")
 				);
 			for(int i=0; i<width; ++i){
 				world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
@@ -300,6 +305,7 @@ public class GameActivity extends Activity {
 		savedInstanceState.putInt("fastbots", world.board.getAliveFastBotCount());
 		savedInstanceState.putInt("bots", world.board.getAliveBotCount());
 		savedInstanceState.putInt("level", world.getLevel());
+		savedInstanceState.putInt("gameMode", world.getGameMode());
 		savedInstanceState.putInt("score", world.player.getScore());
 		savedInstanceState.putInt("energy", world.player.getEnergy());
 		savedInstanceState.putInt("playerX", world.player.getPos().x);

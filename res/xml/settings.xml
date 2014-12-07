@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+	<CheckBoxPreference
+		android:key="music"
+		android:title="@string/music_setting"
+		android:summary="@string/music_setting"
+		android:defaultValue="false" />
+	<CheckBoxPreference
+		android:key="safe"
+		android:title="@string/suicide_setting"
+		android:summary="@string/suicide_summary"
+		android:defaultValue="true" />
+	<CheckBoxPreference
+		android:key="mine"
+		android:title="@string/mine_setting"
+		android:summary="@string/mine_summary"
+		android:defaultValue="true" />
+	<CheckBoxPreference
+		android:key="bomb"
+		android:title="@string/bomb_setting"
+		android:summary="@string/bomb_summary"
+		android:defaultValue="true" />
+	<ListPreference
+		android:key="complexity"
+		android:title="@string/complexity_setting"
+		android:defaultValue="1"
+		android:entries="@array/difficulty"
+		android:entryValues="@array/int_difficulty"
+		android:dialogTitle="@string/complexity_setting" />
+</PreferenceScreen>

@@ -6,6 +6,7 @@ public class World{
 	private int mWidth;
 	private int mFastRobotCount;
 	private int mRobotCount;
+	private int mGameMode;
 
 	//возможные ходы
 	public static final byte UP = 1;
@@ -31,12 +32,13 @@ public class World{
 	private byte objectKind;
 	private byte mReward = 0;
 
-	public World(int width, int height){
+	public World(int width, int height, int mode){
 		mWidth = width;
 		mHeight = height;
 		board = new Board(width, height);
 		player = new Player();
 		mLevel=0;
+		mGameMode = mode;
 		//создание вспомогательных объектов
 		freePos = new Point();
 		junkPos = new Point();
@@ -47,12 +49,13 @@ public class World{
 
 	public World(int width, int height, int bots, int fastbots,
 			int pX, int pY, int energy, int score, boolean isAlive,
-			int level){
+			int level, int mode){
 		mWidth = width;
 		mHeight = height;
 		board = new Board(width, height, bots, fastbots);
 		player = new Player(pX, pY, energy, score, isAlive);
 		mLevel=level;
+		mGameMode = mode;
 		//создание вспомогательных объектов
 		freePos = new Point();
 		junkPos = new Point();
@@ -445,12 +448,15 @@ public class World{
 	private void calcBots(){
 		//TODO переделать в зависимость числа роботов разных типов от большего, чем 2, количества уровней сложности,
 		// после robotCount>width заменять обычных роботов быстрыми, если не получается - добавить обычных
-		if(SettingsParser.needExtraFastBots()){
+		switch (mGameMode){
+		case 1:
 			mRobotCount = 5 + (int)(0.5 * mLevel);
 			mFastRobotCount = mLevel;
-		}else{
+			break;
+		case 0:
 			mRobotCount = 5 + (int)(0.8 * mLevel);
 			mFastRobotCount = -4 + (int)(1.2 * mLevel);
+			break;
 		}
 	}
 
@@ -470,6 +476,10 @@ public class World{
 
 	public int getWidth() {
 		return mWidth;
+	}
+
+	public int getGameMode() {
+		return mGameMode;
 	}
 
 	public int getLevel() {

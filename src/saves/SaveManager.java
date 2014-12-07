@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.util.Log;
 
-import com.github.mcfeod.robots4droid.SettingsParser;
-
 public class SaveManager {
 	private static final String TAG = "SaveManager";
 	private static final SaveManager INSTANCE = new SaveManager();
@@ -114,21 +112,7 @@ public class SaveManager {
 		}
 	}
 
-	public void saveGeneralSettings(Context context) throws IOException{
-		BufferedOutputStream stream = new BufferedOutputStream(
-		 context.openFileOutput("Gen_Settings", Context.MODE_PRIVATE));
-		DataOutput out = new DataOutputStream(stream);
-		out.writeBoolean(SettingsParser.isMusicOn());
-		stream.close();
-	}
-
-	public void loadGeneralSettings(Context context) throws IOException{
-		BufferedInputStream stream = new BufferedInputStream(context.openFileInput("Gen_Settings"));
-		DataInput in = new DataInputStream(stream);
-		SettingsParser.setMusicMode(in.readBoolean());
-		stream.close();
-	}
-
+	
 	/** Загрузка списка рекордов */
 	public void loadScores(Context context) throws IOException{
 		BufferedInputStream stream = new BufferedInputStream(context.openFileInput("Score"));
