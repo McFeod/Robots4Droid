@@ -17,7 +17,7 @@ public class Board{
 
 	private int mWidth, mHeight;
 	private byte mBoard[][];
-	Random rand;
+	private final Random rand;
 
 	public Board(int lengthX, int lengthY){
 		mWidth = lengthX;
@@ -88,7 +88,7 @@ public class Board{
 	/*Ищет и сохраняет в freePos координаты случайной пустой клетки*/
 	public boolean RandomFindFreePos(Point freePos){
 		if (freePos == null)
-			return false;		
+			return false;
 		int x, y;
 		for (int i=0; i<mWidth*mHeight; i++){
 			x = rand.nextInt(mWidth);
@@ -119,7 +119,7 @@ public class Board{
 	}
 
 	/*Проверяет, принадлежит ли точка с координатами (x, y) полю*/
-	public boolean isOnBoard(int x, int y){
+	boolean isOnBoard(int x, int y){
 		return  (x>=0) && (y>=0) && (x<mWidth) && (y<mHeight);
 	}
 
@@ -146,7 +146,7 @@ public class Board{
 				return true;
 		return false;
 	}
-	
+
 	public boolean wasEnemy(Point p){
 		return (isEnemy(p.x, p.y)||isJunk(p.x, p.y));
 	}

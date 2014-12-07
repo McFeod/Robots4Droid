@@ -5,7 +5,7 @@ import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener;
 
 public class ScaleGestureListener extends SimpleOnScaleGestureListener{
 
-	DrawThread mDrawThread;
+	private final DrawThread mDrawThread;
 
 	public ScaleGestureListener(DrawThread drawThread){
 		mDrawThread = drawThread;

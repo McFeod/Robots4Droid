@@ -3,9 +3,9 @@ package com.github.mcfeod.robots4droid;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 
-public class ScrollGestureListener extends SimpleOnGestureListener{
+class ScrollGestureListener extends SimpleOnGestureListener{
 
-	DrawThread mDrawThread;
+	private final DrawThread mDrawThread;
 
 	public ScrollGestureListener(DrawThread drawThread){
 		mDrawThread = drawThread;

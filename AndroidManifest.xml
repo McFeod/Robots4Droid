@@ -29,7 +29,9 @@
 		<activity
 			android:name=".ScoreActivity"
 				android:label="@string/app_name" />
-		<activity android:name="saves.LoadActivity"></activity>
+		<activity
+			android:name="saves.LoadActivity"
+			android:label="@string/app_name" />
 	</application>
 
 </manifest>

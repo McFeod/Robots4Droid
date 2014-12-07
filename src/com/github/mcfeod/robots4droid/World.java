@@ -22,8 +22,8 @@ public class World{
 	public static final byte MINE_COST = 3;
 	public static final byte SAFE_TELEPORT_COST = 1;
 
-	public Player player;
-	public Board board;
+	public final Player player;
+	public final Board board;
 
 	/*вспомогательные объекты и переменные для хранения временной информации*/
 	private Point junkPos, objectPos, freePos;
@@ -144,9 +144,7 @@ public class World{
 	/** Ищет свободную случайную клетку и сохраняет ее в глобальный freePos.
 	  Возвращает true, если свободная клетка найдена */
 	private boolean findFreePos(){
-		if (board.RandomFindFreePos(freePos))
-			return true;
-		return false;
+		return board.RandomFindFreePos(freePos);
 	}
 
 	/** Проверяет, если клетка с координатами (startX, startY) - JUNK, то сохраняет
@@ -167,12 +165,12 @@ public class World{
 			objectPos.y = endY;
 			//проверки на принадлежность поля
 			if (!board.isOnBoard(junkPos))
-				return false;
+				return true;
 			if (!board.isOnBoard(objectPos))
-				return false;
+				return true;
 			//проверка на мусор
 			if (board.isJunk(endX, endY))
-				return false;
+				return true;
 			isJunkExists = true;
 			//сохраняем информацию о конечной клетке
 			objectKind = board.GetKind(endX, endY);
@@ -183,7 +181,7 @@ public class World{
 			board.SetKind(junkPos, Board.EMPTY);
 			board.SetKind(objectPos, Board.JUNK);
 		}
-		return true;
+		return false;
 	}
 
 	/** Восстанавливает сохраненную информацию о мусоре */
@@ -202,7 +200,9 @@ public class World{
 		freePos.x = player.getPos().x;
 		freePos.y = player.getPos().y;
 		switch (where){
-			//case STAY: break;
+			case STAY:
+				mReward = 0;
+				break;
 			case TELEPORT:
 				if (findFreePos()){
 					player.setPos(freePos);
@@ -226,46 +226,46 @@ public class World{
 			case UP:
 				freePos.y--;//передвигаем игрока
 				//если мусор сдвинуть невозможно, то возвращает false
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x, freePos.y-1))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x, freePos.y-1))
 					return false;
 				break;
 			case DOWN:
 				freePos.y++;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x, freePos.y+1))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x, freePos.y+1))
 					return false;
 				break;
 			case LEFT:
 				freePos.x--;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x-1, freePos.y))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x-1, freePos.y))
 					return false;
 				break;
 			case RIGHT:
 				freePos.x++;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x+1, freePos.y))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x+1, freePos.y))
 					return false;
 				break;
 			case UP_LEFT:
 				freePos.x--;
 				freePos.y--;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x-1, freePos.y-1))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x-1, freePos.y-1))
 					return false;
 				break;
 			case UP_RIGHT:
 				freePos.x++;
 				freePos.y--;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x+1, freePos.y-1))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x+1, freePos.y-1))
 					return false;
 				break;
 			case DOWN_LEFT:
 				freePos.x--;
 				freePos.y++;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x-1, freePos.y+1))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x-1, freePos.y+1))
 					return false;
 				break;
 			case DOWN_RIGHT:
 				freePos.x++;
 				freePos.y++;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x+1, freePos.y+1))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x+1, freePos.y+1))
 					return false;
 				break;
 		}
@@ -303,7 +303,7 @@ public class World{
 	/*Передвигает роботов, стоящих от игрока на радиусе r, к игроку.
 	  Если all == true, то передвигает всех роботов, иначе - только быстрых*/
 	private void moveRobots(int playerX, int playerY, int r, boolean all){
-		boolean isExists=false;
+		boolean isExists;
 		for (int i=0; i<2*r+1; i++){
 			//верхняя горизонталь
 			if (all)

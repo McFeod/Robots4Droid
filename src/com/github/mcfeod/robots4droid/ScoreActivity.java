@@ -26,7 +26,7 @@ public class ScoreActivity extends Activity {
 		listView = (ListView) findViewById(R.id.listView);
 		
 		String[] ar = SaveManager.getInstance().getScores();
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
 		 android.R.layout.simple_list_item_1, ar);
 		listView.setAdapter(adapter);
 		
@@ -37,7 +37,7 @@ public class ScoreActivity extends Activity {
 					SaveManager.getInstance().deleteScores(ScoreActivity.this);
 				}catch(IOException e){}
 				String[] ar = SaveManager.getInstance().getScores();
-				ArrayAdapter<String> adapter = new ArrayAdapter<String>(ScoreActivity.this,
+				ArrayAdapter<String> adapter = new ArrayAdapter<>(ScoreActivity.this,
 				 android.R.layout.simple_list_item_1, ar);
 				listView.setAdapter(adapter);
 			}

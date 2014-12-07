@@ -79,6 +79,7 @@
 					<ImageButton
 						android:id="@+id/left_up_button"
 						style="@style/GameImageButton"
+						android:layout_alignParentStart="true"
 						android:layout_alignParentLeft="true"
 						android:src="@drawable/left_up"/>
 
@@ -92,6 +93,7 @@
 						android:id="@+id/right_up_button"
 						style="@style/GameImageButton"
 						android:layout_alignParentRight="true"
+						android:layout_alignParentEnd="true"
 						android:src="@drawable/right_up"/>
 				</RelativeLayout>
 
@@ -104,6 +106,7 @@
 						android:id="@+id/left_button"
 						style="@style/GameImageButton"
 						android:layout_alignParentLeft="true"
+						android:layout_alignParentStart="true"
 						android:src="@drawable/left"/>
 
 					<ImageButton
@@ -115,6 +118,7 @@
 					<ImageButton
 						android:id="@+id/right_button"
 						style="@style/GameImageButton"
+						android:layout_alignParentEnd="true"
 						android:layout_alignParentRight="true"
 						android:src="@drawable/right"/>
 				</RelativeLayout>
@@ -128,6 +132,7 @@
 						android:id="@+id/left_down_button"
 						style="@style/GameImageButton"
 						android:layout_alignParentLeft="true"
+						android:layout_alignParentStart="true"
 						android:src="@drawable/left_down"/>
 
 					<ImageButton
@@ -139,6 +144,7 @@
 					<ImageButton
 						android:id="@+id/right_down_button"
 						style="@style/GameImageButton"
+						android:layout_alignParentEnd="true"
 						android:layout_alignParentRight="true"
 						android:src="@drawable/right_down"/>
 

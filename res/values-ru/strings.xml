@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Robots4Droid</string>
-	<!-- MainActivity -->	
-	<string name="action_settings">Настройки</string>
+	<!-- MainActivity -->
 	<string name="continue_button">Продолжить</string>
 	<string name="new_game_button">Новая игра</string>
 	<string name="load_button">Загрузить</string>

@@ -29,7 +29,9 @@ public class GameActivity extends Activity {
 	private boolean areBombsOn;
 	private TextView levelTextView, scoreTextView, energyTextView, botCountTextView;
 	private TextView scoreInfoTextView;
-	private Button teleButton, safeTeleButton, bombButton, mineButton;
+	private Button safeTeleButton;
+	private Button bombButton;
+	private Button mineButton;
 	private GameSurfaceView view;
 	private DrawThread mDrawThread;
 	private LinearLayout mGameOverLinearLayout;
@@ -37,7 +39,7 @@ public class GameActivity extends Activity {
 	private AlertDialog addScoreDialog;
 
 	/** Кнопка "По новой" */
-	public OnClickListener restartButtonListener = new OnClickListener() {
+	private final OnClickListener restartButtonListener = new OnClickListener() {
 		@Override
 		public void onClick(View v){
 			mGameOverLinearLayout.setVisibility(View.GONE);
@@ -50,7 +52,7 @@ public class GameActivity extends Activity {
 	};
 
 	/** Кнопка "Да ну вас" */
-	public OnClickListener awayButtonListener = new OnClickListener() {
+	private final OnClickListener awayButtonListener = new OnClickListener() {
 		@Override
 		public void onClick(View v){
 			GameActivity.this.finish();
@@ -58,7 +60,7 @@ public class GameActivity extends Activity {
 	};
 	
 	/** Кнопка "Хочу похвастаться" */
-	public OnClickListener addScoreButtonListener = new OnClickListener() {
+	private final OnClickListener addScoreButtonListener = new OnClickListener() {
 		@Override
 		public void onClick(View v){
 			inputNameEditText.setText("");
@@ -66,7 +68,7 @@ public class GameActivity extends Activity {
 		}
 	};
 
-	public OnClickListener listener = new OnClickListener() {
+	private final OnClickListener listener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			if (world.player.isAlive){
@@ -127,7 +129,7 @@ public class GameActivity extends Activity {
 				try{
 					SaveManager.getInstance().addScore(GameActivity.this,
 					 inputNameEditText.getText().toString(), world.player.getScore());
-				}catch(Exception e){};
+				}catch(Exception e){}
 				//чтобы при повороте экрана не появлялась кнопка
 				world.player.chScore(-world.player.getScore());
 				//прячет кнопку после создания нового рекорда
@@ -162,8 +164,8 @@ public class GameActivity extends Activity {
 		findViewById(R.id.left_up_button).setOnClickListener(listener);
 		findViewById(R.id.left_down_button).setOnClickListener(listener);
 		findViewById(R.id.right_up_button).setOnClickListener(listener);
-		findViewById(R.id.right_down_button).setOnClickListener(listener); 
-		teleButton = (Button) findViewById(R.id.teleport_button);
+		findViewById(R.id.right_down_button).setOnClickListener(listener);
+		Button teleButton = (Button) findViewById(R.id.teleport_button);
 		teleButton.setOnClickListener(listener); 
 		safeTeleButton = (Button) findViewById(R.id.safe_teleport_button);
 		safeTeleButton.setOnClickListener(listener); 
@@ -227,7 +229,7 @@ public class GameActivity extends Activity {
 		changeText();
 	}
 
-	public void refreshButtons(){
+	void refreshButtons(){
 		byte bombCost = world.getBombCost();
 		int energy = world.player.getEnergy();
 		if (World.SAFE_TELEPORT_COST > energy){

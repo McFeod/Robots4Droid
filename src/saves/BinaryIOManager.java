@@ -20,7 +20,7 @@ import com.github.mcfeod.robots4droid.World;
 public class BinaryIOManager {
 	private static final String TAG = "BinaryIOManager";
 
-	private Context mContext;
+	private final Context mContext;
 	private World mWorld;
 
 	public static void deleteGameFile(SavedGame save, Context context){

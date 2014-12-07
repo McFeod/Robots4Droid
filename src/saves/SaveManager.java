@@ -15,11 +15,11 @@ import android.util.Log;
 import com.github.mcfeod.robots4droid.SettingsParser;
 
 public class SaveManager {
-	public static final String TAG = "SaveManager";
+	private static final String TAG = "SaveManager";
 	private static final SaveManager INSTANCE = new SaveManager();
-	public static final int UNDEFINED_NUMBER = -2;
+	private static final int UNDEFINED_NUMBER = -2;
 
-	public ArrayList<SavedGame> mGames = new ArrayList<SavedGame>();
+	public ArrayList<SavedGame> mGames = new ArrayList<>();
 	
 	private static final byte MAX_SCORE_COUNT = 10;
 	private String[] mScoreNameArray = new String[MAX_SCORE_COUNT];
@@ -115,8 +115,7 @@ public class SaveManager {
 	}
 
 	public void saveGeneralSettings(Context context) throws IOException{
-		BufferedOutputStream stream = null;
-		stream = new BufferedOutputStream(
+		BufferedOutputStream stream = new BufferedOutputStream(
 		 context.openFileOutput("Gen_Settings", Context.MODE_PRIVATE));
 		DataOutput out = new DataOutputStream(stream);
 		out.writeBoolean(SettingsParser.isMusicOn());
@@ -124,8 +123,7 @@ public class SaveManager {
 	}
 
 	public void loadGeneralSettings(Context context) throws IOException{
-		BufferedInputStream stream = null;
-		stream = new BufferedInputStream(context.openFileInput("Gen_Settings"));
+		BufferedInputStream stream = new BufferedInputStream(context.openFileInput("Gen_Settings"));
 		DataInput in = new DataInputStream(stream);
 		SettingsParser.setMusicMode(in.readBoolean());
 		stream.close();
@@ -149,7 +147,7 @@ public class SaveManager {
 		boolean found = false;
 		for (byte i=0; i<mScoreCount; i++)
 			if (mScoreArray[i] < score){
-				for (byte j=(byte)(mScoreCount); j>i; j--)
+				for (byte j=mScoreCount; j>i; j--)
 					if (j != MAX_SCORE_COUNT){
 						mScoreArray[j] = mScoreArray[j-1];
 						mScoreNameArray[j] = mScoreNameArray[j-1];
@@ -178,7 +176,7 @@ public class SaveManager {
 	}
 	
 	/** Сохраняет список рекордов в файл */
-	public void saveScores(Context context) throws IOException{
+	void saveScores(Context context) throws IOException{
 		BufferedOutputStream stream = new BufferedOutputStream(context.openFileOutput("Score", Context.MODE_PRIVATE));
 		DataOutput out = new DataOutputStream(stream);
 		for (byte i=0; i<mScoreCount; i++){
@@ -201,8 +199,6 @@ public class SaveManager {
 		for (byte i=0; i<mScoreCount; i++)
 			if (mScoreArray[i] < score)
 				return true;
-		if (mScoreCount < MAX_SCORE_COUNT)
-			return true;
-		return false;
+		return (mScoreCount < MAX_SCORE_COUNT);
 	}
 }

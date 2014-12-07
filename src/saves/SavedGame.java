@@ -10,10 +10,10 @@ import com.github.mcfeod.robots4droid.R;
 class SavedGame {
 
 	public long mId;
-	public int mLevel;
-	public int mScore;
-	public java.util.Date mCreationDate;
-	private Context mContext;
+	public final int mLevel;
+	public final int mScore;
+	public final java.util.Date mCreationDate;
+	private final Context mContext;
 
 	private static StringBuilder sBuilder;
 
@@ -39,8 +39,8 @@ class SavedGame {
 		sBuilder.setLength(0);
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM yy  HH:mm. EEEE");
 		sBuilder.append(simpleDateFormat.format(mCreationDate));
-		sBuilder.append("\n"+String.format(mContext.getString(R.string.level), mLevel));
-		sBuilder.append("  "+String.format(mContext.getString(R.string.score), mScore));
+		sBuilder.append("\n").append(String.format(mContext.getString(R.string.level), mLevel));
+		sBuilder.append("  ").append(String.format(mContext.getString(R.string.score), mScore));
 		return sBuilder.toString();
 	}
 

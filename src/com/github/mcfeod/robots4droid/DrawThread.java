@@ -1,6 +1,5 @@
 package com.github.mcfeod.robots4droid;
 
-import java.util.Random;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,9 +12,15 @@ import android.view.SurfaceHolder;
 public class DrawThread extends Thread {
 	private Bitmap bitRobot, bitFastRobot, bitPlayer, bitCell, bitCell2,
 	 bitJunk, bitMine;
-	private Bitmap bitRobotOriginal, bitFastRobotOriginal, bitPlayerOriginal,
-	 bitCellOriginal, bitCell2Original, bitJunkOriginal, bitMineOriginal;
-	public int widthPX=35, heightPX=35;//размеры клетки в пикселях
+	private final Bitmap bitRobotOriginal;
+	private final Bitmap bitFastRobotOriginal;
+	private final Bitmap bitPlayerOriginal;
+	private final Bitmap bitCellOriginal;
+	private final Bitmap bitCell2Original;
+	private final Bitmap bitJunkOriginal;
+	private final Bitmap bitMineOriginal;
+	private int widthPX=35;
+	private int heightPX=35;//размеры клетки в пикселях
 	private World world;
 	private Canvas canvas;
 	private Paint paint;
@@ -25,7 +30,7 @@ public class DrawThread extends Thread {
 	private int step = 8;
 	private int indent=30;
 	private int interval = 16;
-	private SurfaceHolder mSurfaceHolder; //Область для рисования
+	private final SurfaceHolder mSurfaceHolder; //Область для рисования
 
 	public DrawThread(SurfaceHolder surfaceHolder, Context context, GameSurfaceView view){
 		mSurfaceHolder = surfaceHolder;
@@ -51,7 +56,7 @@ public class DrawThread extends Thread {
 		this.world = world;
 	}
 		//подгоняем размеры bitmap-ов под размеры клеток
-	public void changeBitmapSize(boolean toCompare){
+	void changeBitmapSize(boolean toCompare){
 		boolean isEqual = false;
 		if (toCompare)
 			if (bitRobot.getWidth() == widthPX - 2)
@@ -74,7 +79,7 @@ public class DrawThread extends Thread {
 		}
 	}
 
-	public void changeStep(){
+	void changeStep(){
 		double l = (Math.sqrt((startPos.x-movePos.x)*(startPos.x-movePos.x)+
 		 (startPos.y-movePos.y)*(startPos.y-movePos.y)));		
 		if (l < widthPX * 2)
@@ -84,32 +89,27 @@ public class DrawThread extends Thread {
 			step = 1;
 	}
 
-	public void changeIndent(){
+	void changeIndent(){
 		indent = widthPX / 3;
 	}
 
-	public void checkCellSize(){
+	void checkCellSize(){
 		if (widthPX * world.getWidth() + indent * 2 < view.getWidth()){
-			widthPX = (view.getWidth() - indent * 2) / world.getWidth();
-			heightPX = widthPX;
+			heightPX = widthPX = (view.getWidth() - indent * 2) / world.getWidth();
 		}
 		if (heightPX * world.getHeight() + indent * 2 < view.getHeight()){
-			heightPX = (view.getHeight() - indent * 2) / world.getHeight();
-			widthPX = heightPX;
+			widthPX = heightPX = (view.getHeight() - indent * 2) / world.getHeight();
 		}
 		if (widthPX * 5 > view.getWidth()){
-			widthPX = view.getWidth() / 5;
-			heightPX = widthPX;
+			heightPX = widthPX = view.getWidth() / 5;
 		}
 		if (heightPX * 5 > view.getHeight()){
-			heightPX = view.getHeight() / 5;
-			widthPX = heightPX;
+			widthPX = heightPX = view.getHeight() / 5;
 		}
 	}
 
 	public void setDefaultCellSize(){
-		widthPX = view.getWidth() / world.getWidth() * 2;
-		heightPX = widthPX;
+		heightPX = widthPX = view.getWidth() / world.getWidth() * 2;
 		checkCellSize();
 		changeStep();
 		changeIndent();
@@ -203,7 +203,7 @@ public class DrawThread extends Thread {
 		scrollingToPlayer = true;
 	}
 	
-	public boolean isVisible(int x, int y){
+	boolean isVisible(int x, int y){
 		int startX = x * widthPX + indent;
 		int startY = y * heightPX + indent;
 		int endX = (x+1) * widthPX + indent;
@@ -211,16 +211,14 @@ public class DrawThread extends Thread {
 		int left = startPos.x;
 		int left_width = startPos.x + view.getWidth();
 		int top = startPos.y;
-		int top_height = startPos.y + view.getHeight();    	
-		if ((((startX >= left) && (startX <= left_width)) ||
+		int top_height = startPos.y + view.getHeight();
+		return ((((startX >= left) && (startX <= left_width)) ||
 		 ((endX >= left) && (endX <= left_width))) &&
 		 (((startY >= top) && (startY <= top_height)) ||
-		 ((endY >= top) && (endY <= top_height))))
-			return true;
-		return false;
+		 ((endY >= top) && (endY <= top_height))));
 	}
 	
-	public void repaint(){
+	void repaint(){
 		canvas.drawColor(Color.GRAY);
 		for (int i=0; i<world.getWidth(); i++)
 			for (int j=0; j<world.getHeight(); j++)
