@@ -20,9 +20,10 @@ proguard-project.txt
 *.log
 # Backup files
 *~
-# Eclipse/IDEA settings
+project.properties
 .settings/
 .project
 .classpath
 .idea/
-project.properties
+# litter
+*humbs.db

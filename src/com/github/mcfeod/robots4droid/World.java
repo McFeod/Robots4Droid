@@ -19,16 +19,17 @@ public class World{
 	public static final byte STAY = 4;
 	public static final byte TELEPORT = 9;
 	public static final byte SAFE_TELEPORT = 10;
-	public static final byte MINE_COST = 6;
+	public static final byte MINE_COST = 3;
 	public static final byte SAFE_TELEPORT_COST = 1;
 
-	public Player player;
-	public Board board;
+	public final Player player;
+	public final Board board;
 
 	/*вспомогательные объекты и переменные для хранения временной информации*/
 	private Point junkPos, objectPos, freePos;
 	private boolean isJunkExists;
 	private byte objectKind;
+	private byte mReward = 0;
 
 	public World(int width, int height){
 		mWidth = width;
@@ -62,32 +63,32 @@ public class World{
 	private void initLevel(){
 		board.Clear(); //очистка доски
 		mLevel ++;
-		player.chEnergy((int)(Math.sqrt(mLevel)));
-		//увеличение энергии и очков
+		//определение количества роботов
+		calcBots();
+		board.setRobotCount(mRobotCount, mFastRobotCount);
+		//увеличение энергии и очков (не помещать раньше подсчёта роботов!!!)
 		if (mLevel>1)
 			player.chScore((mLevel*5));
-		//определение количества роботов
-		if(SettingsParser.needExtraFastBots()){
-			mRobotCount = 5 + (int)(0.5 * mLevel);
-			mFastRobotCount = mLevel;
-		}else{
-			mRobotCount = 5 + (int)(1.5 * mLevel);
-			mFastRobotCount = -4 + (int)(1.2 * mLevel);
-		}
-		board.setRobotCount(mRobotCount, mFastRobotCount);
+		player.chEnergy(calcEnergy());
 		//Размещение простых роботов
 		for(int i=0; i<mRobotCount; ++i){
-			if (findFreePos());
+			if (findFreePos())
 				board.SetKind(freePos, Board.ROBOT);
+			else
+				board.chDiff(Board.ROBOT, 1);
 		}
 		//Размещение быстрых роботов
 		for(int i=0; i<mFastRobotCount; ++i){
-			if (findFreePos());
+			if (findFreePos())
 				board.SetKind(freePos, Board.FASTROBOT);
+			else
+				board.chDiff(Board.FASTROBOT, 1);
 		}
 		//Размещение игрока
-		if (findSafePos());
+		if (findSafePos())
 			player.setPos(freePos);
+		else
+			winner();
 	}
 	public boolean setMine(){
 		if (player.areSuicidesForbidden)
@@ -102,7 +103,7 @@ public class World{
 	}
 	
 	public byte getBombCost(){
-		byte cost = 1;
+		byte cost = 0;
 		for (int i=-2; i<=2; i++)
 			for (int j=-2; j<=2; j++)
 				switch (Math.abs(i)|Math.abs(j)){
@@ -114,7 +115,7 @@ public class World{
 						if (board.isFastRobot(player.getPos().x+i, player.getPos().y+j))
 							cost+=2;
 				}
-		return cost;
+		return (byte)(1 + cost/2);
 	}
 
 	public boolean bomb(){
@@ -143,11 +144,7 @@ public class World{
 	/** Ищет свободную случайную клетку и сохраняет ее в глобальный freePos.
 	  Возвращает true, если свободная клетка найдена */
 	private boolean findFreePos(){
-		if (board.RandomFindFreePos(freePos))
-			return true;
-		//Если свободная клетка не найдена, то игра заканчивается победой
-		winner();
-		return false;
+		return board.RandomFindFreePos(freePos);
 	}
 
 	/** Проверяет, если клетка с координатами (startX, startY) - JUNK, то сохраняет
@@ -158,6 +155,7 @@ public class World{
 	   1) точка (endX, endY) или точка (startX, startY) лежит за пределами поля
 	   2) точка (endX, endY) - JUNK */
 	private boolean saveInfoAboutJunk(int startX, int startY, int endX, int endY){
+		mReward = 0;
 		isJunkExists = false;
 		objectKind=0;
 		if (board.isJunk(startX, startY)){
@@ -167,27 +165,30 @@ public class World{
 			objectPos.y = endY;
 			//проверки на принадлежность поля
 			if (!board.isOnBoard(junkPos))
-				return false;
+				return true;
 			if (!board.isOnBoard(objectPos))
-				return false;
+				return true;
 			//проверка на мусор
 			if (board.isJunk(endX, endY))
-				return false;
+				return true;
 			isJunkExists = true;
 			//сохраняем информацию о конечной клетке
 			objectKind = board.GetKind(endX, endY);
+			if ((objectKind == Board.ROBOT)||(objectKind == Board.FASTROBOT))
+				mReward = 1;
 			board.chDiff(objectKind, 1);
 			//перемещаем мусор
 			board.SetKind(junkPos, Board.EMPTY);
 			board.SetKind(objectPos, Board.JUNK);
 		}
-		return true;
+		return false;
 	}
 
 	/** Восстанавливает сохраненную информацию о мусоре */
 	private void backInfoAboutJunk(){
 		if (isJunkExists){
 			board.chDiff(objectKind, -1);
+			mReward = 0;
 			board.SetKind(junkPos, Board.JUNK);
 			board.SetKind(objectPos, objectKind);
 		}
@@ -199,7 +200,9 @@ public class World{
 		freePos.x = player.getPos().x;
 		freePos.y = player.getPos().y;
 		switch (where){
-			//case STAY: break;
+			case STAY:
+				mReward = 0;
+				break;
 			case TELEPORT:
 				if (findFreePos()){
 					player.setPos(freePos);
@@ -223,46 +226,46 @@ public class World{
 			case UP:
 				freePos.y--;//передвигаем игрока
 				//если мусор сдвинуть невозможно, то возвращает false
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x, freePos.y-1))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x, freePos.y-1))
 					return false;
 				break;
 			case DOWN:
 				freePos.y++;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x, freePos.y+1))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x, freePos.y+1))
 					return false;
 				break;
 			case LEFT:
 				freePos.x--;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x-1, freePos.y))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x-1, freePos.y))
 					return false;
 				break;
 			case RIGHT:
 				freePos.x++;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x+1, freePos.y))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x+1, freePos.y))
 					return false;
 				break;
 			case UP_LEFT:
 				freePos.x--;
 				freePos.y--;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x-1, freePos.y-1))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x-1, freePos.y-1))
 					return false;
 				break;
 			case UP_RIGHT:
 				freePos.x++;
 				freePos.y--;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x+1, freePos.y-1))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x+1, freePos.y-1))
 					return false;
 				break;
 			case DOWN_LEFT:
 				freePos.x--;
 				freePos.y++;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x-1, freePos.y+1))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x-1, freePos.y+1))
 					return false;
 				break;
 			case DOWN_RIGHT:
 				freePos.x++;
 				freePos.y++;
-				if (!saveInfoAboutJunk(freePos.x, freePos.y, freePos.x+1, freePos.y+1))
+				if (saveInfoAboutJunk(freePos.x, freePos.y, freePos.x+1, freePos.y+1))
 					return false;
 				break;
 		}
@@ -277,6 +280,7 @@ public class World{
 		}
 		//ход игрока
 		player.setPos(freePos);
+		player.chEnergy(mReward);
 		return true;
 	}
 
@@ -299,7 +303,7 @@ public class World{
 	/*Передвигает роботов, стоящих от игрока на радиусе r, к игроку.
 	  Если all == true, то передвигает всех роботов, иначе - только быстрых*/
 	private void moveRobots(int playerX, int playerY, int r, boolean all){
-		boolean isExists=false;
+		boolean isExists;
 		for (int i=0; i<2*r+1; i++){
 			//верхняя горизонталь
 			if (all)
@@ -425,21 +429,39 @@ public class World{
 	/*Ищет координаты безопасной клетки и сохраняет их в freePos.
 	  Возвращает true, если такая клетка существует*/
 	private boolean findSafePos(){	
-	  	for(int i=0; i<2*mHeight*mWidth; ++i)
-	  		if (findFreePos())
-	  			if ((freePos.x != player.getPos().x) && (freePos.y != player.getPos().y))
-	  				if (isSafePos(freePos.x, freePos.y))
-	  					return true;
-	  	for (int i=0; i<mWidth; i++)
-	  		for (int j=0; j<mHeight; j++)
-	  			if ((i != player.getPos().x) && (j != player.getPos().y))
-	  				if (isSafePos(i, j))
-	  					return true;
-	  	return false;
+		for(int i=0; i<2*mHeight*mWidth; ++i)
+			if (findFreePos())
+				if ((freePos.x != player.getPos().x) && (freePos.y != player.getPos().y))
+					if (isSafePos(freePos.x, freePos.y))
+						return true;
+		for (int i=0; i<mWidth; i++)
+			for (int j=0; j<mHeight; j++)
+				if ((i != player.getPos().x) && (j != player.getPos().y))
+					if (isSafePos(i, j))
+						return true;
+		return false;
+	}
+
+	private void calcBots(){
+		//TODO переделать в зависимость числа роботов разных типов от большего, чем 2, количества уровней сложности,
+		// после robotCount>width заменять обычных роботов быстрыми, если не получается - добавить обычных
+		if(SettingsParser.needExtraFastBots()){
+			mRobotCount = 5 + (int)(0.5 * mLevel);
+			mFastRobotCount = mLevel;
+		}else{
+			mRobotCount = 5 + (int)(0.8 * mLevel);
+			mFastRobotCount = -4 + (int)(1.2 * mLevel);
+		}
+	}
+
+	private int calcEnergy(){
+		float linear = (9*mRobotCount + 25*mFastRobotCount)/4/(mWidth+mHeight);
+		int res = (int) (1 + Math.sqrt(linear));
+		return res>6 ? 6:res;
 	}
 
 	public void winner(){
-
+		//TODO
 	}
 	
 	public int getHeight() {
@@ -457,7 +479,6 @@ public class World{
 	public void defeat(){
 		mLevel = 0;
 		player.reset();
-		//TODO запись рекорда
 		initLevel();
 	}
 }

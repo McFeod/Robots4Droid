@@ -5,7 +5,6 @@ import saves.SaveManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +12,8 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,16 +23,52 @@ public class GameActivity extends Activity {
 	private int mLastLevel=-1;
 	private boolean mNeedCrutchForLaunch = true;
 
-	private MediaPlayer mSoundTrack; 
+	private MediaPlayer mSoundTrack;
 	private boolean isMusicOn;
 	private boolean areMinesOn;
 	private boolean areBombsOn;
 	private TextView levelTextView, scoreTextView, energyTextView, botCountTextView;
-	private Button teleButton, safeTeleButton, bombButton, mineButton;
+	private TextView scoreInfoTextView;
+	private Button safeTeleButton;
+	private Button bombButton;
+	private Button mineButton;
 	private GameSurfaceView view;
 	private DrawThread mDrawThread;
+	private LinearLayout mGameOverLinearLayout;
+	private EditText inputNameEditText;
+	private AlertDialog addScoreDialog;
 
-	public OnClickListener listener = new OnClickListener() {
+	/** Кнопка "По новой" */
+	private final OnClickListener restartButtonListener = new OnClickListener() {
+		@Override
+		public void onClick(View v){
+			mGameOverLinearLayout.setVisibility(View.GONE);
+			world.defeat();
+			mDrawThread.scrollToPlayer();
+			mLastLevel = world.getLevel();
+			showNewLevelToast();
+			changeText();
+		}
+	};
+
+	/** Кнопка "Да ну вас" */
+	private final OnClickListener awayButtonListener = new OnClickListener() {
+		@Override
+		public void onClick(View v){
+			GameActivity.this.finish();
+		}
+	};
+	
+	/** Кнопка "Хочу похвастаться" */
+	private final OnClickListener addScoreButtonListener = new OnClickListener() {
+		@Override
+		public void onClick(View v){
+			inputNameEditText.setText("");
+			addScoreDialog.show();
+		}
+	};
+
+	private final OnClickListener listener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			if (world.player.isAlive){
@@ -53,14 +90,13 @@ public class GameActivity extends Activity {
 			}
 		}
 	};
-	
+
 	private void moveBots(boolean succ){
 		if (succ){
 			mDrawThread.scrollToPlayer();
 			mDrawThread.delay(200);
 			//передвигаем роботов
 			world.moveBots();
-			refreshButtons();
 			changeText();
 			if (world.player.isAlive){
 				//отрисовываем роботов
@@ -69,35 +105,8 @@ public class GameActivity extends Activity {
 					mLastLevel = world.getLevel();
 					showNewLevelToast();
 				}
-			}else{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setCancelable(false);
-				DialogInterface.OnClickListener	positiveButtonListener = new DialogInterface.OnClickListener() { // Кнопка ОК
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						world.defeat();
-						mDrawThread.scrollToPlayer();
-						dialog.dismiss();
-						mLastLevel = world.getLevel();
-						showNewLevelToast();
-					}
-				};
-				DialogInterface.OnClickListener	negativeButtonListener = new DialogInterface.OnClickListener() { // Кнопка неОК
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						GameActivity.this.finish();
-						dialog.dismiss();
-					}
-				};
-
-				builder.setTitle(R.string.dialog);
-				builder.setMessage(R.string.dialog);
-				builder.setPositiveButton(R.string.restart, positiveButtonListener);
-				builder.setNegativeButton(R.string.away, negativeButtonListener);
-				AlertDialog dialog = builder.create();
-				dialog.show();
-				dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-			}
+			}else
+				showGameOverDialog();
 		}else
 			Toast.makeText(GameActivity.this, R.string.not_possible, Toast.LENGTH_SHORT).show();
 	}
@@ -110,12 +119,44 @@ public class GameActivity extends Activity {
 		 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_game);
 
-		view = (GameSurfaceView)findViewById(R.id.game);
-		levelTextView = (TextView)findViewById(R.id.levelView);
-		scoreTextView = (TextView)findViewById(R.id.scoreView);
-		energyTextView = (TextView)findViewById(R.id.energyView);
-		botCountTextView = (TextView)findViewById(R.id.botCountView);
+		inputNameEditText = new EditText(GameActivity.this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+		builder.setMessage(R.string.input_name);
+		builder.setView(inputNameEditText);
+		builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				try{
+					SaveManager.getInstance().addScore(GameActivity.this,
+					 inputNameEditText.getText().toString(), world.player.getScore());
+				}catch(Exception e){}
+				//чтобы при повороте экрана не появлялась кнопка
+				world.player.chScore(-world.player.getScore());
+				//прячет кнопку после создания нового рекорда
+				scoreInfoTextView.setVisibility(View.GONE);
+				findViewById(R.id.add_score_button).setVisibility(View.GONE);
+			}
+		});
+		builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		addScoreDialog = builder.create();
+		
+		mGameOverLinearLayout = (LinearLayout) findViewById(R.id.defeat_linearLayout);
+		view = (GameSurfaceView) findViewById(R.id.game);
+		levelTextView = (TextView) findViewById(R.id.levelView);
+		scoreTextView = (TextView) findViewById(R.id.scoreView);
+		energyTextView = (TextView) findViewById(R.id.energyView);
+		botCountTextView = (TextView) findViewById(R.id.botCountView);
+		scoreInfoTextView = (TextView) findViewById(R.id.score_info_textView);
 
+		findViewById(R.id.restart_button).setOnClickListener(restartButtonListener);
+		findViewById(R.id.away_button).setOnClickListener(awayButtonListener);
+		findViewById(R.id.add_score_button).setOnClickListener(addScoreButtonListener);
+		
 		findViewById(R.id.left_button).setOnClickListener(listener);
 		findViewById(R.id.right_button).setOnClickListener(listener);
 		findViewById(R.id.up_button).setOnClickListener(listener);
@@ -123,23 +164,23 @@ public class GameActivity extends Activity {
 		findViewById(R.id.left_up_button).setOnClickListener(listener);
 		findViewById(R.id.left_down_button).setOnClickListener(listener);
 		findViewById(R.id.right_up_button).setOnClickListener(listener);
-		findViewById(R.id.right_down_button).setOnClickListener(listener); 
-		teleButton = (Button)findViewById(R.id.teleport_button);
+		findViewById(R.id.right_down_button).setOnClickListener(listener);
+		Button teleButton = (Button) findViewById(R.id.teleport_button);
 		teleButton.setOnClickListener(listener); 
-		safeTeleButton = (Button)findViewById(R.id.safe_teleport_button);
+		safeTeleButton = (Button) findViewById(R.id.safe_teleport_button);
 		safeTeleButton.setOnClickListener(listener); 
 		findViewById(R.id.stay_button).setOnClickListener(listener);
-		mineButton = (Button)findViewById(R.id.mine_button);
+		mineButton = (Button) findViewById(R.id.mine_button);
 		mineButton.setOnClickListener(listener);
-		bombButton = (Button)findViewById(R.id.bomb_button);
+		bombButton = (Button) findViewById(R.id.bomb_button);
 		bombButton.setOnClickListener(listener);
 
-		mSoundTrack = MediaPlayer.create(this, R.raw.muz);
+			mSoundTrack = MediaPlayer.create(this, R.raw.muz);
 		mSoundTrack.setLooping(true);
 		// при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
 		// по этой причине start() и stop() размещены в onStart() и onStop()
 		if (savedInstanceState == null){
-			if(SaveManager.getInstance().hasLoadingGame()){
+			if (SaveManager.getInstance().hasLoadingGame()){
 				load();
 				mLastLevel = world.getLevel();
 			}else{
@@ -153,19 +194,19 @@ public class GameActivity extends Activity {
 			world.player.areSuicidesForbidden = !SettingsParser.areSuicidesOn();
 			}else{
 			world = new World(
-					savedInstanceState.getInt("width"),
-					savedInstanceState.getInt("height"),
-					savedInstanceState.getInt("bots"),
-					savedInstanceState.getInt("fastbots"),
-					savedInstanceState.getInt("playerX"),
-					savedInstanceState.getInt("playerY"),
-					savedInstanceState.getInt("energy"),
-					savedInstanceState.getInt("score"),
-					savedInstanceState.getBoolean("isAlive"),
-					savedInstanceState.getInt("level")
-					);
+				savedInstanceState.getInt("width"),
+				savedInstanceState.getInt("height"),
+				savedInstanceState.getInt("bots"),
+				savedInstanceState.getInt("fastbots"),
+				savedInstanceState.getInt("playerX"),
+				savedInstanceState.getInt("playerY"),
+				savedInstanceState.getInt("energy"),
+				savedInstanceState.getInt("score"),
+				savedInstanceState.getBoolean("isAlive"),
+				savedInstanceState.getInt("level")
+				);
 			for(int i=0; i<width; ++i){
-				 world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
+				world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
 			}
 			world.player.areSuicidesForbidden = savedInstanceState.getBoolean("areSuicidesForbidden");
 			isMusicOn = savedInstanceState.getBoolean("isMusicOn");
@@ -175,12 +216,12 @@ public class GameActivity extends Activity {
 				mSoundTrack.seekTo(savedInstanceState.getInt("musicTime")+400);
 			mLastLevel = world.getLevel();
 		}
-				
-
+		if (!world.player.isAlive)
+			showGameOverDialog();
 		if (!areBombsOn)
-			findViewById(R.id.bomb_button).setVisibility(8);
+			findViewById(R.id.bomb_button).setVisibility(View.GONE);
 		if (!areMinesOn)
-			findViewById(R.id.mine_button).setVisibility(8);
+			findViewById(R.id.mine_button).setVisibility(View.GONE);
 		view.CreateThread();
 		mDrawThread = view.getDrawThread();
 		mDrawThread.setWorld(world);
@@ -188,7 +229,7 @@ public class GameActivity extends Activity {
 		changeText();
 	}
 
-	public void refreshButtons(){
+	void refreshButtons(){
 		byte bombCost = world.getBombCost();
 		int energy = world.player.getEnergy();
 		if (World.SAFE_TELEPORT_COST > energy){
@@ -273,12 +314,11 @@ public class GameActivity extends Activity {
 	}
 
 	private void changeText(){
-		levelTextView.setText(String.format(getString(R.string.level),
-				 world.getLevel()));
+		levelTextView.setText(String.format(getString(R.string.level),world.getLevel()));
 		scoreTextView.setText(String.format(" %d", world.player.getScore()));	
 		energyTextView.setText(String.format(" %d", world.player.getEnergy()));
 		botCountTextView.setText(String.format(" %d",
-			world.board.getAliveBotCount()+world.board.getAliveFastBotCount()));
+		 world.board.getAliveBotCount()+world.board.getAliveFastBotCount()));
 		refreshButtons();
 	}
 
@@ -294,12 +334,28 @@ public class GameActivity extends Activity {
 	
 	private void showNewLevelToast(){
 		Toast.makeText(GameActivity.this, String.format(getString
-				 (R.string.new_level), mLastLevel) , Toast.LENGTH_SHORT).show();
+		 (R.string.new_level), mLastLevel) , Toast.LENGTH_SHORT).show();
+	}
+	
+	private void showGameOverDialog(){
+		if (SaveManager.getInstance().canAddScore(world.player.getScore())){
+			scoreInfoTextView.setText(String.format(getString(R.string.score_info),
+			 world.player.getScore()));
+			scoreInfoTextView.setVisibility(View.VISIBLE);
+			findViewById(R.id.add_score_button).setVisibility(View.VISIBLE);
+			mGameOverLinearLayout.setVisibility(View.VISIBLE);
+		}else{
+			scoreInfoTextView.setVisibility(View.GONE);
+			findViewById(R.id.add_score_button).setVisibility(View.GONE);
+			mGameOverLinearLayout.setVisibility(View.VISIBLE);
+		}
 	}
 	
 	@Override
 	public void onBackPressed(){
-		save();
-		super.onBackPressed();
+		if (world.player.isAlive){
+			save();
+			super.onBackPressed();
+		}
 	}
 }

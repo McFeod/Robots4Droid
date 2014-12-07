@@ -1,8 +1,10 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	tools:context="com.github.mcfeod.robots4droid.GameActivity">
+	android:layout_height="match_parent">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
 	<LinearLayout
 		android:layout_width="wrap_content"
@@ -19,16 +21,17 @@
 				style="@style/GameImageButton.Action"
 				android:background="@drawable/safe_tele"
 				android:text="@string/one"/>
-	
+
+			<Button
+				android:id="@+id/bomb_button"
+				style="@style/GameImageButton.Action"
+				android:background="@drawable/button_bomb"/>
+
 			<Button
 				android:id="@+id/mine_button"
 				style="@style/GameImageButton.Action"
 				android:background="@drawable/button_mine"/>
-	
-			<Button
-				android:id="@+id/bomb_button"
-				style="@style/GameImageButton.Action"
-				android:background="@drawable/bomb"/>
+
 		</LinearLayout>
 	
 	<LinearLayout
@@ -79,6 +82,7 @@
 					<ImageButton
 						android:id="@+id/left_up_button"
 						android:layout_alignParentLeft="true"
+						android:layout_alignParentStart="true"
 						style="@style/GameImageButton"
 						android:src="@drawable/left_up"/>
 	
@@ -90,10 +94,9 @@
 	
 					<ImageButton
 						android:id="@+id/right_up_button"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
 						android:layout_alignParentRight="true"
-						android:background="@null"
+						style="@style/GameImageButton"
 						android:src="@drawable/right_up"/>
 	
 				</RelativeLayout>
@@ -106,6 +109,7 @@
 					<ImageButton
 						android:id="@+id/left_button"
 						android:layout_alignParentLeft="true"
+						android:layout_alignParentStart="true"
 						style="@style/GameImageButton"
 						android:src="@drawable/left"/>
 		
@@ -118,6 +122,7 @@
 					<ImageButton
 						android:id="@+id/right_button"
 						android:layout_alignParentRight="true"
+						android:layout_alignParentEnd="true"
 						style="@style/GameImageButton"
 						android:src="@drawable/right"/>
 	
@@ -132,6 +137,7 @@
 						android:id="@+id/left_down_button"
 						style="@style/GameImageButton"
 						android:layout_alignParentLeft="true"
+						android:layout_alignParentStart="true"
 						android:src="@drawable/left_down"/>
 	
 					<ImageButton
@@ -144,6 +150,7 @@
 						android:id="@+id/right_down_button"
 						android:layout_alignParentRight="true"
 						style="@style/GameImageButton"
+						android:layout_alignParentEnd="true"
 						android:src="@drawable/right_down"/>
 	
 					</RelativeLayout>
@@ -151,3 +158,7 @@
 			</FrameLayout>
 	</LinearLayout>
 </LinearLayout>
+
+	<include
+		layout="@layout/game_over"/>
+</FrameLayout>

@@ -10,9 +10,9 @@ import android.view.SurfaceView;
 
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
 
-	private SurfaceHolder mSurfaceHolder;
+	private final SurfaceHolder mSurfaceHolder;
 	public DrawThread mDrawThread;
-	Context context;
+	private final Context context;
 	private GestureDetector gestureDetector;
 	private ScaleGestureDetector scaleGestureDetector;
 

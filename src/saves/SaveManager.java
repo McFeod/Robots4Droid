@@ -9,18 +9,23 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.github.mcfeod.robots4droid.SettingsParser;
-
 import android.content.Context;
 import android.util.Log;
 
+import com.github.mcfeod.robots4droid.SettingsParser;
+
 public class SaveManager {
-	public static final String TAG = "SaveManager";
+	private static final String TAG = "SaveManager";
 	private static final SaveManager INSTANCE = new SaveManager();
-	public static final int UNDEFINED_NUMBER = -2;
+	private static final int UNDEFINED_NUMBER = -2;
 
-	public ArrayList<SavedGame> mGames = new ArrayList<SavedGame>();
-
+	public ArrayList<SavedGame> mGames = new ArrayList<>();
+	
+	private static final byte MAX_SCORE_COUNT = 10;
+	private String[] mScoreNameArray = new String[MAX_SCORE_COUNT];
+	private int[] mScoreArray = new int[MAX_SCORE_COUNT];
+	private byte mScoreCount = 0;
+	
 	private int mLoadingGameNumber = UNDEFINED_NUMBER;
 	private boolean mIsDatabaseClosed = true;
 
@@ -62,8 +67,8 @@ public class SaveManager {
 		}
 	}
 
-	public void loadSavesFromDatabase(){
-		SaveDatabaseManager.getInstance().loadSaves();
+	public void loadSavesFromDatabase(Context context){
+		SaveDatabaseManager.getInstance().loadSaves(context);
 	}
 
 	public void openDatabaseConnection(){
@@ -110,21 +115,90 @@ public class SaveManager {
 	}
 
 	public void saveGeneralSettings(Context context) throws IOException{
-		BufferedOutputStream stream = null;
-		stream = new BufferedOutputStream(
-				context.openFileOutput("Gen_Settings", Context.MODE_PRIVATE));
+		BufferedOutputStream stream = new BufferedOutputStream(
+		 context.openFileOutput("Gen_Settings", Context.MODE_PRIVATE));
 		DataOutput out = new DataOutputStream(stream);
 		out.writeBoolean(SettingsParser.isMusicOn());
 		stream.close();
 	}
 
 	public void loadGeneralSettings(Context context) throws IOException{
-		BufferedInputStream stream = null;
-		stream = new BufferedInputStream(
-					context.openFileInput("Gen_Settings"));
+		BufferedInputStream stream = new BufferedInputStream(context.openFileInput("Gen_Settings"));
 		DataInput in = new DataInputStream(stream);
 		SettingsParser.setMusicMode(in.readBoolean());
 		stream.close();
 	}
-	private SaveManager(){}
+
+	/** Загрузка списка рекордов */
+	public void loadScores(Context context) throws IOException{
+		BufferedInputStream stream = new BufferedInputStream(context.openFileInput("Score"));
+		DataInput in = new DataInputStream(stream);
+		mScoreCount = 0;
+		while (stream.available() != 0){
+			mScoreArray[mScoreCount] = in.readInt();
+			mScoreNameArray[mScoreCount] = in.readUTF();
+			mScoreCount++;
+		}
+		stream.close();
+	}
+	
+	/** Добавление нового рекорда и сохранение в файл */
+	public void addScore(Context context, String name, int score) throws IOException{
+		boolean found = false;
+		for (byte i=0; i<mScoreCount; i++)
+			if (mScoreArray[i] < score){
+				for (byte j=mScoreCount; j>i; j--)
+					if (j != MAX_SCORE_COUNT){
+						mScoreArray[j] = mScoreArray[j-1];
+						mScoreNameArray[j] = mScoreNameArray[j-1];
+					}
+				mScoreArray[i] = score;
+				mScoreNameArray[i] = name;
+				if (mScoreCount != MAX_SCORE_COUNT)
+					mScoreCount++;
+				found = true;
+				break;
+			}
+		if (!found && (mScoreCount != MAX_SCORE_COUNT)){
+			mScoreArray[mScoreCount] = score;
+			mScoreNameArray[mScoreCount] = name;
+			mScoreCount++;
+		}
+		saveScores(context);
+	}
+	
+	/** Возвращает список строк с рекордом и именем*/
+	public String[] getScores(){
+		String[] ar = new String[mScoreCount];
+		for (byte i=0; i<mScoreCount; i++)
+			ar[i] = mScoreNameArray[i] + " - " + Integer.toString(mScoreArray[i]);
+		return ar;
+	}
+	
+	/** Сохраняет список рекордов в файл */
+	void saveScores(Context context) throws IOException{
+		BufferedOutputStream stream = new BufferedOutputStream(context.openFileOutput("Score", Context.MODE_PRIVATE));
+		DataOutput out = new DataOutputStream(stream);
+		for (byte i=0; i<mScoreCount; i++){
+			out.writeInt(mScoreArray[i]);
+			out.writeUTF(mScoreNameArray[i]);
+		}
+		stream.close();
+	}
+	
+	/** Удаляет все рекорды */
+	public void deleteScores(Context context) throws IOException{
+		mScoreCount = 0;
+		saveScores(context);
+	}
+	
+	/** Возвращает true, если score!=0 и в списке есть место для записи нового рекорда */
+	public boolean canAddScore(int score){
+		if (score == 0)
+			return false;
+		for (byte i=0; i<mScoreCount; i++)
+			if (mScoreArray[i] < score)
+				return true;
+		return (mScoreCount < MAX_SCORE_COUNT);
+	}
 }

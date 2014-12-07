@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Robots4Droid</string>
-	<string name="action_settings">Настройки</string>
+	<!-- MainActivity -->
 	<string name="continue_button">Продолжить</string>
 	<string name="new_game_button">Новая игра</string>
 	<string name="load_button">Загрузить</string>
+	<string name="scores_button">Рекорды</string>
 	<string name="settings_button">Настройки</string>
 	<string name="about_button">Об игре</string>
-	<string name="dialog">Вы проиграли</string>
-	<string name="restart">По новой!</string>
-	<string name="away">Да ну вас…</string>
-	<string name="no_saved">А продолжать-то нечего!</string>
-	<string name="not_possible">Ты куда, Одиссей?</string>
-	<string name="new_level">НОВЫЙ УРОВЕНЬ: %d</string>
 	<string name="dialog_about_message">
 ﻿Что тут нужно делать.\n\
 Цель игры проста: уничтожить всех роботов и попасть на следующий уровень. Выше уровень - больше роботов. Больше роботов - увлекательнее игра. Больше набранных очков. Больше полученных достижений.\n\
@@ -40,6 +35,21 @@
 \n\
 Будьте внимательны! Игра достаточно бесконечна. Выиграть невозможно. Но возможно повысить самооценку за счёт большего количества очков, чем у ваших друзей.\n\
 	</string>
+	<!-- GameActivity -->
+	<string name="dialog">Ну вы же не собирались бегать вечно?</string>
+	<string name="restart">По новой!</string>
+	<string name="away">Да ну вас…</string>
+	<string name="add_score">Хочу похвастаться!</string>
+	<string name="score_info">Вы умудрились набрать %d очков</string>
+	<string name="no_saved">А продолжать-то нечего!</string>
+	<string name="not_possible">Ты куда, Одиссей?</string>
+	<string name="new_level">НОВЫЙ УРОВЕНЬ: %d</string>
+	<string name="level">Уровень: %d</string>
+	<string name="input_name">И кто это такой крутой?</string>
+	<string name="ok">OK</string>
+	<string name="cancel">Отмена</string>
+	
+	<!-- SettingsActivity -->
 	<string name="music_setting">Музыка</string>
 	<string name="easy_setting">Легко</string>
 	<string name="hard_setting">Больше быстрых роботов!!!</string>
@@ -47,6 +57,15 @@
 	<string name="complexity_setting">Сложность:</string>
 	<string name="mine_setting">Включить мины</string>
 	<string name="bomb_setting">Включить взрыв</string>
-	<string name="level">Уровень: %d</string>
+	
+	<!-- LoadActivity -->
 	<string name="delete">\n\ С глаз долой - из сердца вон?</string>
+	<string name="yes">Да</string>
+	<string name="no">Нет</string>
+	
+	<!-- SavedGame -->
+	<string name="score">Очки: %d</string>
+	
+	<!-- ScoreActivity -->
+	<string name="delete_scores">Удалить рекорды</string>
 </resources>

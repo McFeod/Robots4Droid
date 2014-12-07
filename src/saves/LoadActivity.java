@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
@@ -23,18 +25,20 @@ public class LoadActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceBundle){
 		super.onCreate(savedInstanceBundle);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+		 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		try {
+		try{
 			SaveManager.getInstance().openDatabaseConnection();
-			SaveManager.getInstance().loadSavesFromDatabase();
+			SaveManager.getInstance().loadSavesFromDatabase(LoadActivity.this);
 		}
-		catch (RuntimeException e) {
-			Log.d("MyListFragment", "Loading error" + e.getMessage());
+		catch (RuntimeException e){
+			Log.d("ListActivity", "Loading error" + e.getMessage());
 		}
-
+		
 		SaveAdapter adapter = new SaveAdapter(SaveManager.getInstance().mGames);
 		setListAdapter(adapter);
-		
 		this.getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 			public boolean onItemLongClick(AdapterView<?> av, View v, int position, long id) {
 				String selectedItem = av.getItemAtPosition(position).toString();
@@ -42,21 +46,22 @@ public class LoadActivity extends ListActivity {
 				AlertDialog.Builder builder = new AlertDialog.Builder(LoadActivity.this);
 				builder.setMessage(selectedItem + getString(R.string.delete));
 				builder.setCancelable(false);
-				builder.setPositiveButton("Да", new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								SaveManager.getInstance().removeSave(mPosition, LoadActivity.this.getApplicationContext());
-								setListAdapter(new SaveAdapter(SaveManager.getInstance().mGames));
-								//костыль. Должен быть способ как-то обновить ListView. Хотя раньше вообще OnCreate вызывался...
-							}
-						});
-				builder.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								dialog.cancel();
-							}
-						});
+				builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						SaveManager.getInstance().removeSave(mPosition, LoadActivity.this.getApplicationContext());
+						setListAdapter(new SaveAdapter(SaveManager.getInstance().mGames));
+						//костыль. Должен быть способ как-то обновить ListView. Хотя раньше вообще OnCreate вызывался...
+					}
+				});
+				
+
+				builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
 				builder.show();
 				return true;
 			}
@@ -65,7 +70,6 @@ public class LoadActivity extends ListActivity {
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		SavedGame game = ((SaveAdapter)getListAdapter()).getItem(position);
 		SaveManager.getInstance().rememberGame(position);
 		LoadActivity.this.finish();
 	}
@@ -90,7 +94,7 @@ public class LoadActivity extends ListActivity {
 			// если представление не получено
 			if(convertView == null){
 				convertView = LoadActivity.this.getLayoutInflater()
-						.inflate(R.layout.list_item_save, null);
+				 .inflate(R.layout.list_item_save, null);
 			}
 			//настройка представления
 			SavedGame game = getItem(position);

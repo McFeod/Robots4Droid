@@ -7,8 +7,7 @@
 
 	<CheckBox
 		android:id="@+id/musicBox"
-		android:layout_width="125dp"
-		android:layout_height="wrap_content"
+		style="@style/SettingsItem"
 		android:text="@string/music_setting"
 		android:longClickable="false"
 		android:enabled="true" 
@@ -16,44 +15,39 @@
 	
 	<CheckBox
 		android:id="@+id/suicideBox"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		style="@style/SettingsItem"
 		android:text="@string/suicide_setting" />
 	
 	<CheckBox
 		android:id="@+id/mineBox"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		style="@style/SettingsItem"
 		android:text="@string/mine_setting" />
 	
 	<CheckBox
 		android:id="@+id/bombBox"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		style="@style/SettingsItem"
 		android:text="@string/bomb_setting" />
-	
+
 	<TextView
 		android:id="@+id/complexity_textView"
-		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:text="@string/complexity_setting" />
 
 	<RadioGroup
 		android:id="@+id/complexityGroup"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" >
+		style="@style/SettingsItem"
+		android:layout_weight="2">
 		
 		<RadioButton
 			android:id="@+id/normalRadio"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			style="@style/SettingsItem"
 			android:text="@string/easy_setting" />
 		
 		<RadioButton
 			android:id="@+id/extraRadio"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			style="@style/SettingsItem"
 			android:text="@string/hard_setting" />
 	</RadioGroup>
 </LinearLayout>

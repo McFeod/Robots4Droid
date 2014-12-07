@@ -14,8 +14,6 @@ import android.widget.RadioGroup;
 public class SettingsActivity extends Activity {
 
 	private CheckBox musicBox, suicideBox, mineBox, bombBox;
-	private RadioButton mNormalButton, mExtraFastButton;
-	private RadioGroup complexityGroup;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceBundle) {
@@ -29,13 +27,14 @@ public class SettingsActivity extends Activity {
 		suicideBox = (CheckBox) findViewById(R.id.suicideBox);
 		mineBox = (CheckBox) findViewById(R.id.mineBox);
 		bombBox = (CheckBox) findViewById(R.id.bombBox);
-		complexityGroup = (RadioGroup) findViewById(R.id.complexityGroup);
-		mNormalButton = (RadioButton) findViewById(R.id.normalRadio);
-		mExtraFastButton = (RadioButton) findViewById(R.id.extraRadio);
+		RadioGroup complexityGroup = (RadioGroup) findViewById(R.id.complexityGroup);
+		RadioButton mNormalButton = (RadioButton) findViewById(R.id.normalRadio);
+		RadioButton mExtraFastButton = (RadioButton) findViewById(R.id.extraRadio);
 		musicBox.setChecked(SettingsParser.isMusicOn());
 		suicideBox.setChecked(!SettingsParser.areSuicidesOn());
 		mineBox.setChecked(SettingsParser.areMinesOn());
 		bombBox.setChecked(SettingsParser.areBombsOn());
+		
 		if(SettingsParser.needExtraFastBots()){
 			mExtraFastButton.setChecked(true);
 		}else{
