@@ -61,6 +61,15 @@ WARNING!!! The game is rather endless. There is no victory. But there is an oppo
 	<string name="mine_summary">Ability to create booby traps</string>
 	<string name="bomb_setting">Turn explosions on</string>
 	<string name="bomb_summary">Ability to blow up nearby enemies</string>
+	<string name="cast_error_msg">Board metrics must be integers</string>
+	<string name="val_error_msg">Board metrics must be greater than 10 cells</string>
+	<string name="fix_error_msg">Correct your settings</string>
+	<string name="edit_width_msg">Set a board width in cells</string>
+	<string name="edit_height_msg">Set a board height in cells</string>
+	<string name="width_setting">Board width</string>
+	<string name="height_setting">Board height</string>
+	<string name="shortage_mode">Energy shortage</string>
+	<string name="shortage_mode_summary">Energy is only given at the beginning of the game</string>
 	
 	<!-- LoadActivity -->
 	<string name="delete">\n\ Out of sight, out of mind?</string>

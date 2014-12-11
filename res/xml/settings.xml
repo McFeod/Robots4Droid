@@ -27,4 +27,21 @@
 		android:entries="@array/difficulty"
 		android:entryValues="@array/int_difficulty"
 		android:dialogTitle="@string/complexity_setting" />
+	<CheckBoxPreference
+		android:key="energy_shortage"
+		android:title="@string/shortage_mode"
+		android:summary="@string/shortage_mode_summary"
+		android:defaultValue="false" />
+	<EditTextPreference
+		android:key="mx_width"
+		android:title="@string/width_setting"
+		android:defaultValue="20"
+		android:inputType="phone"
+		android:dialogTitle="@string/edit_width_msg"/>
+	<EditTextPreference
+		android:key="mx_height"
+		android:title="@string/height_setting"
+		android:defaultValue="15"
+		android:inputType="phone"
+		android:dialogTitle="@string/edit_height_msg"	/>
 </PreferenceScreen>

@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class GameActivity extends Activity {
-	private int width=20, height=15; //размеры сторон
 	private World world;
 	private int mLastLevel=-1;
 	private boolean mNeedCrutchForLaunch = true;
@@ -188,7 +187,11 @@ public class GameActivity extends Activity {
 				load();
 				mLastLevel = world.getLevel();
 			}else{
-				world = new World(width, height, Integer.parseInt(mSettings.getString("complexity", "0")));
+				world = new World(
+						mSettings.getInt("width", 20),
+						mSettings.getInt("height", 15),
+						Integer.parseInt(mSettings.getString("complexity", "0")),
+						mSettings.getBoolean("energy_shortage", false));
 				mLastLevel = world.getLevel();
 				showNewLevelToast();
 			}
@@ -208,9 +211,10 @@ public class GameActivity extends Activity {
 				savedInstanceState.getInt("score"),
 				savedInstanceState.getBoolean("isAlive"),
 				savedInstanceState.getInt("level"),
-				savedInstanceState.getInt("gameMode")
+				savedInstanceState.getInt("gameMode"),
+				savedInstanceState.getBoolean("energy_shortage")
 				);
-			for(int i=0; i<width; ++i){
+			for(int i=0; i<world.getWidth(); ++i){
 				world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
 			}
 			world.player.areSuicidesForbidden = savedInstanceState.getBoolean("areSuicidesForbidden");
@@ -297,15 +301,16 @@ public class GameActivity extends Activity {
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
-		savedInstanceState.putInt("width", width);
-		savedInstanceState.putInt("height", height);
-		for(int i=0; i<width; ++i){
+		savedInstanceState.putInt("width", world.getWidth());
+		savedInstanceState.putInt("height", world.getHeight());
+		for(int i=0; i<world.getWidth(); ++i){
 			savedInstanceState.putByteArray("board_"+i, world.board.getRow(i));
 		}
 		savedInstanceState.putInt("fastbots", world.board.getAliveFastBotCount());
 		savedInstanceState.putInt("bots", world.board.getAliveBotCount());
 		savedInstanceState.putInt("level", world.getLevel());
 		savedInstanceState.putInt("gameMode", world.getGameMode());
+		savedInstanceState.putBoolean("energy_shortage", world.isShortageMode());
 		savedInstanceState.putInt("score", world.player.getScore());
 		savedInstanceState.putInt("energy", world.player.getEnergy());
 		savedInstanceState.putInt("playerX", world.player.getPos().x);

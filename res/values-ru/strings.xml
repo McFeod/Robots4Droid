@@ -58,6 +58,15 @@
 	<string name="mine_summary">Возможность устанавливать мины-ловушки</string>
 	<string name="bomb_setting">Включить взрыв</string>
 	<string name="bomb_summary">Возможнось взорвать блишайших врагов</string>
+	<string name="cast_error_msg">Размеры поля должны быть целыми числами</string>
+	<string name="val_error_msg">Размеры поля должны быть не меньше 10 клеток</string>
+	<string name="fix_error_msg">Исправьте ошибки в настройках</string>
+	<string name="edit_width_msg">Введите ширину поля в клетках</string>
+	<string name="edit_height_msg">Введите высоту поля в клетках</string>
+	<string name="width_setting">Ширина поля</string>
+	<string name="height_setting">Высота поля</string>
+	<string name="shortage_mode">Дефицит энергии</string>
+	<string name="shortage_mode_summary">Энергия выдаётся только в начале игры</string>
 	
 	<!-- LoadActivity -->
 	<string name="delete">\n\ С глаз долой - из сердца вон?</string>

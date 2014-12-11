@@ -1,5 +1,9 @@
 package com.github.mcfeod.robots4droid;
 
+/**
+ * @author mcfeod
+ *
+ */
 public class World{	
 	private int mLevel;
 	private int mHeight;
@@ -7,6 +11,8 @@ public class World{
 	private int mFastRobotCount;
 	private int mRobotCount;
 	private int mGameMode;
+	private boolean mShortageMode;
+	private int mMaxRobotCount;
 
 	//возможные ходы
 	public static final byte UP = 1;
@@ -22,6 +28,7 @@ public class World{
 	public static final byte SAFE_TELEPORT = 10;
 	public static final byte MINE_COST = 3;
 	public static final byte SAFE_TELEPORT_COST = 1;
+	private static final double MAX_LEVEL = 20;
 
 	public final Player player;
 	public final Board board;
@@ -32,13 +39,15 @@ public class World{
 	private byte objectKind;
 	private byte mReward = 0;
 
-	public World(int width, int height, int mode){
+	public World(int width, int height, int mode, boolean shortage){
 		mWidth = width;
 		mHeight = height;
 		board = new Board(width, height);
 		player = new Player();
 		mLevel=0;
+		mMaxRobotCount = calcMaxRobotCount();
 		mGameMode = mode;
+		mShortageMode = shortage;
 		//создание вспомогательных объектов
 		freePos = new Point();
 		junkPos = new Point();
@@ -49,17 +58,27 @@ public class World{
 
 	public World(int width, int height, int bots, int fastbots,
 			int pX, int pY, int energy, int score, boolean isAlive,
-			int level, int mode){
+			int level, int mode, boolean shortage){
 		mWidth = width;
 		mHeight = height;
 		board = new Board(width, height, bots, fastbots);
 		player = new Player(pX, pY, energy, score, isAlive);
 		mLevel=level;
+		mMaxRobotCount = calcMaxRobotCount();
 		mGameMode = mode;
+		mShortageMode = shortage;
 		//создание вспомогательных объектов
 		freePos = new Point();
 		junkPos = new Point();
 		objectPos = new Point();
+	}
+
+	private int calcMaxRobotCount(){
+		float x=0;
+		float s = mWidth * mHeight;
+		for (int i=1; i<=Math.round(s/60.0); i++)
+			x+=s/((2*i+1)*(2*i+1));
+		return (int)x;
 	}
 
 	/** Создание нового уровня */
@@ -93,6 +112,9 @@ public class World{
 		else
 			winner();
 	}
+
+	
+
 	public boolean setMine(){
 		if (player.areSuicidesForbidden)
 			if (!isSafePos(player.getPos().x, player.getPos().y))
@@ -446,24 +468,26 @@ public class World{
 	}
 
 	private void calcBots(){
-		//TODO переделать в зависимость числа роботов разных типов от большего, чем 2, количества уровней сложности,
-		// после robotCount>width заменять обычных роботов быстрыми, если не получается - добавить обычных
-		switch (mGameMode){
-		case 1:
-			mRobotCount = 5 + (int)(0.5 * mLevel);
-			mFastRobotCount = mLevel;
-			break;
-		case 0:
-			mRobotCount = 5 + (int)(0.8 * mLevel);
-			mFastRobotCount = -4 + (int)(1.2 * mLevel);
-			break;
+		double slowMax = mMaxRobotCount * (1 - 0.1*(mGameMode * 2 + 1));
+		if (mLevel <= MAX_LEVEL){
+			double perc = mLevel / MAX_LEVEL;
+			mRobotCount = (int)(slowMax * perc);
+			mFastRobotCount = (int)((mMaxRobotCount*(perc) - mRobotCount));
+		}else{
+			double fastMax = slowMax + mLevel - MAX_LEVEL;
+			slowMax -= mLevel + MAX_LEVEL;
+			mRobotCount = (slowMax > 0) ? (int)(slowMax) : 0;
+			if (fastMax > mMaxRobotCount)
+				fastMax = mMaxRobotCount - (fastMax - mMaxRobotCount);
+			mFastRobotCount = (fastMax < 1.0) ? 1 : (int)(fastMax);
 		}
 	}
+
 
 	private int calcEnergy(){
 		float linear = (9*mRobotCount + 25*mFastRobotCount)/4/(mWidth+mHeight);
 		int res = (int) (1 + Math.sqrt(linear));
-		return res>6 ? 6:res;
+		return (mShortageMode)? ((mLevel==1)? 6:0):(res>6 ? 6:res);
 	}
 
 	public void winner(){
@@ -480,6 +504,10 @@ public class World{
 
 	public int getGameMode() {
 		return mGameMode;
+	}
+	
+	public boolean isShortageMode() {
+		return mShortageMode;
 	}
 
 	public int getLevel() {
