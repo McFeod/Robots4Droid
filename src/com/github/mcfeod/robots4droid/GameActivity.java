@@ -191,7 +191,9 @@ public class GameActivity extends Activity {
 						mSettings.getInt("width", 20),
 						mSettings.getInt("height", 15),
 						Integer.parseInt(mSettings.getString("complexity", "0")),
-						mSettings.getBoolean("energy_shortage", false));
+						mSettings.getBoolean("energy_shortage", false),
+						mSettings.getBoolean("vamp_mode", true)
+						);
 				mLastLevel = world.getLevel();
 				showNewLevelToast();
 			}
@@ -212,7 +214,8 @@ public class GameActivity extends Activity {
 				savedInstanceState.getBoolean("isAlive"),
 				savedInstanceState.getInt("level"),
 				savedInstanceState.getInt("gameMode"),
-				savedInstanceState.getBoolean("energy_shortage")
+				savedInstanceState.getBoolean("energy_shortage"),
+				savedInstanceState.getBoolean("vamp_mode")
 				);
 			for(int i=0; i<world.getWidth(); ++i){
 				world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
@@ -310,6 +313,7 @@ public class GameActivity extends Activity {
 		savedInstanceState.putInt("bots", world.board.getAliveBotCount());
 		savedInstanceState.putInt("level", world.getLevel());
 		savedInstanceState.putInt("gameMode", world.getGameMode());
+		savedInstanceState.putBoolean("vamp_mode", world.isVampMode());
 		savedInstanceState.putBoolean("energy_shortage", world.isShortageMode());
 		savedInstanceState.putInt("score", world.player.getScore());
 		savedInstanceState.putInt("energy", world.player.getEnergy());

@@ -8,6 +8,7 @@ public class World{
 	private int mRobotCount;
 	private int mGameMode;
 	private boolean mShortageMode;
+	private boolean mVampMode;
 	private int mMaxRobotCount;
 
 	//возможные ходы
@@ -35,7 +36,7 @@ public class World{
 	private byte objectKind;
 	private byte mReward = 0;
 
-	public World(int width, int height, int mode, boolean shortage){
+	public World(int width, int height, int mode, boolean shortage, boolean vamp){
 		mWidth = width;
 		mHeight = height;
 		board = new Board(width, height);
@@ -43,6 +44,7 @@ public class World{
 		mLevel=0;
 		mMaxRobotCount = calcMaxRobotCount();
 		mGameMode = mode;
+		mVampMode = vamp;
 		mShortageMode = shortage;
 		//создание вспомогательных объектов
 		freePos = new Point();
@@ -54,7 +56,7 @@ public class World{
 
 	public World(int width, int height, int bots, int fastbots,
 			int pX, int pY, int energy, int score, boolean isAlive,
-			int level, int mode, boolean shortage){
+			int level, int mode, boolean shortage, boolean vamp){
 		mWidth = width;
 		mHeight = height;
 		board = new Board(width, height, bots, fastbots);
@@ -62,6 +64,7 @@ public class World{
 		mLevel=level;
 		mMaxRobotCount = calcMaxRobotCount();
 		mGameMode = mode;
+		mVampMode = vamp;
 		mShortageMode = shortage;
 		//создание вспомогательных объектов
 		freePos = new Point();
@@ -307,7 +310,8 @@ public class World{
 		}
 		//ход игрока
 		player.setPos(freePos);
-		player.chEnergy(mReward);
+		if (mVampMode)
+			player.chEnergy(mReward);
 		return true;
 	}
 
@@ -490,7 +494,14 @@ public class World{
 	private int calcEnergy(){
 		float linear = (9*mRobotCount + 25*mFastRobotCount)/4/(mWidth+mHeight);
 		int res = (int) (1 + Math.sqrt(linear));
-		return (mShortageMode)? ((mLevel==1)? 6:0):(res>6 ? 6:res);
+		if (mShortageMode){
+			if (mLevel == 1){
+				if (!mVampMode)
+					return (int)(Math.round(mWidth+mHeight)/2);
+			}
+			return 0;
+		}
+		return (res>6 ? 6:res);
 	}
 
 	public void winner(){
@@ -509,6 +520,10 @@ public class World{
 		return mGameMode;
 	}
 	
+	public boolean isVampMode() {
+		return mVampMode;
+	}
+
 	public boolean isShortageMode() {
 		return mShortageMode;
 	}

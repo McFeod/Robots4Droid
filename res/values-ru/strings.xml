@@ -67,6 +67,11 @@
 	<string name="height_setting">Высота поля</string>
 	<string name="shortage_mode">Дефицит энергии</string>
 	<string name="shortage_mode_summary">Энергия выдаётся только в начале игры</string>
+	<string name="game_mode_setting">Режим игры</string>
+	<string name="game_mode_summary">Настроить сложность и дополнительные параметры</string>
+	<string name="vamp_mode_setting">Бонусы в виде энергии</string>
+	<string name="vamp_mode_summary">Выдаются, когда вы уничтожаете робота, толкая на него кучу мусора</string>
+	
 	<string name="error">ОШИБКА</string>
 	
 	<!-- LoadActivity -->

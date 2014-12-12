@@ -10,28 +10,38 @@
 		android:title="@string/suicide_setting"
 		android:summary="@string/suicide_summary"
 		android:defaultValue="false" />
-	<CheckBoxPreference
-		android:key="mine"
-		android:title="@string/mine_setting"
-		android:summary="@string/mine_summary"
-		android:defaultValue="true" />
-	<CheckBoxPreference
-		android:key="bomb"
-		android:title="@string/bomb_setting"
-		android:summary="@string/bomb_summary"
-		android:defaultValue="true" />
-	<ListPreference
-		android:key="complexity"
-		android:title="@string/complexity_setting"
-		android:defaultValue="1"
-		android:entries="@array/difficulty"
-		android:entryValues="@array/int_difficulty"
-		android:dialogTitle="@string/complexity_setting" />
-	<CheckBoxPreference
-		android:key="energy_shortage"
-		android:title="@string/shortage_mode"
-		android:summary="@string/shortage_mode_summary"
-		android:defaultValue="false" />
+	<PreferenceScreen
+		android:key="game_mode"
+		android:title="@string/game_mode_setting"
+		android:summary="@string/game_mode_summary">
+		<ListPreference
+			android:key="complexity"
+			android:title="@string/complexity_setting"
+			android:defaultValue="1"
+			android:entries="@array/difficulty"
+			android:entryValues="@array/int_difficulty"
+			android:dialogTitle="@string/complexity_setting" />
+		<CheckBoxPreference
+			android:key="energy_shortage"
+			android:title="@string/shortage_mode"
+			android:summary="@string/shortage_mode_summary"
+			android:defaultValue="false" />
+		<CheckBoxPreference 
+			android:key="vamp_mode"
+			android:title="@string/vamp_mode_setting"
+			android:summary="@string/vamp_mode_summary"
+			android:defaultValue="true"/>
+		<CheckBoxPreference
+			android:key="mine"
+			android:title="@string/mine_setting"
+			android:summary="@string/mine_summary"
+			android:defaultValue="true" />
+		<CheckBoxPreference
+			android:key="bomb"
+			android:title="@string/bomb_setting"
+			android:summary="@string/bomb_summary"
+			android:defaultValue="true" />
+	</PreferenceScreen>
 	<EditTextPreference
 		android:key="mx_width"
 		android:title="@string/width_setting"

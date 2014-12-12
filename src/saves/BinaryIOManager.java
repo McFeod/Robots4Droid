@@ -94,12 +94,13 @@ public class BinaryIOManager {
 		int score = input.readInt();
 		int lvl = input.readInt();
 		int mode = input.readInt();
+		boolean vamp = input.readBoolean();
 		boolean shortage = input.readBoolean();
 		int width = input.readInt();
 		int height = input.readInt();
 		int bots = input.readInt();
 		int fast = input.readInt();
-		mWorld = new World(width, height, bots, fast, x, y, energy, score, true, lvl, mode, shortage);
+		mWorld = new World(width, height, bots, fast, x, y, energy, score, true, lvl, mode, shortage, vamp);
 		byte[] row;
 		for (int i = 0; i < width ; ++i) {
 			row = new byte[height];
@@ -117,6 +118,7 @@ public class BinaryIOManager {
 		output.writeInt(mWorld.player.getScore());
 		output.writeInt(mWorld.getLevel());
 		output.writeInt(mWorld.getGameMode());
+		output.writeBoolean(mWorld.isVampMode());
 		output.writeBoolean(mWorld.isShortageMode());
 		output.writeInt(mWorld.getWidth());
 		output.writeInt(mWorld.getHeight());
