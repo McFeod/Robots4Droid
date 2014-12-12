@@ -1,9 +1,5 @@
 package com.github.mcfeod.robots4droid;
 
-/**
- * @author mcfeod
- *
- */
 public class World{	
 	private int mLevel;
 	private int mHeight;
@@ -78,7 +74,7 @@ public class World{
 		float s = mWidth * mHeight;
 		for (int i=1; i<=Math.round(s/60.0); i++)
 			x+=s/((2*i+1)*(2*i+1));
-		return (int)x;
+		return (int)x+2;
 	}
 
 	/** Создание нового уровня */
@@ -140,7 +136,7 @@ public class World{
 						if (board.isFastRobot(player.getPos().x+i, player.getPos().y+j))
 							cost+=2;
 				}
-		return (byte)(1 + cost/2);
+		return (byte)(1+Math.round(cost/1.5));
 	}
 
 	public boolean bomb(){
@@ -175,7 +171,7 @@ public class World{
 	/** Проверяет, если клетка с координатами (startX, startY) - JUNK, то сохраняет
 	  информацию о ней и о той куда мусор переместиться. Информация нужна для
 	  дальнейшего восстановления этих клеток при небезопасном ходе.
-	  Возвращает true, если ход разрешен.
+	  Возвращает false, если ход разрешен.
 	  Ход запрещен, если
 	   1) точка (endX, endY) или точка (startX, startY) лежит за пределами поля
 	   2) точка (endX, endY) - JUNK */
@@ -214,9 +210,14 @@ public class World{
 		if (isJunkExists){
 			board.chDiff(objectKind, -1);
 			mReward = 0;
+			if (board.wasEnemy(junkPos)){
+				isJunkExists = false;
+				return; //TODO проверить, исправило ли это баг
+			}
 			board.SetKind(junkPos, Board.JUNK);
 			board.SetKind(objectPos, objectKind);
 		}
+		isJunkExists = false;
 	}
 
 	/** Возвращает true, если ход выполнен*/
@@ -226,6 +227,7 @@ public class World{
 		freePos.y = player.getPos().y;
 		switch (where){
 			case STAY:
+				isJunkExists = false;
 				mReward = 0;
 				break;
 			case TELEPORT:
@@ -468,14 +470,15 @@ public class World{
 	}
 
 	private void calcBots(){
-		double slowMax = mMaxRobotCount * (1 - 0.1*(mGameMode * 2 + 1));
+		double slowMax = mMaxRobotCount * (1 - 0.1 * (mGameMode * 2 + 1));
+		double fastMax = mMaxRobotCount * (0.1 * (mGameMode * 2 + 1));
 		if (mLevel <= MAX_LEVEL){
 			double perc = mLevel / MAX_LEVEL;
-			mRobotCount = (int)(slowMax * perc);
-			mFastRobotCount = (int)((mMaxRobotCount*(perc) - mRobotCount));
+			mRobotCount = (int)Math.round(slowMax * perc);
+			mFastRobotCount = (int)Math.round(fastMax * perc);
 		}else{
-			double fastMax = slowMax + mLevel - MAX_LEVEL;
-			slowMax -= mLevel + MAX_LEVEL;
+			slowMax -= mLevel - MAX_LEVEL;
+			fastMax += mLevel - MAX_LEVEL;
 			mRobotCount = (slowMax > 0) ? (int)(slowMax) : 0;
 			if (fastMax > mMaxRobotCount)
 				fastMax = mMaxRobotCount - (fastMax - mMaxRobotCount);

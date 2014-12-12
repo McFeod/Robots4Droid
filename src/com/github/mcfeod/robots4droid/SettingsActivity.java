@@ -39,46 +39,42 @@ public class SettingsActivity extends PreferenceActivity{
 			}
 		});
 		
-		EditListener editLstnr = new EditListener();
 		EditTextPreference width = (EditTextPreference)findPreference("mx_width");
 		EditTextPreference height = (EditTextPreference)findPreference("mx_height");
-		width.setOnPreferenceChangeListener(editLstnr);
-		width.setSummary(width.getText());
-		height.setOnPreferenceChangeListener(editLstnr);
-		height.setSummary(height.getText());
-	}
-	
-	/*обработка изменений в текстовых полях*/
-	private class EditListener implements Preference.OnPreferenceChangeListener{
-		@Override
-		public boolean onPreferenceChange(Preference preference, Object newValue){
-			String s = newValue.toString();
-			if (isValid(checkInput(s))){
-				preference.setSummary(s);
-				switch(preference.getKey()){
-				case "mx_width":
+		width.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				String s = newValue.toString();
+				if (isValid(checkInput(s))){
+					preference.setSummary(s);
 					mErrorWidth = false;
 					mEdit.putInt("width", Integer.decode(s));
-					break;
-				case "mx_height":
+					//ВАЖНО! интовая настройка называется width, строковая - mx_width
+				}else{
+					mErrorWidth = true;
+					preference.setSummary(R.string.error);
+				}
+				return true;
+			}
+		});
+		width.setSummary(width.getText());
+		height.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				String s = newValue.toString();
+				if (isValid(checkInput(s))){
+					preference.setSummary(s);
 					mErrorHeight = false;
 					mEdit.putInt("height", Integer.decode(s));
-					break;
+					//ВАЖНО! интовая настройка называется height, строковая - mx_height
+				}else{
+					mErrorHeight = true;
+					preference.setSummary(R.string.error);
 				}
-				//ВАЖНО! интовая настройка называется width(height), строковая - mx_width(mx_height)
-			}else{
-				switch(preference.getKey()){
-					case "mx_width":
-						mErrorWidth = true;
-						break;
-					case "mx_height":
-						mErrorHeight = true;
-						break;
-				}
-				preference.setSummary("ERROR");
+				return true;
 			}
-			return true;
-		}
+		});
+		height.setSummary(height.getText());
 	}
 	
 	private boolean isValid(int x){
@@ -100,7 +96,7 @@ public class SettingsActivity extends PreferenceActivity{
 		}catch (NumberFormatException e){
 			return -1; //код ошибки для isValid
 		}
-		if (x<10){
+		if ((x<15)||(x>80)){
 			return -2;
 		}
 		return x;

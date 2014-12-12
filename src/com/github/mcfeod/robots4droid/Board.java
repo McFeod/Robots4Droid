@@ -83,12 +83,15 @@ public class Board{
 		if (pos != null)
 			if (isOnBoard(pos))
 				mBoard[pos.x][pos.y] = kind;
+		
 	}
 
 	/*Ищет и сохраняет в freePos координаты случайной пустой клетки*/
 	public boolean RandomFindFreePos(Point freePos){
-		if (freePos == null)
+		if (freePos == null){
+			freePos = new Point();
 			return false;
+		}
 		int x, y;
 		for (int i=0; i<mWidth*mHeight; i++){
 			x = rand.nextInt(mWidth);

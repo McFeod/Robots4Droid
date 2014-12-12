@@ -62,7 +62,7 @@ WARNING!!! The game is rather endless. There is no victory. But there is an oppo
 	<string name="bomb_setting">Turn explosions on</string>
 	<string name="bomb_summary">Ability to blow up nearby enemies</string>
 	<string name="cast_error_msg">Board metrics must be integers</string>
-	<string name="val_error_msg">Board metrics must be greater than 10 cells</string>
+	<string name="val_error_msg">Board metrics must belong to range from 15 to 80</string>
 	<string name="fix_error_msg">Correct your settings</string>
 	<string name="edit_width_msg">Set a board width in cells</string>
 	<string name="edit_height_msg">Set a board height in cells</string>
@@ -70,6 +70,7 @@ WARNING!!! The game is rather endless. There is no victory. But there is an oppo
 	<string name="height_setting">Board height</string>
 	<string name="shortage_mode">Energy shortage</string>
 	<string name="shortage_mode_summary">Energy is only given at the beginning of the game</string>
+	<string name="error">ERROR</string>
 	
 	<!-- LoadActivity -->
 	<string name="delete">\n\ Out of sight, out of mind?</string>

@@ -117,6 +117,8 @@ public class DrawThread extends Thread {
 	}
 
 	public void changeCellSize(int d){
+		if (drawing)
+			return; //TODO
 		widthPX += d;
 		heightPX += d;
 		checkCellSize();
@@ -253,6 +255,9 @@ public class DrawThread extends Thread {
 	}
 
 	public void changeStartPos(int dX, int dY){
+			if (drawing){
+				return;
+			}
 			//меняем начальную точку
 			startPos.x += dX;
 			startPos.y += dY;
