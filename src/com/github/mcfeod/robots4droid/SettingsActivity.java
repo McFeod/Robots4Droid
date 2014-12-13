@@ -7,10 +7,11 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.view.Window;
+import android.preference.PreferenceScreen;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+@SuppressWarnings("deprecation")
 public class SettingsActivity extends PreferenceActivity{
 	private SharedPreferences mPref;
 	private SharedPreferences.Editor mEdit;
@@ -18,10 +19,6 @@ public class SettingsActivity extends PreferenceActivity{
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-		WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.settings);
 		mPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -87,6 +84,20 @@ public class SettingsActivity extends PreferenceActivity{
 			return false;
 		}
 		return true;
+	}
+	
+
+	@Override
+	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference)
+	{
+		super.onPreferenceTreeClick(preferenceScreen, preference);
+		if (preference!=null)
+			if (preference instanceof PreferenceScreen)
+				if (((PreferenceScreen)preference).getDialog()!=null)
+					((PreferenceScreen)preference).getDialog().getWindow()
+						.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+								WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		return false;
 	}
 	
 	private int checkInput(String inp){

@@ -11,8 +11,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -28,6 +28,8 @@ public class GameActivity extends Activity {
 	private boolean isMusicOn;
 	private boolean areMinesOn;
 	private boolean areBombsOn;
+	private boolean isLSD;
+	private boolean isLSDAnim;
 	private TextView levelTextView, scoreTextView, energyTextView, botCountTextView;
 	private TextView scoreInfoTextView;
 	private Button safeTeleButton;
@@ -116,9 +118,6 @@ public class GameActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-		 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_game);
 
 		inputNameEditText = new EditText(GameActivity.this);
@@ -176,9 +175,7 @@ public class GameActivity extends Activity {
 		mineButton.setOnClickListener(listener);
 		bombButton = (Button) findViewById(R.id.bomb_button);
 		bombButton.setOnClickListener(listener);
-
-		mSoundTrack = MediaPlayer.create(this, R.raw.muz);
-		mSoundTrack.setLooping(true);
+		
 		// при сворачивании приложения музыка должна выключаться, а при восстановлении включаться.
 		// по этой причине start() и stop() размещены в onStart() и onStop()
 		if (savedInstanceState == null){
@@ -197,6 +194,8 @@ public class GameActivity extends Activity {
 				mLastLevel = world.getLevel();
 				showNewLevelToast();
 			}
+			isLSD = mSettings.getBoolean("LSD", false);
+			isLSDAnim = mSettings.getBoolean("LSD_anim", false);
 			isMusicOn = mSettings.getBoolean("music", true);
 			areBombsOn = mSettings.getBoolean("bomb", false);
 			areMinesOn = mSettings.getBoolean("mine", false);
@@ -221,6 +220,8 @@ public class GameActivity extends Activity {
 				world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
 			}
 			world.player.areSuicidesForbidden = savedInstanceState.getBoolean("areSuicidesForbidden");
+			isLSD = savedInstanceState.getBoolean("LSD");
+			isLSDAnim = savedInstanceState.getBoolean("LSD_anim");
 			isMusicOn = savedInstanceState.getBoolean("isMusicOn");
 			areBombsOn = savedInstanceState.getBoolean("areBombsOn");
 			areMinesOn = savedInstanceState.getBoolean("areMinesOn");
@@ -228,6 +229,11 @@ public class GameActivity extends Activity {
 				mSoundTrack.seekTo(savedInstanceState.getInt("musicTime")+400);
 			mLastLevel = world.getLevel();
 		}
+		if (isLSD)
+			mSoundTrack = MediaPlayer.create(this, R.raw.lsd);
+		else
+			mSoundTrack = MediaPlayer.create(this, R.raw.muz);
+		mSoundTrack.setLooping(true);
 		if (!world.player.isAlive)
 			showGameOverDialog();
 		if (!areBombsOn)
@@ -271,6 +277,10 @@ public class GameActivity extends Activity {
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		if (mNeedCrutchForLaunch){
+			if (isLSD && isLSDAnim){
+				Animation a = AnimationUtils.loadAnimation(this, R.anim.lsd);
+				view.startAnimation(a);
+			}
 			view.mDrawThread.setDefaultCellSize();
 			view.mDrawThread.scrollToPlayer();
 			mNeedCrutchForLaunch = false;
@@ -324,6 +334,8 @@ public class GameActivity extends Activity {
 		savedInstanceState.putBoolean("isMusicOn", isMusicOn);
 		savedInstanceState.putBoolean("areMinesOn", areMinesOn);
 		savedInstanceState.putBoolean("areBombsOn", areBombsOn);
+		savedInstanceState.putBoolean("LSD", isLSD);
+		savedInstanceState.putBoolean("LSD_anim", isLSDAnim);
 		if (isMusicOn)
 			savedInstanceState.putInt("musicTime",mSoundTrack.getCurrentPosition());
 	}

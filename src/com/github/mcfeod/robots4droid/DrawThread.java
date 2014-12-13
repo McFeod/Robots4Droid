@@ -1,12 +1,15 @@
 package com.github.mcfeod.robots4droid;
 
 
+import java.util.Random;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.preference.PreferenceManager;
 import android.view.SurfaceHolder;
 
 public class DrawThread extends Thread {
@@ -32,12 +35,19 @@ public class DrawThread extends Thread {
 	private int interval = 16;
 	private final SurfaceHolder mSurfaceHolder; //Область для рисования
 
+	private Random mLSDRandom;
+	private Paint mLSDPaint;
+	private boolean isLSD;
+
 	public DrawThread(SurfaceHolder surfaceHolder, Context context, GameSurfaceView view){
+		isLSD = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("LSD", false);
 		mSurfaceHolder = surfaceHolder;
 		startPos = new Point(0, 0);
 		movePos = new Point(0, 0);
 		this.view = view;
 		paint = new Paint();
+		mLSDRandom = new Random();
+		mLSDPaint = new Paint();
 
 		bitRobotOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.robot);
 		bitFastRobotOriginal=BitmapFactory.decodeResource(context.getResources(),R.drawable.fastrobot);
@@ -118,7 +128,7 @@ public class DrawThread extends Thread {
 
 	public void changeCellSize(int d){
 		if (drawing)
-			return; //TODO
+			return;
 		widthPX += d;
 		heightPX += d;
 		checkCellSize();
@@ -221,14 +231,20 @@ public class DrawThread extends Thread {
 	}
 	
 	void repaint(){
+		Canvas lsdCanvas = new Canvas(bitCell2);
 		canvas.drawColor(Color.GRAY);
 		for (int i=0; i<world.getWidth(); i++)
 			for (int j=0; j<world.getHeight(); j++)
 				if (isVisible(i,j)){
-					if ((i+j)%2 == 0)
+					if ((i+j)%2 == 0){
+						if (isLSD){
+							mLSDPaint.setColor(mLSDRandom.nextInt());
+							lsdCanvas.drawRect(1, 1, bitCell2.getWidth()-2,
+							 bitCell2.getHeight()-2, mLSDPaint);
+						}
 						canvas.drawBitmap(bitCell2,widthPX*i+indent-startPos.x,
 						 heightPX*j+indent-startPos.y,paint);
-					else
+					}else
 						canvas.drawBitmap(bitCell,widthPX*i+indent-startPos.x,
 						heightPX*j+indent-startPos.y,paint);
 					switch (world.board.GetKind(i,j)){

@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
@@ -25,10 +23,6 @@ public class LoadActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceBundle){
 		super.onCreate(savedInstanceBundle);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-		 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
 		try{
 			SaveManager.getInstance().openDatabaseConnection();
 			SaveManager.getInstance().loadSavesFromDatabase(LoadActivity.this);

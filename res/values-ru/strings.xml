@@ -71,9 +71,14 @@
 	<string name="game_mode_summary">Настроить сложность и дополнительные параметры</string>
 	<string name="vamp_mode_setting">Бонусы в виде энергии</string>
 	<string name="vamp_mode_summary">Выдаются, когда вы уничтожаете робота, толкая на него кучу мусора</string>
-	
+	<string name="lsd_setting">Набор \"Юный химик\"</string>
+	<string name="lsd_summary">Ответственность за последствия вы берёте на себя…</string>
+	<string name="lsd_anim_setting">Сопутствующая анимация</string>
 	<string name="error">ОШИБКА</string>
-	
+	<string name="skin">Внешний вид</string>
+	<string name="metrics">Размеры доски</string>
+	<string name="gen_settings">Общие настройки</string>
+
 	<!-- LoadActivity -->
 	<string name="delete">\n\ С глаз долой - из сердца вон?</string>
 	<string name="yes">Да</string>

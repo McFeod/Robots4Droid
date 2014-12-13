@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-	<CheckBoxPreference
-		android:key="music"
-		android:title="@string/music_setting"
-		android:summary="@string/music_setting"
-		android:defaultValue="true" />
-	<CheckBoxPreference
-		android:key="safe"
-		android:title="@string/suicide_setting"
-		android:summary="@string/suicide_summary"
-		android:defaultValue="false" />
-	<PreferenceScreen
+	<PreferenceCategory
+		android:title="@string/gen_settings">
+		<CheckBoxPreference
+			android:key="music"
+			android:title="@string/music_setting"
+			android:summary="@string/music_setting"
+			android:defaultValue="true" />
+		<CheckBoxPreference
+			android:key="safe"
+			android:title="@string/suicide_setting"
+			android:summary="@string/suicide_summary"
+			android:defaultValue="false" />
+	</PreferenceCategory>
+	<PreferenceCategory
 		android:key="game_mode"
 		android:title="@string/game_mode_setting"
 		android:summary="@string/game_mode_summary">
@@ -41,17 +44,34 @@
 			android:title="@string/bomb_setting"
 			android:summary="@string/bomb_summary"
 			android:defaultValue="true" />
-	</PreferenceScreen>
-	<EditTextPreference
-		android:key="mx_width"
-		android:title="@string/width_setting"
-		android:defaultValue="20"
-		android:inputType="phone"
-		android:dialogTitle="@string/edit_width_msg"/>
-	<EditTextPreference
-		android:key="mx_height"
-		android:title="@string/height_setting"
-		android:defaultValue="15"
-		android:inputType="phone"
-		android:dialogTitle="@string/edit_height_msg"	/>
+	</PreferenceCategory>
+	<PreferenceCategory 
+		android:title="@string/metrics">
+		<EditTextPreference
+			android:key="mx_width"
+			android:title="@string/width_setting"
+			android:defaultValue="20"
+			android:inputType="phone"
+			android:dialogTitle="@string/edit_width_msg"/>
+		<EditTextPreference
+			android:key="mx_height"
+			android:title="@string/height_setting"
+			android:defaultValue="15"
+			android:inputType="phone"
+			android:dialogTitle="@string/edit_height_msg" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="@string/skin">
+		<CheckBoxPreference 
+			android:key="LSD"
+			android:title="@string/lsd_setting"
+			android:summary="@string/lsd_summary"
+			android:defaultValue="false"/>
+		<CheckBoxPreference 
+			android:key="LSD_anim"
+			android:title="@string/lsd_anim_setting"
+			android:defaultValue="true"
+			android:dependency = "LSD"/>
+			<!-- зависимость от ЛСД... мда уж... -->
+	</PreferenceCategory>
 </PreferenceScreen>

@@ -10,6 +10,7 @@
 
 	<application
 		android:allowBackup="true"
+		android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
 		android:icon="@drawable/fastrobot"
 		android:label="@string/app_name">
 		<activity

@@ -75,6 +75,12 @@ WARNING!!! The game is rather endless. There is no victory. But there is an oppo
 	<string name="game_mode_summary">Setup complexity and extra features</string>
 	<string name="vamp_mode_setting">Energy bonuses</string>
 	<string name="vamp_mode_summary">You get energy when you kill enemy with pushing a junk</string>
+	<string name="lsd_setting">Young chemist mode</string>
+	<string name="lsd_summary">You take full responsibitity for aftereffects…</string>
+	<string name="lsd_anim_setting">Associated animation</string>
+	<string name="skin">Аppearance</string>
+	<string name="metrics">Board size</string>
+	<string name="gen_settings">General settings</string>
 	
 	<!-- LoadActivity -->
 	<string name="delete">\n\ Out of sight, out of mind?</string>
