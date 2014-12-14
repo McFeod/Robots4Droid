@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/frameLayout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<com.github.mcfeod.robots4droid.GameSurfaceView
+		android:id="@+id/game"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"/>
+
+	<RelativeLayout
+		android:background="#00000000"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
+
+		<RelativeLayout
+			android:layout_alignParentTop="true"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<ImageButton
+				android:id="@+id/left_up_button"
+				style="@style/GameImageButton"
+				android:layout_alignParentLeft="true"
+				android:src="@drawable/left_up"/>
+
+			<ImageButton
+				android:id="@+id/up_button"
+				style="@style/GameImageButton"
+				android:layout_centerHorizontal="true"
+				android:src="@drawable/up"/>
+
+			<ImageButton
+				android:id="@+id/right_up_button"
+				style="@style/GameImageButton"
+				android:layout_alignParentRight="true"
+				android:src="@drawable/right_up"/>
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:layout_centerVertical="true"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<ImageButton
+				android:id="@+id/left_button"
+				style="@style/GameImageButton"
+				android:layout_alignParentLeft="true"
+				android:src="@drawable/left"/>
+
+			<ImageButton
+				android:id="@+id/stay_button"
+				style="@style/GameImageButton"
+				android:layout_centerHorizontal="true"
+				android:src="@drawable/point"/>
+
+			<ImageButton
+				android:id="@+id/right_button"
+				style="@style/GameImageButton"
+				android:layout_alignParentRight="true"
+				android:src="@drawable/right"/>
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:layout_alignParentBottom="true"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<ImageButton
+				android:id="@+id/left_down_button"
+				style="@style/GameImageButton"
+				android:layout_alignParentLeft="true"
+				android:src="@drawable/left_down"/>
+
+			<ImageButton
+				android:id="@+id/down_button"
+				style="@style/GameImageButton"
+				android:layout_centerHorizontal="true"
+				android:src="@drawable/down"/>
+
+			<ImageButton
+				android:id="@+id/right_down_button"
+				style="@style/GameImageButton"
+				android:layout_alignParentRight="true"
+				android:src="@drawable/right_down"/>
+
+		</RelativeLayout>
+	</RelativeLayout>
+</FrameLayout>
