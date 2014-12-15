@@ -199,8 +199,14 @@ public class GameActivity extends Activity {
 			isMusicOn = mSettings.getBoolean("music", true);
 			areBombsOn = mSettings.getBoolean("bomb", false);
 			areMinesOn = mSettings.getBoolean("mine", false);
-			world.player.areSuicidesForbidden = mSettings.getBoolean("safe", true);
-			}else{
+			world.player.areSuicidesForbidden = mSettings.getBoolean("suicides_forbidden", false);
+			if (isLSD)
+				mSoundTrack = MediaPlayer.create(this, R.raw.lsd);
+			else
+				mSoundTrack = MediaPlayer.create(this, R.raw.muz);
+			mSoundTrack.setLooping(true);
+			
+		}else{
 			world = new World(
 				savedInstanceState.getInt("width"),
 				savedInstanceState.getInt("height"),
@@ -219,21 +225,21 @@ public class GameActivity extends Activity {
 			for(int i=0; i<world.getWidth(); ++i){
 				world.board.setRow(i, savedInstanceState.getByteArray("board_"+i));
 			}
-			world.player.areSuicidesForbidden = savedInstanceState.getBoolean("areSuicidesForbidden");
+			world.player.areSuicidesForbidden = savedInstanceState.getBoolean("suicides_forbidden");
 			isLSD = savedInstanceState.getBoolean("LSD");
 			isLSDAnim = savedInstanceState.getBoolean("LSD_anim");
 			isMusicOn = savedInstanceState.getBoolean("isMusicOn");
 			areBombsOn = savedInstanceState.getBoolean("areBombsOn");
 			areMinesOn = savedInstanceState.getBoolean("areMinesOn");
+			if (isLSD)
+				mSoundTrack = MediaPlayer.create(this, R.raw.lsd);
+			else
+				mSoundTrack = MediaPlayer.create(this, R.raw.muz);
+			mSoundTrack.setLooping(true);
 			if (isMusicOn)
 				mSoundTrack.seekTo(savedInstanceState.getInt("musicTime")+400);
 			mLastLevel = world.getLevel();
 		}
-		if (isLSD)
-			mSoundTrack = MediaPlayer.create(this, R.raw.lsd);
-		else
-			mSoundTrack = MediaPlayer.create(this, R.raw.muz);
-		mSoundTrack.setLooping(true);
 		if (!world.player.isAlive)
 			showGameOverDialog();
 		if (!areBombsOn)
@@ -330,7 +336,7 @@ public class GameActivity extends Activity {
 		savedInstanceState.putInt("playerX", world.player.getPos().x);
 		savedInstanceState.putInt("playerY", world.player.getPos().y);
 		savedInstanceState.putBoolean("isAlive", world.player.isAlive);
-		savedInstanceState.putBoolean("areSuicidesForbidden", world.player.areSuicidesForbidden);
+		savedInstanceState.putBoolean("suicides_forbidden", world.player.areSuicidesForbidden);
 		savedInstanceState.putBoolean("isMusicOn", isMusicOn);
 		savedInstanceState.putBoolean("areMinesOn", areMinesOn);
 		savedInstanceState.putBoolean("areBombsOn", areBombsOn);

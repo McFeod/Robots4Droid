@@ -213,10 +213,6 @@ public class World{
 		if (isJunkExists){
 			board.chDiff(objectKind, -1);
 			mReward = 0;
-			if (board.wasEnemy(junkPos)){
-				isJunkExists = false;
-				return; //TODO проверить, исправило ли это баг
-			}
 			board.SetKind(junkPos, Board.JUNK);
 			board.SetKind(objectPos, objectKind);
 		}
@@ -228,9 +224,9 @@ public class World{
 		//копируем координаты игрока
 		freePos.x = player.getPos().x;
 		freePos.y = player.getPos().y;
+		isJunkExists = false;
 		switch (where){
 			case STAY:
-				isJunkExists = false;
 				mReward = 0;
 				break;
 			case TELEPORT:

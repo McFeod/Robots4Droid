@@ -8,7 +8,7 @@
 			android:summary="@string/music_setting"
 			android:defaultValue="true" />
 		<CheckBoxPreference
-			android:key="safe"
+			android:key="suicides_forbidden"
 			android:title="@string/suicide_setting"
 			android:summary="@string/suicide_summary"
 			android:defaultValue="false" />

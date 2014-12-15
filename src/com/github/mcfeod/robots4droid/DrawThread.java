@@ -239,8 +239,8 @@ public class DrawThread extends Thread {
 					if ((i+j)%2 == 0){
 						if (isLSD){
 							mLSDPaint.setColor(mLSDRandom.nextInt());
-							lsdCanvas.drawRect(1, 1, bitCell2.getWidth()-2,
-							 bitCell2.getHeight()-2, mLSDPaint);
+							lsdCanvas.drawRect(1, 1, bitCell2.getWidth()-1,
+							 bitCell2.getHeight()-1, mLSDPaint);
 						}
 						canvas.drawBitmap(bitCell2,widthPX*i+indent-startPos.x,
 						 heightPX*j+indent-startPos.y,paint);
