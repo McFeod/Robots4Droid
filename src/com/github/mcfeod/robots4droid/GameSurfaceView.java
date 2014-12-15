@@ -15,6 +15,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	private final Context context;
 	private GestureDetector gestureDetector;
 	private ScaleGestureDetector scaleGestureDetector;
+	private boolean mScaling = false;
 
 	/** Три следующих метода обязательны, не удалять! */
 	/** Создание области рисования */
@@ -64,8 +65,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		switch (event.getPointerCount()){
-			case 1: gestureDetector.onTouchEvent(event);
-			case 2: scaleGestureDetector.onTouchEvent(event);
+			case 1:
+				if (!mScaling)
+					gestureDetector.onTouchEvent(event);
+				if (event.getAction() == MotionEvent.ACTION_UP)
+					mScaling = false;
+				break;
+			case 2:
+				scaleGestureDetector.onTouchEvent(event);
+				mScaling = true;
+				break;
 		}
 		return true;
 	}

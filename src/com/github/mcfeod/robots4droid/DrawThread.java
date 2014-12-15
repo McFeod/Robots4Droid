@@ -129,13 +129,17 @@ public class DrawThread extends Thread {
 	public void changeCellSize(int d){
 		if (drawing)
 			return;
+		float procX = (startPos.x+view.getWidth()/2) / (float)(world.getWidth()*widthPX);
+		float procY = (startPos.y+view.getHeight()/2) / (float)(world.getHeight()*heightPX);
 		widthPX += d;
 		heightPX += d;
 		checkCellSize();
 		changeStep();
 		changeIndent();
-		changeBitmapSize(true);		
-		changeStartPos(0, 0);
+		changeBitmapSize(true);
+		int newStartPosX = (int)((world.getWidth()*widthPX)*procX - view.getWidth()/2);
+		int newStartPosY = (int)((world.getHeight()*heightPX)*procY - view.getHeight()/2);
+		changeStartPos(newStartPosX-startPos.x, newStartPosY-startPos.y);
 		if (scrollingToPlayer)
 			scrollToPlayer();
 	}
