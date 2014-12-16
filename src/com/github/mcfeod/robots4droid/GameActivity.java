@@ -22,7 +22,6 @@ import android.widget.Toast;
 public class GameActivity extends Activity {
 	private World world;
 	private int mLastLevel=-1;
-	private boolean mNeedCrutchForLaunch = true;
 
 	private MediaPlayer mSoundTrack;
 	private boolean isMusicOn;
@@ -282,15 +281,12 @@ public class GameActivity extends Activity {
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
-		if (mNeedCrutchForLaunch){
 			if (isLSD && isLSDAnim){
 				Animation a = AnimationUtils.loadAnimation(this, R.anim.lsd);
 				view.startAnimation(a);
 			}
 			view.mDrawThread.setDefaultCellSize();
 			view.mDrawThread.scrollToPlayer();
-			mNeedCrutchForLaunch = false;
-		}
 	}
 	
 	@Override

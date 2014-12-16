@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- SettingsActivity -->
+	<string name="music_setting">Музыка</string>
+	<string name="suicide_setting">Включить безопасные ходы</string>
+	<string name="suicide_summary">Запретить самоубийственные ходы</string>
+	<string name="complexity_setting">Сложность</string>
+	<string name="mine_setting">Включить мины</string>
+	<string name="mine_summary">Возможность устанавливать мины-ловушки</string>
+	<string name="bomb_setting">Включить взрыв</string>
+	<string name="bomb_summary">Возможнось взорвать блишайших врагов</string>
+	<string name="cast_error_msg">Размеры поля должны быть целыми числами</string>
+	<string name="val_error_msg">Размеры поля должны лежать в диапазоне от 15 до 80</string>
+	<string name="fix_error_msg">Исправьте ошибки в настройках</string>
+	<string name="edit_width_msg">Введите ширину поля в клетках</string>
+	<string name="edit_height_msg">Введите высоту поля в клетках</string>
+	<string name="width_setting">Ширина поля</string>
+	<string name="height_setting">Высота поля</string>
+	<string name="shortage_mode">Дефицит энергии</string>
+	<string name="shortage_mode_summary">Энергия выдаётся только в начале игры</string>
+	<string name="game_mode_setting">Режим игры</string>
+	<string name="game_mode_summary">Настроить сложность и дополнительные параметры</string>
+	<string name="vamp_mode_setting">Бонусы в виде энергии</string>
+	<string name="vamp_mode_summary">Выдаются, когда вы уничтожаете робота, толкая на него кучу мусора</string>
+	<string name="lsd_setting">Набор \"Юный химик\"</string>
+	<string name="lsd_summary">Ответственность за последствия вы берёте на себя…</string>
+	<string name="lsd_anim_setting">Сопутствующая анимация</string>
+	<string name="error">ОШИБКА</string>
+	<string name="skin">Внешний вид</string>
+	<string name="metrics">Размеры доски</string>
+	<string name="gen_settings">Общие настройки</string>
+	
+	<string name="compl_0">Очень легко</string>
+	<string name="compl_1">Легко</string>
+	<string name="compl_2">Нормально</string>
+	<string name="compl_3">Сложно</string>
+	<string name="compl_4">Очень сложно</string>
+</resources>

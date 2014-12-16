@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- SettingsActivity -->
+	<string name="music_setting">Music</string>
+	<string name="suicide_setting">Turn safe movements on</string>
+	<string name="suicide_summary">Reject suicide movements</string>
+	<string name="complexity_setting">Difficulty</string>
+	<string name="mine_setting">Turn mines on</string>
+	<string name="mine_summary">Ability to create booby traps</string>
+	<string name="bomb_setting">Turn explosions on</string>
+	<string name="bomb_summary">Ability to blow up nearby enemies</string>
+	<string name="cast_error_msg">Board metrics must be integers</string>
+	<string name="val_error_msg">Board metrics must belong to range from 15 to 80</string>
+	<string name="fix_error_msg">Correct your settings</string>
+	<string name="edit_width_msg">Set a board width in cells</string>
+	<string name="edit_height_msg">Set a board height in cells</string>
+	<string name="width_setting">Board width</string>
+	<string name="height_setting">Board height</string>
+	<string name="shortage_mode">Energy shortage</string>
+	<string name="shortage_mode_summary">Energy is only given at the beginning of the game</string>
+	<string name="error">ERROR</string>
+	<string name="game_mode_setting">Game mode</string>
+	<string name="game_mode_summary">Setup complexity and extra features</string>
+	<string name="vamp_mode_setting">Energy bonuses</string>
+	<string name="vamp_mode_summary">You get energy when you kill enemy with pushing a junk</string>
+	<string name="lsd_setting">Young chemist mode</string>
+	<string name="lsd_summary">You take full responsibitity for aftereffects…</string>
+	<string name="lsd_anim_setting">Associated animation</string>
+	<string name="skin">Аppearance</string>
+	<string name="metrics">Board size</string>
+	<string name="gen_settings">General settings</string>
+	
+	<string name="compl_0">Very easy</string>
+	<string name="compl_1">Easy</string>
+	<string name="compl_2">Medium</string>
+	<string name="compl_3">Hard</string>
+	<string name="compl_4">Very hard</string>
+</resources>
