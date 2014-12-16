@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.util.Log;
 
+import com.github.mcfeod.robots4droid.R;
+import com.github.mcfeod.robots4droid.World;
+
 public class SaveManager {
 	private static final String TAG = "SaveManager";
 	private static final SaveManager INSTANCE = new SaveManager();
@@ -21,6 +24,8 @@ public class SaveManager {
 	
 	private static final byte MAX_SCORE_COUNT = 10;
 	private String[] mScoreNameArray = new String[MAX_SCORE_COUNT];
+	private byte[] mScoreGameModeArray = new byte[MAX_SCORE_COUNT];
+	private boolean[] mScoreShortageArray = new boolean[MAX_SCORE_COUNT];
 	private long[] mScoreArray = new long[MAX_SCORE_COUNT];
 	private byte mScoreCount = 0;
 	
@@ -112,7 +117,6 @@ public class SaveManager {
 		}
 	}
 
-	
 	/** Загрузка списка рекордов */
 	public void loadScores(Context context) throws IOException{
 		BufferedInputStream stream = new BufferedInputStream(context.openFileInput("Score"));
@@ -121,41 +125,67 @@ public class SaveManager {
 		while (stream.available() != 0){
 			mScoreArray[mScoreCount] = in.readLong();
 			mScoreNameArray[mScoreCount] = in.readUTF();
+			mScoreGameModeArray[mScoreCount] = in.readByte();
+			mScoreShortageArray[mScoreCount] = in.readBoolean();
 			mScoreCount++;
 		}
 		stream.close();
 	}
 	
 	/** Добавление нового рекорда и сохранение в файл */
-	public void addScore(Context context, String name, long score) throws IOException{
+	public void addScore(Context context, String name, World world) throws IOException{
 		boolean found = false;
 		for (byte i=0; i<mScoreCount; i++)
-			if (mScoreArray[i] < score){
+			if (mScoreArray[i] < world.player.getScore()){
 				for (byte j=mScoreCount; j>i; j--)
 					if (j != MAX_SCORE_COUNT){
 						mScoreArray[j] = mScoreArray[j-1];
 						mScoreNameArray[j] = mScoreNameArray[j-1];
+						mScoreGameModeArray[j] = mScoreGameModeArray[j-1];
+						mScoreShortageArray[j] = mScoreShortageArray[j-1];
 					}
-				mScoreArray[i] = score;
+				mScoreArray[i] = world.player.getScore();
 				mScoreNameArray[i] = name;
+				mScoreGameModeArray[i] = (byte)world.getGameMode();
+				mScoreShortageArray[i] = world.isShortageMode();
 				if (mScoreCount != MAX_SCORE_COUNT)
 					mScoreCount++;
 				found = true;
 				break;
 			}
 		if (!found && (mScoreCount != MAX_SCORE_COUNT)){
-			mScoreArray[mScoreCount] = score;
+			mScoreArray[mScoreCount] = world.player.getScore();
 			mScoreNameArray[mScoreCount] = name;
+			mScoreGameModeArray[mScoreCount] = (byte)world.getGameMode();
+			mScoreShortageArray[mScoreCount] = world.isShortageMode();
 			mScoreCount++;
 		}
 		saveScores(context);
 	}
 	
 	/** Возвращает список строк с рекордом и именем*/
-	public String[] getScores(){
+	public String[] getScoresName(Context context){
 		String[] ar = new String[mScoreCount];
 		for (byte i=0; i<mScoreCount; i++)
-			ar[i] = mScoreNameArray[i] + " - " + Long.toString(mScoreArray[i]);
+			ar[i] = String.format(context.getString(R.string.save_score_name),
+			 mScoreNameArray[i], mScoreArray[i]);
+		return ar;
+	}
+	
+	/** Возвращает список строк с информацией о рекордах*/
+	public String[] getScoresInfo(Context context){
+		String[] ar = new String[mScoreCount];
+		for (byte i=0; i<mScoreCount; i++)
+			if (mScoreShortageArray[i])
+				ar[i] = String.format(context.getString(R.string.save_score_info),
+				 context.getResources().getStringArray
+				 (R.array.difficulty)[mScoreGameModeArray[i]], 
+				 context.getString(R.string.on));
+			else
+				ar[i] = String.format(context.getString(R.string.save_score_info),
+				 context.getResources().getStringArray
+				 (R.array.difficulty)[mScoreGameModeArray[i]], 
+				 context.getString(R.string.off));
 		return ar;
 	}
 	
@@ -166,6 +196,8 @@ public class SaveManager {
 		for (byte i=0; i<mScoreCount; i++){
 			out.writeLong(mScoreArray[i]);
 			out.writeUTF(mScoreNameArray[i]);
+			out.writeByte(mScoreGameModeArray[i]);
+			out.writeBoolean(mScoreShortageArray[i]);
 		}
 		stream.close();
 	}

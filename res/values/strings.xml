@@ -35,4 +35,8 @@
 	
 	<!-- ScoreActivity -->
 	<string name="delete_scores">Delete scores</string>
+	<string name="save_score_name">%1$s - %2$d points</string>
+	<string name="save_score_info">Difficulty: %1$s\nEnergy shortage: %2$s</string>
+	<string name="on">on</string>
+	<string name="off">off</string>
 </resources>
