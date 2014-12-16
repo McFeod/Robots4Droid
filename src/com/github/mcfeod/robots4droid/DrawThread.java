@@ -37,10 +37,11 @@ public class DrawThread extends Thread {
 
 	private Random mLSDRandom;
 	private Paint mLSDPaint;
-	private boolean isLSD;
+	private boolean isLSD, isFullLSD;
 
 	public DrawThread(SurfaceHolder surfaceHolder, Context context, GameSurfaceView view){
 		isLSD = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("LSD", false);
+		isFullLSD = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("full_LSD", false);
 		mSurfaceHolder = surfaceHolder;
 		startPos = new Point(0, 0);
 		movePos = new Point(0, 0);
@@ -236,6 +237,7 @@ public class DrawThread extends Thread {
 	
 	void repaint(){
 		Canvas lsdCanvas = new Canvas(bitCell2);
+		Canvas fulllsdCanvas = new Canvas(bitCell);
 		canvas.drawColor(Color.GRAY);
 		for (int i=0; i<world.getWidth(); i++)
 			for (int j=0; j<world.getHeight(); j++)
@@ -248,9 +250,15 @@ public class DrawThread extends Thread {
 						}
 						canvas.drawBitmap(bitCell2,widthPX*i+indent-startPos.x,
 						 heightPX*j+indent-startPos.y,paint);
-					}else
+					}else{
+						if (isFullLSD){
+							mLSDPaint.setColor(mLSDRandom.nextInt());
+							fulllsdCanvas.drawRect(1, 1, bitCell.getWidth()-1,
+							 bitCell.getHeight()-1, mLSDPaint);
+						}
 						canvas.drawBitmap(bitCell,widthPX*i+indent-startPos.x,
-						heightPX*j+indent-startPos.y,paint);
+						 heightPX*j+indent-startPos.y,paint);
+					}
 					switch (world.board.GetKind(i,j)){
 						case Board.JUNK:
 							canvas.drawBitmap(bitJunk,widthPX*i+indent-startPos.x,

@@ -73,5 +73,11 @@
 			android:defaultValue="true"
 			android:dependency = "LSD"/>
 			<!-- зависимость от ЛСД... мда уж... -->
+		<CheckBoxPreference 
+			android:key="full_LSD"
+			android:title="@string/full_lsd_setting"
+			android:summary="@string/full_lsd_summary"
+			android:defaultValue="false"
+			android:dependency = "LSD"/>
 	</PreferenceCategory>
 </PreferenceScreen>

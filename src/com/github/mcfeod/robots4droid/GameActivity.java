@@ -31,6 +31,7 @@ public class GameActivity extends Activity {
 	private boolean areBombsOn;
 	private boolean isLSD;
 	private boolean isLSDAnim;
+	private boolean isFullLSD;
 	private String[] mToastArray;
 	private Random rand;
 	private TextView levelTextView, scoreTextView, energyTextView, botCountTextView;
@@ -201,6 +202,7 @@ public class GameActivity extends Activity {
 			}
 			isLSD = mSettings.getBoolean("LSD", false);
 			isLSDAnim = mSettings.getBoolean("LSD_anim", false);
+			isFullLSD = mSettings.getBoolean("full_LSD", false);
 			isMusicOn = mSettings.getBoolean("music", true);
 			areBombsOn = mSettings.getBoolean("bomb", false);
 			areMinesOn = mSettings.getBoolean("mine", false);
@@ -234,6 +236,7 @@ public class GameActivity extends Activity {
 			world.player.areSuicidesForbidden = savedInstanceState.getBoolean("suicides_forbidden");
 			isLSD = savedInstanceState.getBoolean("LSD");
 			isLSDAnim = savedInstanceState.getBoolean("LSD_anim");
+			isFullLSD = savedInstanceState.getBoolean("full_LSD");
 			isMusicOn = savedInstanceState.getBoolean("isMusicOn");
 			areBombsOn = savedInstanceState.getBoolean("areBombsOn");
 			areMinesOn = savedInstanceState.getBoolean("areMinesOn");
@@ -346,6 +349,7 @@ public class GameActivity extends Activity {
 		savedInstanceState.putBoolean("areBombsOn", areBombsOn);
 		savedInstanceState.putBoolean("LSD", isLSD);
 		savedInstanceState.putBoolean("LSD_anim", isLSDAnim);
+		savedInstanceState.putBoolean("full_LSD", isFullLSD);
 		if (isMusicOn)
 			savedInstanceState.putInt("musicTime",mSoundTrack.getCurrentPosition());
 	}
