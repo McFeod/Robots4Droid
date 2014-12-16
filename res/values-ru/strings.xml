@@ -10,7 +10,8 @@
 	<string name="about_button">Об игре</string>
 
 	<!-- GameActivity -->
-	<string name="dialog">Ну вы же не собирались бегать вечно?</string>
+	<string name="victory">Невероятно! Вам удалось выиграть!</string>
+	<string name="diedlog">Ну вы же не собирались бегать вечно?</string>
 	<string name="restart">По новой!</string>
 	<string name="away">Да ну вас…</string>
 	<string name="add_score">Хочу похвастаться!</string>

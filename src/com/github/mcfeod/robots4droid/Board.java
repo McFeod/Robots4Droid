@@ -184,7 +184,7 @@ public class Board{
 	}
 
 	public int diff2score(){
-		int res = mDiffBotCount*5 + 10*mDiffFastBotCount;
+		int res = mDiffBotCount + 2*mDiffFastBotCount;
 		mDiffBotCount = 0;
 		mDiffFastBotCount = 0;
 		return res;

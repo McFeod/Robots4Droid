@@ -11,13 +11,13 @@ class SavedGame {
 
 	public long mId;
 	public final int mLevel;
-	public final int mScore;
+	public final long mScore;
 	public final java.util.Date mCreationDate;
 	private final Context mContext;
 
 	private static StringBuilder sBuilder;
 
-	public SavedGame(int level, int score, Date creationDate, Context context){
+	public SavedGame(int level, long score, Date creationDate, Context context){
 		sBuilder = new StringBuilder();
 		mLevel = level;
 		mScore = score;
@@ -25,7 +25,7 @@ class SavedGame {
 		mContext = context;
 	}
 
-	public SavedGame(int level, int score, Date creationDate, long id, Context context){
+	public SavedGame(int level, long score, Date creationDate, long id, Context context){
 		sBuilder = new StringBuilder();
 		mLevel = level;
 		mScore = score;

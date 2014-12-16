@@ -220,8 +220,9 @@ public class GameActivity extends Activity {
 				savedInstanceState.getInt("playerX"),
 				savedInstanceState.getInt("playerY"),
 				savedInstanceState.getInt("energy"),
-				savedInstanceState.getInt("score"),
+				savedInstanceState.getLong("score"),
 				savedInstanceState.getBoolean("isAlive"),
+				savedInstanceState.getBoolean("isWinner"),
 				savedInstanceState.getInt("level"),
 				savedInstanceState.getInt("gameMode"),
 				savedInstanceState.getBoolean("energy_shortage"),
@@ -333,11 +334,12 @@ public class GameActivity extends Activity {
 		savedInstanceState.putInt("gameMode", world.getGameMode());
 		savedInstanceState.putBoolean("vamp_mode", world.isVampMode());
 		savedInstanceState.putBoolean("energy_shortage", world.isShortageMode());
-		savedInstanceState.putInt("score", world.player.getScore());
+		savedInstanceState.putLong("score", world.player.getScore());
 		savedInstanceState.putInt("energy", world.player.getEnergy());
 		savedInstanceState.putInt("playerX", world.player.getPos().x);
 		savedInstanceState.putInt("playerY", world.player.getPos().y);
 		savedInstanceState.putBoolean("isAlive", world.player.isAlive);
+		savedInstanceState.putBoolean("isWinner", world.player.isWinner);
 		savedInstanceState.putBoolean("suicides_forbidden", world.player.areSuicidesForbidden);
 		savedInstanceState.putBoolean("isMusicOn", isMusicOn);
 		savedInstanceState.putBoolean("areMinesOn", areMinesOn);
@@ -373,6 +375,13 @@ public class GameActivity extends Activity {
 	}
 	
 	private void showGameOverDialog(){
+		TextView result = (TextView)findViewById(R.id.gameover_dialog_text);
+		if (world.player.isWinner){
+			world.player.chScore(world.player.getScore());
+			result.setText(R.string.victory);
+		}else{
+			result.setText(R.string.diedlog);
+		}
 		if (SaveManager.getInstance().canAddScore(world.player.getScore())){
 			scoreInfoTextView.setText(String.format(getString(R.string.score_info),
 			 world.player.getScore()));

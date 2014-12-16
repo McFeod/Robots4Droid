@@ -10,7 +10,8 @@
 	<string name="about_button">About</string>
 
 	<!-- GameActivity -->
-	<string name="dialog">Oooops… it looks like you died</string>
+	<string name="victory">Incredible! You won!</string>
+	<string name="diedlog">Oooops… it looks like you died</string>
 	<string name="restart">Once more!</string>
 	<string name="away">Give me a break…</string>
 	<string name="add_score">I wanna go down in history!</string>

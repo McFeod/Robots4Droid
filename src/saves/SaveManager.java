@@ -21,7 +21,7 @@ public class SaveManager {
 	
 	private static final byte MAX_SCORE_COUNT = 10;
 	private String[] mScoreNameArray = new String[MAX_SCORE_COUNT];
-	private int[] mScoreArray = new int[MAX_SCORE_COUNT];
+	private long[] mScoreArray = new long[MAX_SCORE_COUNT];
 	private byte mScoreCount = 0;
 	
 	private int mLoadingGameNumber = UNDEFINED_NUMBER;
@@ -119,7 +119,7 @@ public class SaveManager {
 		DataInput in = new DataInputStream(stream);
 		mScoreCount = 0;
 		while (stream.available() != 0){
-			mScoreArray[mScoreCount] = in.readInt();
+			mScoreArray[mScoreCount] = in.readLong();
 			mScoreNameArray[mScoreCount] = in.readUTF();
 			mScoreCount++;
 		}
@@ -127,7 +127,7 @@ public class SaveManager {
 	}
 	
 	/** Добавление нового рекорда и сохранение в файл */
-	public void addScore(Context context, String name, int score) throws IOException{
+	public void addScore(Context context, String name, long score) throws IOException{
 		boolean found = false;
 		for (byte i=0; i<mScoreCount; i++)
 			if (mScoreArray[i] < score){
@@ -155,7 +155,7 @@ public class SaveManager {
 	public String[] getScores(){
 		String[] ar = new String[mScoreCount];
 		for (byte i=0; i<mScoreCount; i++)
-			ar[i] = mScoreNameArray[i] + " - " + Integer.toString(mScoreArray[i]);
+			ar[i] = mScoreNameArray[i] + " - " + Long.toString(mScoreArray[i]);
 		return ar;
 	}
 	
@@ -164,7 +164,7 @@ public class SaveManager {
 		BufferedOutputStream stream = new BufferedOutputStream(context.openFileOutput("Score", Context.MODE_PRIVATE));
 		DataOutput out = new DataOutputStream(stream);
 		for (byte i=0; i<mScoreCount; i++){
-			out.writeInt(mScoreArray[i]);
+			out.writeLong(mScoreArray[i]);
 			out.writeUTF(mScoreNameArray[i]);
 		}
 		stream.close();
@@ -177,7 +177,7 @@ public class SaveManager {
 	}
 	
 	/** Возвращает true, если score!=0 и в списке есть место для записи нового рекорда */
-	public boolean canAddScore(int score){
+	public boolean canAddScore(long score){
 		if (score == 0)
 			return false;
 		for (byte i=0; i<mScoreCount; i++)

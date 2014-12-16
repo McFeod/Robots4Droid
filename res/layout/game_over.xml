@@ -9,7 +9,7 @@
 	android:visibility="gone">
 
 	<TextView
-		android:text="@string/dialog"
+		android:id="@+id/gameover_dialog_text"
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
 		android:gravity="center_horizontal"

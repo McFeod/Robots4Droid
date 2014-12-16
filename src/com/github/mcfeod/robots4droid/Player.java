@@ -2,23 +2,23 @@ package com.github.mcfeod.robots4droid;
 
 public class Player{
 	private Point mPos; //координаты
-	private int mScore;
+	private long mScore;
 	private int mEnergy;
 	public boolean isAlive; 
+	public boolean isWinner;
 	public boolean areSuicidesForbidden;
 
 	public Player(){
 		mPos = new Point();
-		mEnergy = 0;
-		mScore = 0;
-		isAlive = true;
+		this.reset();
 	}
 
-	public Player(int x, int y, int energy, int score, boolean alive){
+	public Player(int x, int y, int energy, long score, boolean alive, boolean winner){
 		mPos = new Point(x,y);
 		mEnergy = energy;
 		mScore = score;
 		isAlive = alive;
+		isWinner = winner;
 	}
 
 	public Point getPos(){
@@ -37,11 +37,11 @@ public class Player{
 		}
 	}
 
-	public int getScore() {
+	public long getScore() {
 		return mScore;
 	}
 
-	public void chScore(int diff){
+	public void chScore(long diff){
 		mScore += diff;
 	}
 
@@ -56,6 +56,7 @@ public class Player{
 	public void reset(){
 		mEnergy = 0;
 		mScore = 0;
+		isWinner = false;
 		isAlive = true;
 	}
 }

@@ -20,7 +20,7 @@
 		<ListPreference
 			android:key="complexity"
 			android:title="@string/complexity_setting"
-			android:defaultValue="1"
+			android:defaultValue="0"
 			android:entries="@array/difficulty"
 			android:entryValues="@array/int_difficulty"
 			android:dialogTitle="@string/complexity_setting" />

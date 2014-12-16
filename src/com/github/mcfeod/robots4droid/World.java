@@ -54,13 +54,13 @@ public class World{
 		initLevel();
 	}
 
-	public World(int width, int height, int bots, int fastbots,
-			int pX, int pY, int energy, int score, boolean isAlive,
+	public World(int width, int height, int bots, int fastbots, int pX, int pY,
+			int energy, long score, boolean isAlive, boolean isWinner,
 			int level, int mode, boolean shortage, boolean vamp){
 		mWidth = width;
 		mHeight = height;
 		board = new Board(width, height, bots, fastbots);
-		player = new Player(pX, pY, energy, score, isAlive);
+		player = new Player(pX, pY, energy, score, isAlive, isWinner);
 		mLevel=level;
 		mMaxRobotCount = calcMaxRobotCount();
 		mGameMode = mode;
@@ -158,7 +158,7 @@ public class World{
 					board.chDiff(board.GetKind(player.getPos().x+i, player.getPos().y+j), 1);
 					board.SetKind(player.getPos().x+i, player.getPos().y+j, Board.EMPTY);
 				}
-			player.chScore(board.diff2score());
+			player.chScore(calcScore(board.diff2score()));
 			if (board.isBotsDead())
 				initLevel();
 			return true;
@@ -246,8 +246,6 @@ public class World{
 					player.chEnergy(-1);
 					return true;
 				}
-				//если свободной клетки не найдено, то игра заканчивается победой
-				winner();
 				return false;
 			case UP:
 				freePos.y--;//передвигаем игрока
@@ -386,7 +384,7 @@ public class World{
 		//передвижение быстрых роботов второй раз
 		for (int i=1; i<=d; i++)
 			moveRobots(playerPos.x, playerPos.y, i, false);
-		player.chScore(board.diff2score());
+		player.chScore(calcScore(board.diff2score()));
 		/*костыль для сочетания "Ваниной спиральки" и наглости игрока, 
 		 * прущего на робота.*/ 
 		if (board.wasEnemy(player.getPos()))
@@ -482,10 +480,11 @@ public class World{
 			mRobotCount = (slowMax > 0) ? (int)(slowMax) : 0;
 			if (fastMax > mMaxRobotCount)
 				fastMax = mMaxRobotCount - (fastMax - mMaxRobotCount);
-			mFastRobotCount = (fastMax < 1.0) ? 1 : (int)(fastMax);
+			if (fastMax < 1.0)
+				winner();
+			mFastRobotCount = (int)(fastMax);
 		}
 	}
-
 
 	private int calcEnergy(){
 		float linear = (9*mRobotCount + 25*mFastRobotCount)/4/(mWidth+mHeight);
@@ -500,8 +499,18 @@ public class World{
 		return (res>6 ? 6:res);
 	}
 
+	private int calcScore(int primary){
+		float k = 1;
+		if (mShortageMode)
+			k*=1.5;
+		if (!mVampMode)
+			k*=1.2;
+		return 5*(int)Math.round(k*primary*(1+0.25*mGameMode));
+	}
+
 	public void winner(){
-		//TODO
+		player.isAlive = false;
+		player.isWinner = true;
 	}
 	
 	public int getHeight() {
