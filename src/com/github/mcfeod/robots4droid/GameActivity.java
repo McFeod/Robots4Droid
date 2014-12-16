@@ -132,7 +132,7 @@ public class GameActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				try{
 					SaveManager.getInstance().addScore(GameActivity.this,
-					 inputNameEditText.getText().toString(), world.player.getScore());
+					 inputNameEditText.getText().toString(), world);
 				}catch(Exception e){}
 				//чтобы при повороте экрана не появлялась кнопка
 				world.player.chScore(-world.player.getScore());

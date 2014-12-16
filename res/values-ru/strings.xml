@@ -32,4 +32,8 @@
 	
 	<!-- ScoreActivity -->
 	<string name="delete_scores">Удалить рекорды</string>
+	<string name="save_score_name">%1$s - %2$d очков</string>
+	<string name="save_score_info">Сложность: %1$s\nДефицит энергии: %2$s</string>
+	<string name="on">вкл</string>
+	<string name="off">выкл</string>
 </resources>
