@@ -1,5 +1,7 @@
 package com.github.mcfeod.robots4droid;
 
+import java.util.Random;
+
 import saves.BinaryIOManager;
 import saves.SaveManager;
 import android.app.Activity;
@@ -29,6 +31,8 @@ public class GameActivity extends Activity {
 	private boolean areBombsOn;
 	private boolean isLSD;
 	private boolean isLSDAnim;
+	private String[] mToastArray;
+	private Random rand;
 	private TextView levelTextView, scoreTextView, energyTextView, botCountTextView;
 	private TextView scoreInfoTextView;
 	private Button safeTeleButton;
@@ -110,10 +114,10 @@ public class GameActivity extends Activity {
 				}
 			}else
 				showGameOverDialog();
-		}else
-			Toast.makeText(GameActivity.this, R.string.not_possible, Toast.LENGTH_SHORT).show();
+		}else{
+			Toast.makeText(GameActivity.this, mToastArray[rand.nextInt(mToastArray.length)], Toast.LENGTH_SHORT).show();
+		}
 	}
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -152,6 +156,8 @@ public class GameActivity extends Activity {
 		energyTextView = (TextView) findViewById(R.id.energyView);
 		botCountTextView = (TextView) findViewById(R.id.botCountView);
 		scoreInfoTextView = (TextView) findViewById(R.id.score_info_textView);
+		mToastArray = this.getResources().getStringArray(R.array.reject_movement);
+		rand = new Random();
 
 		findViewById(R.id.restart_button).setOnClickListener(restartButtonListener);
 		findViewById(R.id.away_button).setOnClickListener(awayButtonListener);

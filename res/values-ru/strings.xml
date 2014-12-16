@@ -16,7 +16,6 @@
 	<string name="add_score">Хочу похвастаться!</string>
 	<string name="score_info">Вы умудрились набрать %d очков</string>
 	<string name="no_saved">А продолжать-то нечего!</string>
-	<string name="not_possible">Ты куда, Одиссей?</string>
 	<string name="new_level">НОВЫЙ УРОВЕНЬ: %d</string>
 	<string name="level">Уровень: %d</string>
 	<string name="input_name">И кто это такой крутой?</string>

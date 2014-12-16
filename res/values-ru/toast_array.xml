@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="reject_movement">
+		<item>Ты туда не ходи, ты сюда ходи…</item>
+		<item>Ты куда, Одиссей?</item>
+		<item>А если подумать?</item>
+		<item>Ты не пройдёшь!</item>
+		<item>А ещё у нас в игре есть справка!</item>
+		<item>Не, ну я так не играю…</item>
+	</string-array>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="reject_movement">
+		<item>Hey, it\'s not your way!</item>
+		<item>Keep calm and tap another button</item>
+		<item>Incorrect. RTFM!</item>
+		<item>Enough! Choose correct direction.</item>
+		<item>What about some wise moves?</item>
+	</string-array>
+</resources>
