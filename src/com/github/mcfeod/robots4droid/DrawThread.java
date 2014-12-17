@@ -42,6 +42,8 @@ public class DrawThread extends Thread {
 	public DrawThread(SurfaceHolder surfaceHolder, Context context, GameSurfaceView view){
 		isLSD = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("LSD", false);
 		isFullLSD = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("full_LSD", false);
+		if (!isLSD && isFullLSD)
+			isFullLSD = false;
 		mSurfaceHolder = surfaceHolder;
 		startPos = new Point(0, 0);
 		movePos = new Point(0, 0);

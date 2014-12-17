@@ -104,11 +104,14 @@ public class GameActivity extends Activity {
 			mDrawThread.scrollToPlayer();
 			mDrawThread.delay(200);
 			//передвигаем роботов
-			world.moveBots();
+			world.moveBots(false);
+			mDrawThread.scrollToPlayer();
+			mDrawThread.delay(100);
+			//передвигаем роботов
+			world.moveBots(true);
+			mDrawThread.scrollToPlayer();
 			changeText();
 			if (world.player.isAlive){
-				//отрисовываем роботов
-				mDrawThread.scrollToPlayer();
 				if (mLastLevel != world.getLevel()){
 					mLastLevel = world.getLevel();
 					showNewLevelToast();

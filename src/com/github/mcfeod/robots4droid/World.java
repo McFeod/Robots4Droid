@@ -368,7 +368,7 @@ public class World{
 	}
 
 	/** Перемещение роботов */
-	public void moveBots(){	
+	public void moveBots(boolean toMoveFast){	
 		Point playerPos = player.getPos();
 		//поиск максимального радиуса
 		int d=playerPos.x;
@@ -379,11 +379,13 @@ public class World{
 		if (mHeight-playerPos.y-1 > d)
 			d=mHeight-playerPos.y-1;
 		//передвижение всех роботов на одну клетку
-		for (int i=1; i<=d; i++)
-			moveRobots(playerPos.x, playerPos.y, i, true);
+		if (!toMoveFast)
+			for (int i=1; i<=d; i++)
+				moveRobots(playerPos.x, playerPos.y, i, true);
 		//передвижение быстрых роботов второй раз
-		for (int i=1; i<=d; i++)
-			moveRobots(playerPos.x, playerPos.y, i, false);
+		else
+			for (int i=1; i<=d; i++)
+				moveRobots(playerPos.x, playerPos.y, i, false);
 		player.chScore(calcScore(board.diff2score()));
 		/*костыль для сочетания "Ваниной спиральки" и наглости игрока, 
 		 * прущего на робота.*/ 
