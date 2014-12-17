@@ -42,8 +42,6 @@ public class DrawThread extends Thread {
 	public DrawThread(SurfaceHolder surfaceHolder, Context context, GameSurfaceView view){
 		isLSD = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("LSD", false);
 		isFullLSD = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("full_LSD", false);
-		if (!isLSD && isFullLSD)
-			isFullLSD = false;
 		mSurfaceHolder = surfaceHolder;
 		startPos = new Point(0, 0);
 		movePos = new Point(0, 0);
@@ -253,7 +251,7 @@ public class DrawThread extends Thread {
 						canvas.drawBitmap(bitCell2,widthPX*i+indent-startPos.x,
 						 heightPX*j+indent-startPos.y,paint);
 					}else{
-						if (isFullLSD){
+						if (isLSD && isFullLSD){
 							mLSDPaint.setColor(mLSDRandom.nextInt());
 							fulllsdCanvas.drawRect(1, 1, bitCell.getWidth()-1,
 							 bitCell.getHeight()-1, mLSDPaint);

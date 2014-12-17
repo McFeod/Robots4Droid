@@ -378,14 +378,9 @@ public class World{
 			d=mWidth-playerPos.x-1;
 		if (mHeight-playerPos.y-1 > d)
 			d=mHeight-playerPos.y-1;
-		//передвижение всех роботов на одну клетку
-		if (!toMoveFast)
-			for (int i=1; i<=d; i++)
-				moveRobots(playerPos.x, playerPos.y, i, true);
-		//передвижение быстрых роботов второй раз
-		else
-			for (int i=1; i<=d; i++)
-				moveRobots(playerPos.x, playerPos.y, i, false);
+		//передвижение всех роботов на одну клетку либо быстрых второй раз
+		for (int i=1; i<=d; i++)
+			moveRobots(playerPos.x, playerPos.y, i, !toMoveFast);
 		player.chScore(calcScore(board.diff2score()));
 		/*костыль для сочетания "Ваниной спиральки" и наглости игрока, 
 		 * прущего на робота.*/ 

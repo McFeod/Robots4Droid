@@ -25,8 +25,8 @@
 	<string name="lsd_setting">Набор \"Юный химик\"</string>
 	<string name="lsd_summary">Ответственность за последствия вы берёте на себя…</string>
 	<string name="lsd_anim_setting">Сопутствующая анимация</string>
-	<string name="full_lsd_setting">Нет слов</string>
-	<string name="full_lsd_summary">Без комментариев…</string>
+	<string name="full_lsd_setting">Двойной эффект</string>
+	<string name="full_lsd_summary">Для особых ценителей…</string>
 	<string name="error">ОШИБКА</string>
 	<string name="skin">Внешний вид</string>
 	<string name="metrics">Размеры доски</string>
