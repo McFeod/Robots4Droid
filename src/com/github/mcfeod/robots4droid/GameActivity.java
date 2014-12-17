@@ -211,7 +211,7 @@ public class GameActivity extends Activity {
 			areMinesOn = mSettings.getBoolean("mine", false);
 			world.player.areSuicidesForbidden = mSettings.getBoolean("suicides_forbidden", false);
 			if (isLSD)
-				mSoundTrack = MediaPlayer.create(this, R.raw.lsd);
+				mSoundTrack = MediaPlayer.create(this, R.raw.uprt);
 			else
 				mSoundTrack = MediaPlayer.create(this, R.raw.muz);
 			mSoundTrack.setLooping(true);
@@ -243,7 +243,7 @@ public class GameActivity extends Activity {
 			areBombsOn = savedInstanceState.getBoolean("areBombsOn");
 			areMinesOn = savedInstanceState.getBoolean("areMinesOn");
 			if (isLSD)
-				mSoundTrack = MediaPlayer.create(this, R.raw.lsd);
+				mSoundTrack = MediaPlayer.create(this, R.raw.uprt);
 			else
 				mSoundTrack = MediaPlayer.create(this, R.raw.muz);
 			mSoundTrack.setLooping(true);
