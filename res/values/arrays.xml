@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string-array name="main_menu">
+		<item>@string/continue_button</item>
+		<item>@string/new_game_button</item>
+		<item>@string/load_button</item>
+		<item>@string/scores_button</item>
+		<item>@string/settings_button</item>
+		<item>@string/about_button</item>
+	</string-array>
 	<string-array name="difficulty">
 		<item>@string/compl_0</item>
 		<item>@string/compl_1</item>

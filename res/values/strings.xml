@@ -39,4 +39,6 @@
 	<string name="save_score_info">Difficulty: %1$s\nEnergy shortage: %2$s</string>
 	<string name="on">on</string>
 	<string name="off">off</string>
+	
+	<string name="about_url">file:///android_res/raw/index.html</string>
 </resources>

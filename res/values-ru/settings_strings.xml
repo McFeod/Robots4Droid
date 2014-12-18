@@ -2,7 +2,7 @@
 <resources>
 	<!-- SettingsActivity -->
 	<string name="music_setting">Музыка</string>
-	<string name="suicide_setting">Включить безопасные ходы</string>
+	<string name="suicide_setting">Безопасные ходы</string>
 	<string name="suicide_summary">Запретить самоубийственные ходы</string>
 	<string name="complexity_setting">Сложность</string>
 	<string name="mine_setting">Включить мины</string>

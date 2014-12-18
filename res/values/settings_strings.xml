@@ -2,7 +2,7 @@
 <resources>
 	<!-- SettingsActivity -->
 	<string name="music_setting">Music</string>
-	<string name="suicide_setting">Turn safe movements on</string>
+	<string name="suicide_setting">Safe movements</string>
 	<string name="suicide_summary">Reject suicide movements</string>
 	<string name="complexity_setting">Difficulty</string>
 	<string name="mine_setting">Turn mines on</string>

@@ -5,14 +5,50 @@ import java.io.IOException;
 import saves.LoadActivity;
 import saves.SaveManager;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
+	
+	private final OnItemClickListener listener = new OnItemClickListener() {
+		@Override
+		public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
+			Intent intent = null;
+			switch (position){
+				case 0: 
+					if (SaveManager.getInstance().markLast())
+						intent = new Intent(MainActivity.this, GameActivity.class);
+					else
+						Toast.makeText(MainActivity.this, getString(R.string.no_saved), Toast.LENGTH_SHORT).show();
+					break;
+				case 1: 
+					intent = new Intent(MainActivity.this, GameActivity.class);
+					break;
+				case 2: 
+					intent = new Intent(MainActivity.this, LoadActivity.class);
+					break;
+				case 3: 
+					intent = new Intent(MainActivity.this, ScoreActivity.class);
+					break;
+				case 4: 
+					intent = new Intent(MainActivity.this, SettingsActivity.class);
+					break;
+				case 5: 
+					intent = new Intent(MainActivity.this, AboutActivity.class);
+					break;
+			}
+			if (intent != null)
+				startActivity(intent);
+		}
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceBundle){
 		super.onCreate(savedInstanceBundle);
@@ -27,61 +63,10 @@ public class MainActivity extends Activity {
 		try{
 			SaveManager.getInstance().loadScores(MainActivity.this);
 		}catch (IOException e){}
-
-		findViewById(R.id.settings_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(MainActivity.this, SettingsActivity.class);
-				startActivity(i);
-			}
-		});
-
-		findViewById(R.id.new_game_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(MainActivity.this, GameActivity.class);
-				startActivity(i);
-			}
-		});
-
-		findViewById(R.id.continue_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (SaveManager.getInstance().markLast()){
-					Intent i = new Intent(MainActivity.this, GameActivity.class);
-					startActivity(i);}
-				else{
-					Toast.makeText(MainActivity.this, getString(R.string.no_saved), Toast.LENGTH_SHORT).show();
-				}
-			}
-		});
-
-		findViewById(R.id.load_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-					 Intent i = new Intent(MainActivity.this, LoadActivity.class);
-					 startActivity(i);
-			}
-		});
-		
-		findViewById(R.id.score_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-					 Intent i = new Intent(MainActivity.this, ScoreActivity.class);
-					 startActivity(i);
-			}
-		});
-
-		findViewById(R.id.about_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-				builder.setMessage(R.string.dialog_about_message);
-				builder.setCancelable(true);
-				AlertDialog dialog = builder.create();
-				dialog.show();
-			}
-		});
+		ListView buttons = (ListView)findViewById(R.id.menu_buttons);
+		String[] btns = this.getResources().getStringArray(R.array.main_menu);
+		buttons.setAdapter(new ArrayAdapter<String>(MainActivity.this, R.layout.main_menu_item, btns));
+		buttons.setOnItemClickListener(listener);
 	}
 
 	@Override
