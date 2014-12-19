@@ -105,7 +105,7 @@ public class GameActivity extends Activity {
 			//передвигаем роботов
 			world.moveBots(false);
 			mDrawThread.scrollToPlayer();
-			if (world.board.getAliveFastBotCount()>0){
+			if ((world.board.getAliveFastBotCount()>0) && (mLastLevel == world.getLevel())){
 				mDrawThread.delay(100);
 				//передвигаем быстрых роботов
 				world.moveBots(true);
