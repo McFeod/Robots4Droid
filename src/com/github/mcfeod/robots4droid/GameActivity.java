@@ -31,6 +31,7 @@ public class GameActivity extends Activity {
 	private boolean areBombsOn;
 	private boolean isLSD;
 	private boolean isLSDAnim;
+	private boolean isCalculated;
 	private String[] mToastArray;
 	private Random rand;
 	private TextView levelTextView, scoreTextView, energyTextView, botCountTextView;
@@ -51,6 +52,7 @@ public class GameActivity extends Activity {
 		public void onClick(View v){
 			mGameOverLinearLayout.setVisibility(View.GONE);
 			world.defeat();
+			isCalculated = false;
 			mDrawThread.scrollToPlayer();
 			mLastLevel = world.getLevel();
 			showNewLevelToast();
@@ -204,6 +206,7 @@ public class GameActivity extends Activity {
 				mLastLevel = world.getLevel();
 				showNewLevelToast();
 			}
+			isCalculated = false;
 			isLSD = mSettings.getBoolean("LSD", false);
 			isLSDAnim = mSettings.getBoolean("LSD_anim", false);
 			isMusicOn = mSettings.getBoolean("music", true);
@@ -242,6 +245,7 @@ public class GameActivity extends Activity {
 			isMusicOn = savedInstanceState.getBoolean("isMusicOn");
 			areBombsOn = savedInstanceState.getBoolean("areBombsOn");
 			areMinesOn = savedInstanceState.getBoolean("areMinesOn");
+			isCalculated = savedInstanceState.getBoolean("isCalculated");
 			if (isLSD)
 				mSoundTrack = MediaPlayer.create(this, R.raw.uprt);
 			else
@@ -351,6 +355,8 @@ public class GameActivity extends Activity {
 		savedInstanceState.putBoolean("areBombsOn", areBombsOn);
 		savedInstanceState.putBoolean("LSD", isLSD);
 		savedInstanceState.putBoolean("LSD_anim", isLSDAnim);
+		savedInstanceState.putBoolean("isCalculated", isCalculated);
+		
 		if (isMusicOn)
 			savedInstanceState.putInt("musicTime",mSoundTrack.getCurrentPosition());
 	}
@@ -382,7 +388,10 @@ public class GameActivity extends Activity {
 	private void showGameOverDialog(){
 		TextView result = (TextView)findViewById(R.id.gameover_dialog_text);
 		if (world.player.isWinner){
-			world.player.chScore(world.player.getScore());
+			if (!isCalculated){
+				world.player.chScore(world.player.getScore());
+				isCalculated = true;
+			}
 			result.setText(R.string.victory);
 		}else{
 			result.setText(R.string.diedlog);
